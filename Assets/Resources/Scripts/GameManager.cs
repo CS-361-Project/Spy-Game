@@ -5,14 +5,17 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour {
 	List<Fan> fanList;
 	List<Guard> guardList;
+	List<Burner> burnerList;
 	// Use this for initialization
 	void Start() {
 		fanList = new List<Fan>();
 		guardList = new List<Guard>();
+		burnerList = new List<Burner>();
 		for (int i = 0; i < 30; i++) {
 			addGuard();
 		}
 		addFan(new Vector2(3, 0), new Vector2(-1, 0));
+		addBurner(new Vector2(0, 0));
 	}
 	
 	// Update is called once per frame
@@ -42,7 +45,21 @@ public class GameManager : MonoBehaviour {
 		foreach (Fan fan in fanList) {
 			fan.FanToggled += guard.onFanToggled;
 		}
+		foreach (Burner bb in burnerList) {
+			bb.BurnerToggled += guard.onBurnerToggled;
+		}
 		guardList.Add(guard);
+	}
+
+
+	void addBurner(Vector2 position) {
+		GameObject burnerObj = new GameObject();
+		burnerObj.transform.position = position;
+		Burner burner = burnerObj.AddComponent<Burner>();
+		foreach (Guard g in guardList) {
+			burner.BurnerToggled += g.onBurnerToggled;
+		}
+		burnerList.Add(burner);
 	}
 }
 

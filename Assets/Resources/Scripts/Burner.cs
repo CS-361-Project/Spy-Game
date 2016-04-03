@@ -1,0 +1,70 @@
+﻿using UnityEngine;
+using System;
+using System.Collections;
+
+public class Burner : MonoBehaviour {
+	bool state;
+	Vector2 position;
+	//Vector2 velocity;
+	SpriteRenderer rend;
+
+	// Class to encapsulate all data sent to subscribers when a fan event happens
+	public class BurnerEventArgs : EventArgs {
+		public Vector2 position { get; set; }
+		public bool state { get; set; }
+		//public Vector2 velocity { get; set; }
+	}
+
+
+	void Start () {
+		state = false;
+		position = transform.position;
+		gameObject.AddComponent<BoxCollider2D>();
+		rend = gameObject.AddComponent<SpriteRenderer>();
+		rend.sortingOrder = 1;
+		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
+		rend.color = Color.yellow;
+	}
+
+	void Update () {
+
+	}
+
+	void OnMouseDown() {
+		toggle();
+	}
+
+	public event EventHandler<BurnerEventArgs> BurnerToggled;
+
+
+	public void setState(bool newState) {
+		state = newState;
+		onBurnerToggled();
+	}
+
+	public void toggle() {
+		state = !state;
+		if (state) {
+			rend.color = Color.blue;
+		}
+		else {
+			rend.color = Color.yellow;
+		}
+		onBurnerToggled();
+	}
+
+
+	public virtual void onBurnerToggled() {
+		if (BurnerToggled != null) {
+			print("Triggering toggle event.");
+			BurnerEventArgs args = new BurnerEventArgs();
+			args.state = this.state;
+			args.position = this.position;
+			BurnerToggled(this, args);
+		}
+		else {
+			print("Not triggering toggle event - no listeners.");
+		}
+	}
+
+}

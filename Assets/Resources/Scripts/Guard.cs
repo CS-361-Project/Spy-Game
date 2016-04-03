@@ -23,5 +23,14 @@ public class Guard : MonoBehaviour {
 			rend.color = Color.blue;
 		}
 	}
+
+	public virtual void onBurnerToggled(object source, Burner.BurnerEventArgs args) {
+		if (args.state) {
+			rend.color = Color.yellow;
+		}
+		else {
+			rend.color = Color.blue;
+		}
+	}
 }
 
