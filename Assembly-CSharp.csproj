@@ -49,6 +49,7 @@
      <Compile Include="Assets\Resources\Scripts\Fan.cs" />
      <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
      <Compile Include="Assets\Resources\Scripts\Guard.cs" />
+     <Compile Include="Assets\Resources\Scripts\Tile.cs" />
  <Reference Include="UnityEngine.Networking">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
