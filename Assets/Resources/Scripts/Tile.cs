@@ -51,13 +51,13 @@ public class Tile : MonoBehaviour {
 	}
 
 	public List<Tile> getNeighbors() {
-		List<Tile> neighbors = new List<Tile>();
-		for (int i = posX - 1; i <= posX + 1; i++) {
-			for (int j = posY - 1; j <= posY + 1; j++) {
-				neighbors.Add(game.getTile(i, j));
-			}
-		}
-		return neighbors();
+		Tile[] neighbors = new Tile[] {
+			game.getTile(posX - 1, posY),
+			game.getTile(posX + 1, posY),
+			game.getTile(posX, posY - 1),
+			game.getTile(posX, posY + 1)
+		};
+		return neighbors;
 	}
 
 	void checkForFire(){

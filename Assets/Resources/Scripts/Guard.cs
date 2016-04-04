@@ -12,6 +12,7 @@ public class Guard : MonoBehaviour {
 	GameManager gm;
 	// Use this for initialization
 	void init(Tile t, GameManager m) {
+		gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
 		rend.color = Color.blue;
@@ -27,15 +28,28 @@ public class Guard : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		position += direction * Time.deltaTime * speed;
-		Tile nextTile = gm.getClosestTile(position);
-		if (nextTile != tile) {
-			if (nextTile.isPassable()) {
-				tile = nextTile;
-			}
-			else {
-				List<Tile> neighbors
+		tile = gm.getClosestTile(position);
+		lookingAt = direction;
+		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, 5)) {
+			//TODO: Make sure it's not something boring like a wall
+			Vector2 toObject = (c.transform.position - transform.position).normalized;
+			float angle = Vector2.Dot(lookingAt, toObject);
+			if (angle <= 0.15425145 || angle >= -0.15425145) { // -30 to 30 degrees
+				if (Physics2D.Raycast(transform.position, c.transform.position - transform.position).collider == c) {
+					// found object code
+				}
 			}
 		}
+	}
+
+	void OnCollision(Collider2D c) {
+		float sin = Mathf.Sin(Mathf.PI / 2);
+		float cos = Mathf.Cos(Mathf.PI / 2);
+
+		float tx = direction.x;
+		float ty = direction.y;
+		direction.x = (cos * tx) - (sin * ty);
+		direction.y = (sin * tx) + (cos * ty); // rotate 90 degrees on collision
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
