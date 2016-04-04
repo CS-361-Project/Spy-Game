@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour {
 	List<Chemical> chemicalList;
 
 	Tile[,] board;
+	public int width;
+	public int height;
 
 	// Use this for initialization
 	void Start() {
@@ -33,19 +35,26 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void buildBoard(int width, int height){
+		this.width = width;
+		this.height = height;
 		board = new Tile[width, height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				board[x,y] = addTile(x, y);
+				if (x == 0 && y == 3) {
+					board[x, y] = addTile(x, y, 1);
+				}
+				else {
+					board[x, y] = addTile(x, y, 0);
+				}
 			}
 		}
 
 	}
 
-	Tile addTile(int x, int y){
+	Tile addTile(int x, int y, int fire){
 		GameObject tileObj = new GameObject();
 		Tile tile = tileObj.AddComponent<Tile>();
-		tile.init(x,y,this);
+		tile.init(x,y,this, fire, 0, true);
 		tile.transform.localPosition = new Vector3(x, y, 0);
 		return tile;
 
