@@ -32,5 +32,14 @@ public class Guard : MonoBehaviour {
 			rend.color = Color.blue;
 		}
 	}
+
+	public virtual void onChemicalToggled(object source, Chemical.ChemicalEventArgs args) {
+		if (args.state) {
+			rend.color = Color.green;
+		}
+		else {
+			rend.color = Color.yellow;
+		}
+	}
 }
 

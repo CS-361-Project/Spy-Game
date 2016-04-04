@@ -8,7 +8,7 @@ public class Burner : MonoBehaviour {
 	//Vector2 velocity;
 	SpriteRenderer rend;
 
-	// Class to encapsulate all data sent to subscribers when a fan event happens
+	// Class to encapsulate all data sent to subscribers when a burner event happens
 	public class BurnerEventArgs : EventArgs {
 		public Vector2 position { get; set; }
 		public bool state { get; set; }
