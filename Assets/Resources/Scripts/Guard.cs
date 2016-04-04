@@ -8,6 +8,7 @@ public class Guard : MonoBehaviour {
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
 		rend.color = Color.blue;
+		rend.sortingOrder = 1;
 	}
 	
 	// Update is called once per frame

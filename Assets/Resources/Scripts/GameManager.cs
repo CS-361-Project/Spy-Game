@@ -13,18 +13,37 @@ public class GameManager : MonoBehaviour {
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
 		chemicalList = new List<Chemical> ();
-		for (int i = 0; i < 30; i++) {
-			addGuard();
-		}
+//		for (int i = 0; i < 30; i++) {
+//			addGuard();
+//		}
 		addFan(new Vector2(3, 0), new Vector2(-1, 0));
 		addBurner(new Vector2(0, 0));
-		addChemical (new Vector2 (-5, 0));
+		addChemical (new Vector2 (1, 0));
+
+		buildBoard(6, 6);
 
 	}
 	
 	// Update is called once per frame
 	void Update() {
 	
+	}
+
+	void buildBoard(int width, int height){
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				addTile(x, y);
+			}
+		}
+
+	}
+
+	void addTile(int x, int y){
+		GameObject tileObj = new GameObject();
+		Tile tile = tileObj.AddComponent<Tile>();
+		tile.init();
+		tile.transform.localPosition = new Vector3(x, y, 0);
+
 	}
 
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
