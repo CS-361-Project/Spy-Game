@@ -6,16 +6,20 @@ public class GameManager : MonoBehaviour {
 	List<Fan> fanList;
 	List<Guard> guardList;
 	List<Burner> burnerList;
+	List<Chemical> chemicalList;
 	// Use this for initialization
 	void Start() {
 		fanList = new List<Fan>();
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
+		chemicalList = new List<Chemical> ();
 		for (int i = 0; i < 30; i++) {
 			addGuard();
 		}
 		addFan(new Vector2(3, 0), new Vector2(-1, 0));
 		addBurner(new Vector2(0, 0));
+		addChemical (new Vector2 (-5, 0));
+
 	}
 	
 	// Update is called once per frame
@@ -48,6 +52,9 @@ public class GameManager : MonoBehaviour {
 		foreach (Burner bb in burnerList) {
 			bb.BurnerToggled += guard.onBurnerToggled;
 		}
+		foreach (Chemical chem in chemicalList) {
+			chem.ChemicalToggled += guard.onChemicalToggled;
+		}
 		guardList.Add(guard);
 	}
 
@@ -60,6 +67,16 @@ public class GameManager : MonoBehaviour {
 			burner.BurnerToggled += g.onBurnerToggled;
 		}
 		burnerList.Add(burner);
+	}
+
+	void addChemical(Vector2 position) {
+		GameObject chemObj = new GameObject();
+		chemObj.transform.position = position;
+		Chemical chemical = chemObj.AddComponent<Chemical>();
+		foreach (Guard g in guardList) {
+			chemical.ChemicalToggled += g.onChemicalToggled;
+		}
+		chemicalList.Add(chemical);
 	}
 }
 

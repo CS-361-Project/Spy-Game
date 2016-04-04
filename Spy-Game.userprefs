@@ -1,11 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Resources/Scripts/BunsenBurner.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Resources/Scripts/Fan.cs">
     <Files>
-      <File FileName="Assets/Resources/Scripts/GameManager.cs" Line="1" Column="1" />
       <File FileName="Assets/Resources/Scripts/Fan.cs" Line="1" Column="1" />
-      <File FileName="Assets/Resources/Scripts/Guard.cs" Line="1" Column="1" />
-      <File FileName="Assets/Resources/Scripts/BunsenBurner.cs" Line="1" Column="1" />
+      <File FileName="Assets/Resources/Scripts/GameManager.cs" Line="45" Column="24" />
+      <File FileName="Assets/Resources/Scripts/Guard.cs" Line="15" Column="2" />
+      <File FileName="Assets/Resources/Scripts/Chemicals.cs" Line="23" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
