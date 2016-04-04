@@ -39,7 +39,7 @@ public class Guard : MonoBehaviour {
 			rend.color = Color.green;
 		}
 		else {
-			rend.color = Color.yellow;
+			rend.color = Color.blue;
 		}
 	}
 }

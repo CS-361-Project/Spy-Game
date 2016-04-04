@@ -10,6 +10,7 @@ public class Chemical : MonoBehaviour {
 	void Start () {
 		state = false;
 		position = transform.position;
+		gameObject.transform.localScale = new Vector3 (5.0F,5.0F,1.0F);
 		gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Beaker");
@@ -21,21 +22,12 @@ public class Chemical : MonoBehaviour {
 		public Vector2 position { get; set; }
 		public bool state { get; set; }
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 	
 	}
-
-	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
-		if (args.state) {
-			rend.color = Color.yellow;
-		}
-		else {
-			rend.color = Color.green;
-		}
-	}
-
+		
 	void OnMouseDown() {
 		toggle();
 	}
@@ -51,10 +43,10 @@ public class Chemical : MonoBehaviour {
 	public void toggle() {
 		state = !state;
 		if (state) {
-			rend.color = Color.green;
+			rend.color = Color.white;
 		}
 		else {
-			rend.color = Color.yellow;
+			rend.color = Color.green;
 		}
 		onChemicalToggled();
 	}
