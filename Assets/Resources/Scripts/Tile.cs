@@ -3,18 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Tile : MonoBehaviour {
-	int fireTimer;
+	float fireTimer;
 	SpriteRenderer rend;
 	GameManager game;
 	bool flammable;
-	bool fire;
-	bool gas;
+	float fire;
+	float gas;
 	int posX;
 	int posY;
 
+	float TimeBeforeSpread = 1;
+
 	// Use this for initialization
-	public void init (int x, int y, GameManager game) {
+	public void init (int x, int y, GameManager game, float fire, float gas, bool flammable) {
 		fireTimer = 0;
+		this.flammable = flammable;
+		this.gas = gas;
+		this.fire = fire;
 		this.game = game;
 		this.posX = x;
 		this.posY = y;
@@ -31,8 +36,13 @@ public class Tile : MonoBehaviour {
 		if (flammable) {
 			checkForFire();
 		}
-		if (fire) {
-			fireTimer += 1;
+		if (fire == 1) {
+			fireTimer += Time.deltaTime;
+			rend.color = Color.red;
+			if (fireTimer > TimeBeforeSpread) {
+				fire = 2;
+
+			}
 		}
 	}
 
@@ -52,10 +62,12 @@ public class Tile : MonoBehaviour {
 
 	void checkForFire(){
 		//if one of the neighbors is burning then start burning
-		for (int i = posX - 1; i < posX + 1; i++) {
-			for (int j = posY - 1; j < posY + 1; j++) {
-				if (game.getTile(i, j).fire) {
-					this.fire = true;
+		for (int i = posX - 1; i <= posX + 1; i++) {
+			for (int j = posY - 1; j <= posY + 1; j++) {
+				if ((i != posX || j != posY) && (i == posX || j == posY) && !(i==0&&j==0) && (i > -1 && i < game.width) && (j > -1 && j < game.height)) {
+					if (game.getTile(i, j).fire>=2) {
+						this.fire = 1;
+					}
 				}
 			}
 		}
