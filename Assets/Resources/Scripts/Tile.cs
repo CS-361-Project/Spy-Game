@@ -4,11 +4,19 @@ using System.Collections;
 public class Tile : MonoBehaviour {
 	int fireTimer;
 	SpriteRenderer rend;
+	GameManager game;
 	bool flammable;
+	bool fire;
+	bool gas;
+	int posX;
+	int posY;
 
 	// Use this for initialization
-	public void init () {
+	public void init (int x, int y, GameManager game) {
 		fireTimer = 0;
+		this.game = game;
+		this.posX = x;
+		this.posY = y;
 		gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 0;
@@ -19,15 +27,22 @@ public class Tile : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		checkForFire();
+		if (flammable) {
+			checkForFire();
+		}
+		if (fire) {
+			fireTimer += 1;
+		}
 	}
 
 	void checkForFire(){
 		//if one of the neighbors is burning then start burning
-
-
-		//if burning increase fire time
-		fireTimer+=1;
-
+		for (int i = posX - 1; i < posX + 1; i++) {
+			for (int j = posY - 1; j < posY + 1; j++) {
+				if (game.getTile(i, j).fire) {
+					this.fire = true;
+				}
+			}
+		}
 	}
 }

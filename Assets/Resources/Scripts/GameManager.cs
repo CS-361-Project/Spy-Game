@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour {
 	List<Guard> guardList;
 	List<Burner> burnerList;
 	List<Chemical> chemicalList;
+
+	Tile[,] board;
+
 	// Use this for initialization
 	void Start() {
 		fanList = new List<Fan>();
@@ -30,20 +33,32 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void buildBoard(int width, int height){
+		board = new Tile[width, height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				addTile(x, y);
+				board[x,y] = addTile(x, y);
 			}
 		}
 
 	}
 
-	void addTile(int x, int y){
+	Tile addTile(int x, int y){
 		GameObject tileObj = new GameObject();
 		Tile tile = tileObj.AddComponent<Tile>();
-		tile.init();
+		tile.init(x,y,this);
 		tile.transform.localPosition = new Vector3(x, y, 0);
+		return tile;
 
+	}
+
+	public Tile getTile(int x,int y){
+		return board[x, y];
+	}
+
+	public Tile getClosestTile(Vector2 check){
+		int i = Mathf.RoundToInt(check.x);
+		int j = Mathf.RoundToInt(check.y);
+		return getTile(i, j);
 	}
 
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
