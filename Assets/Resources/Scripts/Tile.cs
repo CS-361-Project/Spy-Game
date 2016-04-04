@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Tile : MonoBehaviour {
 	int fireTimer;
@@ -33,6 +34,20 @@ public class Tile : MonoBehaviour {
 		if (fire) {
 			fireTimer += 1;
 		}
+	}
+
+	public bool isPassable() {
+		return true;
+	}
+
+	public List<Tile> getNeighbors() {
+		List<Tile> neighbors = new List<Tile>();
+		for (int i = posX - 1; i <= posX + 1; i++) {
+			for (int j = posY - 1; j <= posY + 1; j++) {
+				neighbors.Add(game.getTile(i, j));
+			}
+		}
+		return neighbors();
 	}
 
 	void checkForFire(){
