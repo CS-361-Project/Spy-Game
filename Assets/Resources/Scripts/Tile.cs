@@ -4,7 +4,11 @@ using System.Collections.Generic;
 
 public class Tile : MonoBehaviour {
 	float fireTimer;
+<<<<<<< HEAD
 	SpriteRenderer rend;
+=======
+	protected SpriteRenderer rend;
+>>>>>>> origin/master
 	GameManager game;
 	bool flammable;
 	float fire;
@@ -23,7 +27,8 @@ public class Tile : MonoBehaviour {
 		this.game = game;
 		this.posX = x;
 		this.posY = y;
-		gameObject.AddComponent<BoxCollider2D>();
+		gameObject.name = "Tile";
+//		gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 0;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
@@ -43,6 +48,7 @@ public class Tile : MonoBehaviour {
 				fire = 2;
 
 			}
+<<<<<<< HEAD
 		}
 	}
 
@@ -56,8 +62,24 @@ public class Tile : MonoBehaviour {
 			for (int j = posY - 1; j <= posY + 1; j++) {
 				neighbors.Add(game.getTile(i, j));
 			}
+=======
+>>>>>>> origin/master
 		}
 		return neighbors();
+	}
+
+	public virtual bool isPassable() {
+		return true;
+	}
+
+	public Tile[] getNeighbors() {
+		Tile[] neighbors = new Tile[] {
+			game.getTile(posX - 1, posY),
+			game.getTile(posX + 1, posY),
+			game.getTile(posX, posY - 1),
+			game.getTile(posX, posY + 1)
+		};
+		return neighbors;
 	}
 
 	void checkForFire(){

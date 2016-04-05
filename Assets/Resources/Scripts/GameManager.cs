@@ -18,14 +18,13 @@ public class GameManager : MonoBehaviour {
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
 		chemicalList = new List<Chemical> ();
+		buildBoard(8, 8);
 //		for (int i = 0; i < 30; i++) {
-//			addGuard();
+			addGuard(3, 3);
 //		}
-		addFan(new Vector2(3, 0), new Vector2(-1, 0));
-		addBurner(new Vector2(0, 0));
-		addChemical (new Vector2 (1, 0));
-
-		buildBoard(6, 6);
+		addFan(new Vector2(4, 1), new Vector2(-1, 0));
+		addBurner(new Vector2(1, 1));
+		addChemical (new Vector2 (2, 1));
 
 	}
 	
@@ -40,12 +39,24 @@ public class GameManager : MonoBehaviour {
 		board = new Tile[width, height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
+<<<<<<< HEAD
 				if (x == 0 && y == 3) {
 					board[x, y] = addTile(x, y, 1);
 				}
 				else {
 					board[x, y] = addTile(x, y, 0);
 				}
+=======
+				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+					board[x, y] = addWall(x, y);
+				}
+//				if (x == 1 && y == 4) {
+//					board[x, y] = addTile(x, y, 1);
+//				}
+//				else {
+					board[x, y] = addTile(x, y, 0);
+//				}
+>>>>>>> origin/master
 			}
 		}
 
@@ -57,7 +68,14 @@ public class GameManager : MonoBehaviour {
 		tile.init(x,y,this, fire, 0, true);
 		tile.transform.localPosition = new Vector3(x, y, 0);
 		return tile;
+	}
 
+	Wall addWall(int x, int y) {
+		GameObject wallObj = new GameObject();
+		Wall wall = wallObj.AddComponent<Wall>();
+		wall.init(x, y, this);
+		wall.transform.localPosition = new Vector3(x, y, 0);
+		return wall;
 	}
 
 	public Tile getTile(int x,int y){
@@ -65,8 +83,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public Tile getClosestTile(Vector2 check){
-		int i = Mathf.RoundToInt(check.x);
-		int j = Mathf.RoundToInt(check.y);
+		int i = (int)Mathf.Floor(check.x);
+		int j = (int)Mathf.Floor(check.y);
 		return getTile(i, j);
 	}
 
@@ -75,6 +93,7 @@ public class GameManager : MonoBehaviour {
 	// register each guard to be notified when new fan is toggled
 	void addFan(Vector2 position, Vector2 direction) {
 		GameObject fanObj = new GameObject();
+		fanObj.name = "Fan";
 		fanObj.transform.position = position;
 		Fan fan = fanObj.AddComponent<Fan>();
 		foreach (Guard g in guardList) {
@@ -85,9 +104,9 @@ public class GameManager : MonoBehaviour {
 
 
 	// register each guard to be notified when a fan is toggled
-	void addGuard() {
+	void addGuard(int x, int y) {
 		GameObject guardObj = new GameObject();
-		guardObj.transform.position = new Vector2(Random.value * 10 - 5, Random.value * 10 - 5);
+		guardObj.name = "Guard";
 		Guard guard = guardObj.AddComponent<Guard>();
 		foreach (Fan fan in fanList) {
 			fan.FanToggled += guard.onFanToggled;
@@ -98,12 +117,14 @@ public class GameManager : MonoBehaviour {
 		foreach (Chemical chem in chemicalList) {
 			chem.ChemicalToggled += guard.onChemicalToggled;
 		}
+		guard.init(getTile(x, y), this);
 		guardList.Add(guard);
 	}
 
 
 	void addBurner(Vector2 position) {
 		GameObject burnerObj = new GameObject();
+		burnerObj.name = "Burner";
 		burnerObj.transform.position = position;
 		Burner burner = burnerObj.AddComponent<Burner>();
 		foreach (Guard g in guardList) {
@@ -114,6 +135,7 @@ public class GameManager : MonoBehaviour {
 
 	void addChemical(Vector2 position) {
 		GameObject chemObj = new GameObject();
+		chemObj.name = "Chemical";
 		chemObj.transform.position = position;
 		Chemical chemical = chemObj.AddComponent<Chemical>();
 		foreach (Guard g in guardList) {
