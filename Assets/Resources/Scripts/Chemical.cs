@@ -12,7 +12,7 @@ public class Chemical : MonoBehaviour {
 		position = transform.position;
 		gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
-		rend.sprite = Resources.Load<Sprite>("Sprites/Beaker");
+		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
 		rend.sortingOrder = 1;
 		rend.color = Color.green;
 
