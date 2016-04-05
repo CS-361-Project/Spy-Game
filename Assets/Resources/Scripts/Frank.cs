@@ -57,6 +57,7 @@ public class Frank : MonoBehaviour {
 		position = currentTile.transform.position;
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
+		transform.localScale = new Vector3(0.7f, 0.7f, 1);
 		direction = new Vector2 (1f, 0f);
 		lineOfSight = direction;
 

@@ -21,9 +21,9 @@ public class GameManager : MonoBehaviour {
 		buildBoard(8, 8);
 		addGuard(2, 3);
 		addFrank (5, 4);
-		addFan(new Vector2(4, 1), new Vector2(-1, 0));
+		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		//addBurner(new Vector2(1, 1));
-		addChemical (new Vector2 (2, 1));
+		//addChemical (new Vector2 (2, 1));
 
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > 0.5)
+					if (UnityEngine.Random.value > 0.7)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
