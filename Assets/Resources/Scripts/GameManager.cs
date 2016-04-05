@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
 		buildBoard(8, 8);
 //		for (int i = 0; i < 30; i++) {
 			addGuard(3, 3);
+		addFrank (5, 4);
 //		}
 		addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		addBurner(new Vector2(1, 1));
@@ -91,6 +92,22 @@ public class GameManager : MonoBehaviour {
 			fan.FanToggled += g.onFanToggled;
 		}
 		fanList.Add(fan);
+	}
+
+	void addFrank(int x, int y) {
+		GameObject frankObj = new GameObject();
+		frankObj.name = "Frank";
+		Frank frank = frankObj.AddComponent<Frank>();
+		foreach (Fan fan in fanList) {
+			fan.FanToggled += frank.onFanToggled;
+		}
+		foreach (Burner bb in burnerList) {
+			bb.BurnerToggled += frank.onBurnerToggled;
+		}
+		foreach (Chemical chem in chemicalList) {
+			chem.ChemicalToggled += frank.onChemicalToggled;
+		}
+		frank.init(getTile(x, y), this);
 	}
 
 

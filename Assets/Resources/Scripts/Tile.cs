@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Tile : MonoBehaviour {
 	float fireTimer;
 	protected SpriteRenderer rend;
+
 	GameManager game;
 	bool flammable;
 	float fire;
