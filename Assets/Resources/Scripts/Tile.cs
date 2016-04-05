@@ -11,8 +11,8 @@ public class Tile : MonoBehaviour {
 	protected bool flammable;
 	public float fire;
 	public float gas;
-	int posX;
-	int posY;
+	public int posX;
+	public int posY;
 
 	float TimeBeforeSpread = 1.5f;
 
