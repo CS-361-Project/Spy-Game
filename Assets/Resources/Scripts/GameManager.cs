@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour {
 	Tile[,] board;
 	public int width;
 	public int height;
-
+	int count;
 	// Use this for initialization
 	void Start() {
 		fanList = new List<Fan>();
@@ -21,15 +21,20 @@ public class GameManager : MonoBehaviour {
 		buildBoard(8, 8);
 		addGuard(2, 3);
 		addFrank (5, 4);
-		addFan(new Vector2(4, 1), new Vector2(-1, 0));
-		addBurner(new Vector2(1, 1));
-		addChemical (new Vector2 (2, 1));
+		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
+		//addBurner(new Vector2(1, 1));
+		//addChemical (new Vector2 (2, 1));
 
+//		addChemical (new Vector2 (2, 1));
+		count = 0;
 	}
 	
 	// Update is called once per frame
 	void Update() {
-	
+		count++;
+		if (count == 150) {
+			getTile(1, 1).setFire(1);
+		}
 	}
 
 	void buildBoard(int width, int height){
@@ -41,18 +46,24 @@ public class GameManager : MonoBehaviour {
 				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
 					board[x, y] = addWall(x, y);
 				}
-//				if (x == 1 && y == 4) {
-//					board[x, y] = addTile(x, y, 1);
-//				}
-//				else {
+				else if (x == 1 && y == 1) {
 					board[x, y] = addTile(x, y, 0);
-//				}
+					addBurner(new Vector2 (x, y));
+				}
+				else {
+					if (UnityEngine.Random.value > 0.7)
+						board[x, y] = addWall(x, y);
+					else
+						board[x, y] = addTile(x, y, 0);
+				}
 			}
 		}
 
+
+
 	}
 
-	Tile addTile(int x, int y, int fire){
+	Tile addTile(int x, int y, float fire){
 		GameObject tileObj = new GameObject();
 		Tile tile = tileObj.AddComponent<Tile>();
 		tile.init(x,y,this, fire, 0, true);
@@ -133,6 +144,7 @@ public class GameManager : MonoBehaviour {
 		burnerObj.name = "Burner";
 		burnerObj.transform.position = position;
 		Burner burner = burnerObj.AddComponent<Burner>();
+		burner.init(getTile((int)position.x, (int)position.y));
 		foreach (Guard g in guardList) {
 			burner.BurnerToggled += g.onBurnerToggled;
 		}

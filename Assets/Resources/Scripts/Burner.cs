@@ -7,6 +7,7 @@ public class Burner : MonoBehaviour {
 	Vector2 position;
 	//Vector2 velocity;
 	SpriteRenderer rend;
+	Tile location;
 
 	// Class to encapsulate all data sent to subscribers when a burner event happens
 	public class BurnerEventArgs : EventArgs {
@@ -16,7 +17,8 @@ public class Burner : MonoBehaviour {
 	}
 
 
-	void Start () {
+	public void init (Tile loc) {
+		this.location = loc;
 		state = false;
 		position = transform.position;
 		gameObject.AddComponent<BoxCollider2D>();
@@ -29,7 +31,9 @@ public class Burner : MonoBehaviour {
 	}
 
 	void Update () {
-
+		if (state) {
+			location.setGas(.1f);
+		}
 	}
 
 	void OnMouseDown() {

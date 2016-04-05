@@ -43,6 +43,7 @@ public class Guard : MonoBehaviour {
 		tile = t;
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
+		transform.localScale = new Vector3(0.7f, 0.7f, 1);
 		direction = new Vector2(0, 1);
 		lookingAt = new Vector2(0, 1);
 		gm = m;
@@ -54,7 +55,6 @@ public class Guard : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		fovDisplay.setDirection(direction);
-		rend.color = Color.white * suspicion / 3.0f;
 		if (suspicion >= 1f) {
 			if (alert == null) {
 				GameObject alertObj = new GameObject();
