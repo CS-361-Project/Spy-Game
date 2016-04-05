@@ -16,6 +16,9 @@ public class Guard : MonoBehaviour {
 	float suspicion;
 
 	AlertIcon alert;
+	FOV fovDisplay;
+
+	const float viewDistance = 2.5f;
 
 	// Use this for initialization
 	public void init(Tile t, GameManager m) {
@@ -31,6 +34,11 @@ public class Guard : MonoBehaviour {
 		body.gravityScale = 0;
 		body.isKinematic = true;
 		gameObject.layer = LayerMask.NameToLayer("Guard");
+		GameObject fovObj = new GameObject();
+		fovObj.name = "FOV";
+		fovObj.transform.parent = transform;
+		fovDisplay = fovObj.AddComponent<FOV>();
+		fovDisplay.init(viewDistance);
 
 		tile = t;
 		transform.position = t.transform.position;
@@ -45,6 +53,8 @@ public class Guard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
+		fovDisplay.setDirection(direction);
+		rend.color = Color.white * suspicion / 3.0f;
 		if (suspicion >= 1f) {
 			if (alert == null) {
 				GameObject alertObj = new GameObject();
@@ -53,7 +63,7 @@ public class Guard : MonoBehaviour {
 				alert.transform.parent = transform;
 				alert.transform.localPosition = Vector3.up;
 			}
-			suspicion -= .05f;
+			suspicion -= .01f;
 			if (suspicion < 1f) {
 				Destroy(alert.gameObject);
 			}
@@ -61,60 +71,61 @@ public class Guard : MonoBehaviour {
 		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
 		tile = gm.getClosestTile(transform.position);	
 		lookingAt = direction.normalized;
-		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, 5)) {
+		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
 			//TODO: Make sure it's not something boring like a wall
 			if (c != coll && c.gameObject.name != "Wall") {
-				Vector2 toObject = (c.transform.position - transform.position).normalized;
-				float angle = Vector2.Dot(lookingAt, toObject);
-//				print("Angle from guard to " + c.gameObject.name + " is " + angle);
-				if (angle <= 1 && angle >= 0.866025404) { // 0 to 60
-					if (Physics2D.Raycast(transform.position, toObject, 10, 1 << 9).collider == c) {
-//						direction = toObject;
-						print("Guard sees an object: " + c.gameObject.name);
-						suspicion = 1.5f;
-						Debug.DrawLine(c.transform.position, transform.position, new Color(angle / 2.0f + .5f, angle / 2f + .5f, angle / 2f + .5f));
-						// found object code
+				if (canSee(c.transform.position)) {
+					switch (c.gameObject.name) {
+						case "Frank":
+							suspicion = 2f;
+							break;
+						case "Chemical":
+							if (c.gameObject.GetComponent<Chemical>().state) {
+								suspicion += .25f;
+							}
+							break;
 					}
 				}
 			}
 		}
 	}
 
+	bool canSee(Vector3 pos) {
+		Vector2 toObject = (pos - transform.position).normalized;
+		float angle = Vector2.Dot(lookingAt, toObject);
+		if (angle <= 1 && angle >= 0.866025404) { // cos 0 to cos 60
+			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject, viewDistance, 1 << 9 | 1 << 10);
+			if (rayHit.collider != null && rayHit.collider.transform.position == pos) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void OnTriggerEnter2D(Collider2D c) {
 //		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
-//		float sin = Mathf.Sin(Mathf.PI / 2);
-//		float cos = Mathf.Cos(Mathf.PI / 2);
 		direction *= -1;
-//		float tx = direction.x;
-//		float ty = direction.y;
-//		direction.x = (cos * tx) - (sin * ty);
-//		direction.y = (sin * tx) + (cos * ty); // rotate 90 degrees on collision
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
-		if (args.state) {
-			rend.color = Color.red;
-		}
-		else {
-			rend.color = Color.blue;
+		if (canSee(args.position)) {
+			suspicion += .5f;
 		}
 	}
 
 	public virtual void onBurnerToggled(object source, Burner.BurnerEventArgs args) {
 		if (args.state) {
-			rend.color = Color.yellow;
-		}
-		else {
-			rend.color = Color.blue;
+			if (canSee(args.position)) {
+				suspicion += .5f;
+				// also probably want to go turn that off
+			}
 		}
 	}
 
 	public virtual void onChemicalToggled(object source, Chemical.ChemicalEventArgs args) {
-		if (args.state) {
-			rend.color = Color.green;
-		}
-		else {
-			rend.color = Color.blue;
+		if (canSee(args.position)) {
+			suspicion += .5f;
+			print("that's supsicious");
 		}
 	}
 }

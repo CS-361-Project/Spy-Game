@@ -24,6 +24,8 @@ public class Burner : MonoBehaviour {
 		rend.sortingOrder = 1;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
 		rend.color = Color.yellow;
+
+		gameObject.layer = LayerMask.NameToLayer("Room Objects");
 	}
 
 	void Update () {
@@ -56,14 +58,10 @@ public class Burner : MonoBehaviour {
 
 	public virtual void onBurnerToggled() {
 		if (BurnerToggled != null) {
-			print("Triggering toggle event.");
 			BurnerEventArgs args = new BurnerEventArgs();
 			args.state = this.state;
 			args.position = this.position;
 			BurnerToggled(this, args);
-		}
-		else {
-			print("Not triggering toggle event - no listeners.");
 		}
 	}
 

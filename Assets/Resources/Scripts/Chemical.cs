@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 
 public class Chemical : MonoBehaviour {
-	bool state;
+	public bool state;
 	Vector2 position;
 	SpriteRenderer rend;
 	// Use this for initialization
@@ -15,6 +15,8 @@ public class Chemical : MonoBehaviour {
 		rend.sprite = Resources.Load<Sprite>("Sprites/Beaker");
 		rend.sortingOrder = 1;
 		rend.color = Color.green;
+
+		gameObject.layer = LayerMask.NameToLayer("Room Objects");
 	}
 
 	public class ChemicalEventArgs : EventArgs {
@@ -53,14 +55,10 @@ public class Chemical : MonoBehaviour {
 
 	public virtual void onChemicalToggled() {
 		if (ChemicalToggled != null) {
-			print("Triggering toggle event.");
 			ChemicalEventArgs args = new ChemicalEventArgs();
 			args.state = this.state;
 			args.position = this.position;
 			ChemicalToggled(this, args);
-		}
-		else {
-			print("Not triggering toggle event - no listeners.");
 		}
 	}
 }

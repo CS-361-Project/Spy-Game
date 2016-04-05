@@ -49,6 +49,7 @@
      <Compile Include="Assets\Resources\Scripts\Burner.cs" />
      <Compile Include="Assets\Resources\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Resources\Scripts\Chemical.cs" />
+     <Compile Include="Assets\Resources\Scripts\FOV.cs" />
      <Compile Include="Assets\Resources\Scripts\Fan.cs" />
      <Compile Include="Assets\Resources\Scripts\Frank.cs" />
      <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
