@@ -4,23 +4,23 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Frank : MonoBehaviour {
+	BoxCollider2D coll;
+	GameManager gm;
+	Tile currentTile;
 	SpriteRenderer rend;
 	bool onFire;
-	enum behavior {smoking, drinking, talking, puking, shooting, running};
-	Queue toDoList;
-	Behavior[] behaviorList;
+
+	public enum behavior {drinking, smoking, talking, puking};
+
+	Queue<int> toDoList;
 
 	Vector2 position;
 	Vector2 direction;
 	Vector2 lineOfSight;
 	float speed;
-
-	BoxCollider2D coll;
-	GameManager gm;
-	Tile currentTile;
-
 	float clock;
 
+	FrankIcon icon;
 
 	// Use this for initialization
 	public void init (Tile t, GameManager man) {
@@ -29,8 +29,16 @@ public class Frank : MonoBehaviour {
 		speed = 1F;
 		clock = 0; 
 
-		toDoList = new Queue ();
-		behaviorList[Enum.GetNames(typeof(behavior)).Length];
+		toDoList = new Queue<int> ();
+		for (int i = 0; i < Enum.GetNames (typeof(behavior)).Length - 1; i++) {
+			toDoList.Enqueue ((int)UnityEngine.Random.Range (0, Enum.GetNames (typeof(behavior)).Length));
+		}
+
+		GameObject iconObj = new GameObject();
+		iconObj.name = "Icon";
+		icon = iconObj.AddComponent<FrankIcon>();
+		icon.transform.parent = transform;
+		icon.transform.localPosition = Vector3.up;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
@@ -58,10 +66,9 @@ public class Frank : MonoBehaviour {
 		clock += Time.deltaTime;
 		Wander ();
 		lookAround();
-		if (clock >= 10) {
+		if (clock >= 1) {
 			clock = 0;
-			print ("sam");
-			//updateToDoList ();
+			updateToDoList ();
 
 		}
 
@@ -69,10 +76,37 @@ public class Frank : MonoBehaviour {
 
 	void updateToDoList(){
 		int behaviorCount = Enum.GetNames(typeof(behavior)).Length;
-		toDoList.Dequeue ();
-		int rand = (int)UnityEngine.Random.Range (0, behaviorCount - 1);
-		toDoList.Enqueue (behaviorList [rand]);
+		int rand = (int)UnityEngine.Random.Range (0, behaviorCount);
 
+		int nextTask = toDoList.Dequeue ();
+		print (nextTask);
+
+		Destroy(icon.gameObject);
+
+		GameObject iconObj = new GameObject();
+		iconObj.name = "Icon";
+		icon = iconObj.AddComponent<FrankIcon>();
+		icon.transform.parent = transform;
+		icon.transform.localPosition = Vector3.up;
+
+		if (nextTask == (int)behavior.drinking) {
+			print ("drinking");
+			drinking ();
+		}
+		if (nextTask == (int)behavior.puking) {
+			print ("puking");
+			puking ();
+		}
+		if (nextTask == (int)behavior.smoking) {
+			print ("smoking");
+			smoking ();
+		}
+		if (nextTask == (int)behavior.talking) {
+			print ("talking");
+			talking ();
+		}
+
+		toDoList.Enqueue (rand);
 	}
 
 	void Wander(){
@@ -84,20 +118,13 @@ public class Frank : MonoBehaviour {
 		lineOfSight = direction;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, 5)) {
 			//TODO: Make sure it's not something boring like a wall
-			if (c != coll) {
+			if (c != coll && c.gameObject.name != "Wall") {
 				Vector2 toObject = (c.transform.position - transform.position).normalized;
 				float angle = Vector2.Dot(lineOfSight, toObject);
-<<<<<<< HEAD
-				if (angle <= 0.86602540378 || angle >= -0.86602540378) { // -30 to 30 degrees
-					if (Physics2D.Raycast(transform.position, c.transform.position - transform.position).collider == c) {
-						//  direction = toObject;
-						print("I see an object: " + c.gameObject.name);
-=======
-				if (angle <= 1 && angle >= 0.866025404) { // -30 to 30 degrees
-					if (Physics2D.Raycast(transform.position, toObject, 5, 1 << 8).collider == c) {
-						//						direction = toObject;
-//						print("Frank sees an object: " + c.gameObject.name);
->>>>>>> master
+				if (angle <= 1 && angle >= 0.866025404) { // 0 to 60
+					if (Physics2D.Raycast(transform.position, toObject, 10, 1 << 8).collider == c) {
+						print("Frank sees an object: " + c.gameObject.name);
+						Debug.DrawLine(c.transform.position, transform.position, new Color(angle / 2.0f + .5f, angle / 2f + .5f, angle / 2f + .5f));
 						// found object code
 					}
 				}
@@ -106,17 +133,24 @@ public class Frank : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D c) {
-<<<<<<< HEAD
-		print("Collided with: " + c.gameObject.name);
-=======
 		//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
 		//		float sin = Mathf.Sin(Mathf.PI / 2);
 		//		float cos = Mathf.Cos(Mathf.PI / 2);
->>>>>>> master
 		direction *= -1;
 	}
-	
 
+	void smoking(){
+		icon.init ((int)behavior.smoking);
+	}
+	void drinking(){
+		icon.init ((int)behavior.drinking);
+	}
+	void talking(){
+		icon.init ((int)behavior.talking);
+	}
+	void puking(){
+		icon.init ((int)behavior.puking);
+	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
 		if (args.state) {

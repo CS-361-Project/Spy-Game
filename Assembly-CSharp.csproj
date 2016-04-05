@@ -51,6 +51,7 @@
      <Compile Include="Assets\Resources\Scripts\Chemical.cs" />
      <Compile Include="Assets\Resources\Scripts\Fan.cs" />
      <Compile Include="Assets\Resources\Scripts\Frank.cs" />
+     <Compile Include="Assets\Resources\Scripts\FrankIcon.cs" />
      <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
      <Compile Include="Assets\Resources\Scripts\Guard.cs" />
      <Compile Include="Assets\Resources\Scripts\Player.cs" />
