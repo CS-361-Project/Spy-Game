@@ -40,12 +40,6 @@ public class GameManager : MonoBehaviour {
 		board = new Tile[width, height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				if (x == 0 && y == 3) {
-					board[x, y] = addTile(x, y, 1);
-				}
-				else {
-					board[x, y] = addTile(x, y, 0);
-				}
 				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
 					board[x, y] = addWall(x, y);
 				}
