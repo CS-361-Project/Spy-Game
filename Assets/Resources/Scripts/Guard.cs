@@ -4,32 +4,23 @@ using System.Collections.Generic;
 
 public class Guard : MonoBehaviour {
 	SpriteRenderer rend;
-<<<<<<< HEAD
 	Vector2 position;
-=======
->>>>>>> origin/master
 	Vector2 direction;
 	Vector2 lookingAt;
 	float speed;
 	Tile tile;
-<<<<<<< HEAD
 	GameManager gm;
-	// Use this for initialization
-	void init(Tile t, GameManager m) {
-=======
 	BoxCollider2D coll;
-	GameManager gm;
+
 	// Use this for initialization
 	public void init(Tile t, GameManager m) {
->>>>>>> origin/master
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
 		rend.color = Color.blue;
 		rend.sortingOrder = 1;
-<<<<<<< HEAD
 		tile = t;
 		position = t.transform.position;
-=======
+
 		coll = gameObject.AddComponent<BoxCollider2D>();
 		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
 		body.gravityScale = 0;
@@ -38,7 +29,6 @@ public class Guard : MonoBehaviour {
 		tile = t;
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
->>>>>>> origin/master
 		direction = new Vector2(1, 0);
 		lookingAt = new Vector2(1, 0);
 		speed = 2;
@@ -47,20 +37,9 @@ public class Guard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-<<<<<<< HEAD
-		position += direction * Time.deltaTime * speed;
-		Tile nextTile = gm.getClosestTile(position);
-		if (nextTile != tile) {
-			if (nextTile.isPassable()) {
-				tile = nextTile;
-			}
-			else {
-				List<Tile> neighbors
-			}
-		}
-=======
+		
 		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
-		tile = gm.getClosestTile(transform.position);
+		tile = gm.getClosestTile(transform.position);	
 		lookingAt = direction;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, 5)) {
 			//TODO: Make sure it's not something boring like a wall
@@ -88,7 +67,6 @@ public class Guard : MonoBehaviour {
 //		float ty = direction.y;
 //		direction.x = (cos * tx) - (sin * ty);
 //		direction.y = (sin * tx) + (cos * ty); // rotate 90 degrees on collision
->>>>>>> origin/master
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {

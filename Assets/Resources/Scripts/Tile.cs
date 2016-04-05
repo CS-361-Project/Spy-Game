@@ -4,11 +4,8 @@ using System.Collections.Generic;
 
 public class Tile : MonoBehaviour {
 	float fireTimer;
-<<<<<<< HEAD
-	SpriteRenderer rend;
-=======
 	protected SpriteRenderer rend;
->>>>>>> origin/master
+
 	GameManager game;
 	bool flammable;
 	float fire;
@@ -48,24 +45,7 @@ public class Tile : MonoBehaviour {
 				fire = 2;
 
 			}
-<<<<<<< HEAD
 		}
-	}
-
-	public bool isPassable() {
-		return true;
-	}
-
-	public List<Tile> getNeighbors() {
-		List<Tile> neighbors = new List<Tile>();
-		for (int i = posX - 1; i <= posX + 1; i++) {
-			for (int j = posY - 1; j <= posY + 1; j++) {
-				neighbors.Add(game.getTile(i, j));
-			}
-=======
->>>>>>> origin/master
-		}
-		return neighbors();
 	}
 
 	public virtual bool isPassable() {
