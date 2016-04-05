@@ -11,6 +11,7 @@ public class Wall : Tile {
 		rend.color = Color.black;
 		gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
 		gameObject.name = "Wall";
+		flammable = false;
 	}
 }
 
