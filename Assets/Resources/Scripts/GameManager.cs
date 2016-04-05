@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
 		buildBoard(8, 8);
 //		for (int i = 0; i < 30; i++) {
 			addGuard(3, 3);
+		addFrank (5, 4);
 //		}
 		addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		addBurner(new Vector2(1, 1));
@@ -39,14 +40,12 @@ public class GameManager : MonoBehaviour {
 		board = new Tile[width, height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-<<<<<<< HEAD
 				if (x == 0 && y == 3) {
 					board[x, y] = addTile(x, y, 1);
 				}
 				else {
 					board[x, y] = addTile(x, y, 0);
 				}
-=======
 				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
 					board[x, y] = addWall(x, y);
 				}
@@ -56,7 +55,6 @@ public class GameManager : MonoBehaviour {
 //				else {
 					board[x, y] = addTile(x, y, 0);
 //				}
->>>>>>> origin/master
 			}
 		}
 
@@ -100,6 +98,22 @@ public class GameManager : MonoBehaviour {
 			fan.FanToggled += g.onFanToggled;
 		}
 		fanList.Add(fan);
+	}
+
+	void addFrank(int x, int y) {
+		GameObject frankObj = new GameObject();
+		frankObj.name = "Frank";
+		Frank frank = frankObj.AddComponent<Frank>();
+		foreach (Fan fan in fanList) {
+			fan.FanToggled += frank.onFanToggled;
+		}
+		foreach (Burner bb in burnerList) {
+			bb.BurnerToggled += frank.onBurnerToggled;
+		}
+		foreach (Chemical chem in chemicalList) {
+			chem.ChemicalToggled += frank.onChemicalToggled;
+		}
+		frank.init(getTile(x, y), this);
 	}
 
 
