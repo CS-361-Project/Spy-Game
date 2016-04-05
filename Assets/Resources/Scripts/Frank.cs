@@ -79,7 +79,6 @@ public class Frank : MonoBehaviour {
 		int rand = (int)UnityEngine.Random.Range (0, behaviorCount);
 
 		int nextTask = toDoList.Dequeue ();
-		print (nextTask);
 
 		Destroy(icon.gameObject);
 
@@ -90,19 +89,15 @@ public class Frank : MonoBehaviour {
 		icon.transform.localPosition = Vector3.up;
 
 		if (nextTask == (int)behavior.drinking) {
-			print ("drinking");
 			drinking ();
 		}
 		if (nextTask == (int)behavior.puking) {
-			print ("puking");
 			puking ();
 		}
 		if (nextTask == (int)behavior.smoking) {
-			print ("smoking");
 			smoking ();
 		}
 		if (nextTask == (int)behavior.talking) {
-			print ("talking");
 			talking ();
 		}
 

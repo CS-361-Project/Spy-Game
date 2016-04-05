@@ -19,15 +19,8 @@ public class GameManager : MonoBehaviour {
 		burnerList = new List<Burner>();
 		chemicalList = new List<Chemical> ();
 		buildBoard(8, 8);
-<<<<<<< HEAD
-//		for (int i = 0; i < 30; i++) {
-			addGuard(5, 3);
-		addFrank (3, 3);
-//		}
-=======
 		addGuard(2, 3);
 		addFrank (5, 4);
->>>>>>> master
 		addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		addBurner(new Vector2(1, 1));
 		addChemical (new Vector2 (2, 1));
