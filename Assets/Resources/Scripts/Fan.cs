@@ -31,7 +31,7 @@ public class Fan : MonoBehaviour {
 		state = false;
 		position = transform.position;
 		velocity = new Vector2(1, 0);
-		gameObject.AddComponent<BoxCollider2D>();
+		gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 1;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
