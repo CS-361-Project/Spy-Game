@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Resources\Scripts\AlertIcon.cs" />
      <Compile Include="Assets\Resources\Scripts\Burner.cs" />
      <Compile Include="Assets\Resources\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Resources\Scripts\Chemical.cs" />
