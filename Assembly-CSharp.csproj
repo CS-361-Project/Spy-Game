@@ -3,9 +3,8 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20506</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
     <ProjectGuid>{EA1BFE03-9DC5-3097-DF15-F3D5C5A5230D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -34,36 +33,38 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.XML" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+      <HintPath>C:\Program Files\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+      <HintPath>C:\Program Files\Unity\Editor\Data\Managed\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Resources\Scripts\AlertIcon.cs" />
-     <Compile Include="Assets\Resources\Scripts\Burner.cs" />
-     <Compile Include="Assets\Resources\Scripts\CameraControl.cs" />
-     <Compile Include="Assets\Resources\Scripts\Chemical.cs" />
-     <Compile Include="Assets\Resources\Scripts\FOV.cs" />
-     <Compile Include="Assets\Resources\Scripts\Fan.cs" />
-     <Compile Include="Assets\Resources\Scripts\Frank.cs" />
-     <Compile Include="Assets\Resources\Scripts\FrankIcon.cs" />
-     <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
-     <Compile Include="Assets\Resources\Scripts\Guard.cs" />
-     <Compile Include="Assets\Resources\Scripts\Player.cs" />
-     <Compile Include="Assets\Resources\Scripts\Tile.cs" />
-     <Compile Include="Assets\Resources\Scripts\Wall.cs" />
- <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
- </Reference>
- <Reference Include="UnityEngine.Networking">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
- </Reference>
+    <Compile Include="Assets\Resources\Scripts\AlertIcon.cs" />
+    <Compile Include="Assets\Resources\Scripts\Burner.cs" />
+    <Compile Include="Assets\Resources\Scripts\CameraControl.cs" />
+    <Compile Include="Assets\Resources\Scripts\Chemical.cs" />
+    <Compile Include="Assets\Resources\Scripts\FOV.cs" />
+    <Compile Include="Assets\Resources\Scripts\Fan.cs" />
+    <Compile Include="Assets\Resources\Scripts\Frank.cs" />
+    <Compile Include="Assets\Resources\Scripts\FrankIcon.cs" />
+    <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Resources\Scripts\Guard.cs" />
+    <Compile Include="Assets\Resources\Scripts\Player.cs" />
+    <Compile Include="Assets\Resources\Scripts\Tile.cs" />
+    <Compile Include="Assets\Resources\Scripts\Wall.cs" />
+    <Reference Include="UnityEngine.UI">
+      <HintPath>C:\Program Files\Unity\Editor\Data\UnityExtensions\Unity\GUISystem\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Networking">
+      <HintPath>C:\Program Files\Unity\Editor\Data\UnityExtensions\Unity\Networking\UnityEngine.Networking.dll</HintPath>
+    </Reference>
+    <Compile Include="Assets\Resources\Scripts\SmallPhysics.cs" />
+    <Compile Include="Assets\Resources\Scripts\SmallPhysicsObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -73,5 +74,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  
 </Project>

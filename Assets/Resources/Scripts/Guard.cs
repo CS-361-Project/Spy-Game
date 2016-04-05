@@ -19,6 +19,10 @@ public class Guard : MonoBehaviour {
 	FOV fovDisplay;
 
 	const float viewDistance = 2.5f;
+	Tile startTile, endTile;
+	int patrolDirection;
+	List<Vector2> targetPositions;
+	int currPosIndex;
 
 	// Use this for initialization
 	public void init(Tile t, GameManager m) {
@@ -50,6 +54,10 @@ public class Guard : MonoBehaviour {
 
 		suspicion = 0.0f;
 		speed = 2.0f;
+		startTile = t;
+		endTile = m.getTile(t.posX + 3, t.posY + 5);
+		patrolDirection = 1;
+		targetPositions = gm.getPath(startTile, endTile);
 	}
 	
 	// Update is called once per frame
@@ -68,9 +76,22 @@ public class Guard : MonoBehaviour {
 				Destroy(alert.gameObject);
 			}
 		}
-		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
-		tile = gm.getClosestTile(transform.position);	
-		lookingAt = direction.normalized;
+		if (patrolDirection == 1 && currPosIndex == targetPositions.Count - 1) {
+			targetPositions = gm.getPath(endTile, startTile);
+			currPosIndex = 0;
+		}
+		else if (patrolDirection == -1 && currPosIndex == targetPositions.Count - 1) {
+			targetPositions = gm.getPath(startTile, endTile);
+			currPosIndex = 1;
+		}
+		Vector2 targetDirection = (targetPositions[currPosIndex + 1] - targetPositions[currPosIndex]).normalized;
+		direction = Vector2.Lerp(direction, targetDirection, .2f);
+		if (gm.getClosestTile(targetPositions[currPosIndex + 1]) == tile) {
+			currPosIndex++;
+		}
+//		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
+//		tile = gm.getClosestTile(transform.position);	
+//		lookingAt = direction.normalized;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
 			//TODO: Make sure it's not something boring like a wall
 			if (c != coll && c.gameObject.name != "Wall") {
