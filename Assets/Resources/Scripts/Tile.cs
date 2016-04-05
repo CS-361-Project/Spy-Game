@@ -16,6 +16,9 @@ public class Tile : MonoBehaviour {
 
 	float TimeBeforeSpread = 1.5f;
 
+	//Used for path finding
+	public int dist = -1;
+
 	// Use this for initialization
 	public void init (int x, int y, GameManager game, float fire, float gas, bool flammable) {
 		fireTimer = 0;
