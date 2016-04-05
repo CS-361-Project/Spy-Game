@@ -4,21 +4,26 @@ using System.Collections.Generic;
 
 public class Guard : MonoBehaviour {
 	SpriteRenderer rend;
-	Vector2 position;
 	Vector2 direction;
 	Vector2 lookingAt;
 	float speed;
 	Tile tile;
+	BoxCollider2D coll;
 	GameManager gm;
 	// Use this for initialization
-	void init(Tile t, GameManager m) {
-		gameObject.AddComponent<BoxCollider2D>();
+	public void init(Tile t, GameManager m) {
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
 		rend.color = Color.blue;
 		rend.sortingOrder = 1;
+		coll = gameObject.AddComponent<BoxCollider2D>();
+		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
+		body.gravityScale = 0;
+		body.isKinematic = true;
+
 		tile = t;
-		position = t.transform.position;
+		transform.position = t.transform.position;
+		transform.eulerAngles = Vector3.zero;
 		direction = new Vector2(1, 0);
 		lookingAt = new Vector2(1, 0);
 		speed = 2;
@@ -27,29 +32,35 @@ public class Guard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		position += direction * Time.deltaTime * speed;
-		tile = gm.getClosestTile(position);
+		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
+		tile = gm.getClosestTile(transform.position);
 		lookingAt = direction;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, 5)) {
 			//TODO: Make sure it's not something boring like a wall
-			Vector2 toObject = (c.transform.position - transform.position).normalized;
-			float angle = Vector2.Dot(lookingAt, toObject);
-			if (angle <= 0.15425145 || angle >= -0.15425145) { // -30 to 30 degrees
-				if (Physics2D.Raycast(transform.position, c.transform.position - transform.position).collider == c) {
-					// found object code
+			if (c != coll) {
+				Vector2 toObject = (c.transform.position - transform.position).normalized;
+				float angle = Vector2.Dot(lookingAt, toObject);
+				if (angle <= 0.15425145 || angle >= -0.15425145) { // -30 to 30 degrees
+					if (Physics2D.Raycast(transform.position, c.transform.position - transform.position).collider == c) {
+//						direction = toObject;
+						print("I see an object: " + c.gameObject.name);
+						// found object code
+					}
 				}
 			}
 		}
 	}
 
-	void OnCollision(Collider2D c) {
-		float sin = Mathf.Sin(Mathf.PI / 2);
-		float cos = Mathf.Cos(Mathf.PI / 2);
-
-		float tx = direction.x;
-		float ty = direction.y;
-		direction.x = (cos * tx) - (sin * ty);
-		direction.y = (sin * tx) + (cos * ty); // rotate 90 degrees on collision
+	void OnTriggerEnter2D(Collider2D c) {
+		print("Collided with: " + c.gameObject.name);
+//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
+//		float sin = Mathf.Sin(Mathf.PI / 2);
+//		float cos = Mathf.Cos(Mathf.PI / 2);
+		direction *= -1;
+//		float tx = direction.x;
+//		float ty = direction.y;
+//		direction.x = (cos * tx) - (sin * ty);
+//		direction.y = (sin * tx) + (cos * ty); // rotate 90 degrees on collision
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
