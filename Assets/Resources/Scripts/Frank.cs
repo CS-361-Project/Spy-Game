@@ -8,7 +8,9 @@ public class Frank : MonoBehaviour {
 	GameManager gm;
 	Tile currentTile;
 	SpriteRenderer rend;
+
 	bool onFire;
+	bool isDrunk;
 
 	public enum behavior {drinking, smoking, talking, puking};
 
@@ -33,12 +35,13 @@ public class Frank : MonoBehaviour {
 		for (int i = 0; i < Enum.GetNames (typeof(behavior)).Length - 1; i++) {
 			toDoList.Enqueue ((int)UnityEngine.Random.Range (0, Enum.GetNames (typeof(behavior)).Length));
 		}
-
+			
 		GameObject iconObj = new GameObject();
 		iconObj.name = "Icon";
 		icon = iconObj.AddComponent<FrankIcon>();
 		icon.transform.parent = transform;
 		icon.transform.localPosition = Vector3.up;
+		updateToDoList ();
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
@@ -46,6 +49,7 @@ public class Frank : MonoBehaviour {
 		rend.sortingOrder = 1;
 
 		onFire = false;
+		isDrunk = false;
 
 		coll = gameObject.AddComponent<BoxCollider2D> ();
 		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
@@ -65,13 +69,14 @@ public class Frank : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		clock += Time.deltaTime;
-		Wander ();
-		lookAround();
 		if (clock >= 1) {
 			clock = 0;
 			updateToDoList ();
-
 		}
+
+		Wander ();
+		lookAround();
+
 
 	}
 
@@ -106,6 +111,11 @@ public class Frank : MonoBehaviour {
 	}
 
 	void Wander(){
+		if (!isDrunk) {
+			speed = 1.0F;
+		} else {
+			speed = UnityEngine.Random.Range (0, 2F);
+		}
 		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
 	}
 
@@ -137,16 +147,26 @@ public class Frank : MonoBehaviour {
 
 	void smoking(){
 		icon.init ((int)behavior.smoking);
+		Tile location = gm.getClosestTile (transform.position);
+		if (location.gas > 0) {
+			location.fire = Mathf.Max(1, location.fire);
+		}
 	}
+
 	void drinking(){
+		isDrunk = true;
 		icon.init ((int)behavior.drinking);
 	}
+
 	void talking(){
 		icon.init ((int)behavior.talking);
 	}
+
 	void puking(){
+		isDrunk = false;
 		icon.init ((int)behavior.puking);
 	}
+
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
 		if (args.state) {
