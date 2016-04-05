@@ -35,6 +35,7 @@ public class Frank : MonoBehaviour {
 		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
 		body.gravityScale = 0;
 		body.isKinematic = true;
+		gameObject.layer = LayerMask.NameToLayer("Frank");
 
 		currentTile = t;
 		position = currentTile.transform.position;
@@ -62,10 +63,10 @@ public class Frank : MonoBehaviour {
 			if (c != coll) {
 				Vector2 toObject = (c.transform.position - transform.position).normalized;
 				float angle = Vector2.Dot(lineOfSight, toObject);
-				if (angle <= 0.15425145 || angle >= -0.15425145) { // -30 to 30 degrees
-					if (Physics2D.Raycast(transform.position, c.transform.position - transform.position).collider == c) {
+				if (angle <= 1 && angle >= 0.866025404) { // -30 to 30 degrees
+					if (Physics2D.Raycast(transform.position, toObject, 5, 1 << 8).collider == c) {
 						//						direction = toObject;
-						print("I see an object: " + c.gameObject.name);
+//						print("Frank sees an object: " + c.gameObject.name);
 						// found object code
 					}
 				}
@@ -74,7 +75,6 @@ public class Frank : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D c) {
-		print("Collided with: " + c.gameObject.name);
 		//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
 		//		float sin = Mathf.Sin(Mathf.PI / 2);
 		//		float cos = Mathf.Cos(Mathf.PI / 2);
