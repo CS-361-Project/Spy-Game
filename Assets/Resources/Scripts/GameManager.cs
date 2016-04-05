@@ -20,8 +20,8 @@ public class GameManager : MonoBehaviour {
 		chemicalList = new List<Chemical> ();
 		buildBoard(8, 8);
 //		for (int i = 0; i < 30; i++) {
-			addGuard(3, 3);
-		addFrank (5, 4);
+			addGuard(5, 3);
+		addFrank (3, 3);
 //		}
 		addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		addBurner(new Vector2(1, 1));

@@ -10,10 +10,9 @@ public class Chemical : MonoBehaviour {
 	void Start () {
 		state = false;
 		position = transform.position;
-		gameObject.transform.localScale = new Vector3 (5.0F,5.0F,1.0F);
 		gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
-		rend.sprite = Resources.Load<Sprite>("Sprites/Beaker");
+		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
 		rend.sortingOrder = 1;
 		rend.color = Color.green;
 	}

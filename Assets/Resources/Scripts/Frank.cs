@@ -6,7 +6,9 @@ using System.Collections.Generic;
 public class Frank : MonoBehaviour {
 	SpriteRenderer rend;
 	bool onFire;
-	enum states {smoking, drinking, talking, puking, shooting, running};
+	enum behavior {smoking, drinking, talking, puking, shooting, running};
+	Queue toDoList;
+	Behavior[] behaviorList;
 
 	Vector2 position;
 	Vector2 direction;
@@ -17,12 +19,18 @@ public class Frank : MonoBehaviour {
 	GameManager gm;
 	Tile currentTile;
 
+	float clock;
+
 
 	// Use this for initialization
 	public void init (Tile t, GameManager man) {
 		
 		gm = man;
 		speed = 1F;
+		clock = 0; 
+
+		toDoList = new Queue ();
+		behaviorList[Enum.GetNames(typeof(behavior)).Length];
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
@@ -46,8 +54,24 @@ public class Frank : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
+		clock += Time.deltaTime;
 		Wander ();
 		lookAround();
+		if (clock >= 10) {
+			clock = 0;
+			print ("sam");
+			//updateToDoList ();
+
+		}
+
+	}
+
+	void updateToDoList(){
+		int behaviorCount = Enum.GetNames(typeof(behavior)).Length;
+		toDoList.Dequeue ();
+		int rand = (int)UnityEngine.Random.Range (0, behaviorCount - 1);
+		toDoList.Enqueue (behaviorList [rand]);
+
 	}
 
 	void Wander(){
@@ -62,9 +86,9 @@ public class Frank : MonoBehaviour {
 			if (c != coll) {
 				Vector2 toObject = (c.transform.position - transform.position).normalized;
 				float angle = Vector2.Dot(lineOfSight, toObject);
-				if (angle <= 0.15425145 || angle >= -0.15425145) { // -30 to 30 degrees
+				if (angle <= 0.86602540378 || angle >= -0.86602540378) { // -30 to 30 degrees
 					if (Physics2D.Raycast(transform.position, c.transform.position - transform.position).collider == c) {
-						//						direction = toObject;
+						//  direction = toObject;
 						print("I see an object: " + c.gameObject.name);
 						// found object code
 					}
@@ -75,14 +99,7 @@ public class Frank : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D c) {
 		print("Collided with: " + c.gameObject.name);
-		//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
-		//		float sin = Mathf.Sin(Mathf.PI / 2);
-		//		float cos = Mathf.Cos(Mathf.PI / 2);
 		direction *= -1;
-		//		float tx = direction.x;
-		//		float ty = direction.y;
-		//		direction.x = (cos * tx) - (sin * ty);
-		//		direction.y = (sin * tx) + (cos * ty); // rotate 90 degrees on collision
 	}
 	
 
