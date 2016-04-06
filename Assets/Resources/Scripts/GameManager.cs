@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > 0.7)
+					if (UnityEngine.Random.value > 1.1)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);

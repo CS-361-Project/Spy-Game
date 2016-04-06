@@ -50,7 +50,7 @@ public class Frank : MonoBehaviour {
 		coll = gameObject.AddComponent<BoxCollider2D> ();
 		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
 		body.gravityScale = 0;
-		body.isKinematic = true;
+//		body.isKinematic = true;
 		gameObject.layer = LayerMask.NameToLayer("Frank");
 
 		currentTile = t;
