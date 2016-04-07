@@ -41,6 +41,10 @@ public class Guard : MonoBehaviour {
 		body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 		body.constraints = RigidbodyConstraints2D.FreezeRotation;
 		gameObject.layer = LayerMask.NameToLayer("Guard");
+		coll.gameObject.layer = LayerMask.NameToLayer("Guard");
+		Physics.IgnoreLayerCollision(gameObject.layer, gameObject.layer, true);
+		//print(gameObject.layer);
+		//gameObject.layer = 8;
 		GameObject fovObj = new GameObject();
 		fovObj.name = "FOV";
 		fovObj.transform.parent = transform;
@@ -58,7 +62,7 @@ public class Guard : MonoBehaviour {
 		suspicion = 0.0f;
 		speed = 2f;
 		startTile = t;
-		endTile = m.getTile(t.posX + 2, t.posY + 3);
+		endTile = m.getTile(4, 6);
 		patrolDirection = 1;
 		targetPositions = gm.getPath(startTile, endTile);
 		foreach (Vector2 v in targetPositions) {
@@ -71,6 +75,7 @@ public class Guard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
+		//Physics.IgnoreLayerCollision(gameObject.layer, gameObject.layer, true);
 		fovDisplay.setDirection(direction);
 		if (suspicion >= 1f) {
 			if (alert == null) {
@@ -102,13 +107,21 @@ public class Guard : MonoBehaviour {
 		direction = (targetPositions[currPosIndex + 1] - (Vector2)transform.position).normalized;
 		Debug.DrawLine(transform.position, targetPositions[currPosIndex + 1]);
 
+		Vector2 currDir = body.velocity.normalized;
+		direction = Vector2.Lerp(currDir, direction, 0.22f);
+
+		/*body.AddForce(direction * (0.5f * (1.0f-Vector2.Dot(direction,currDir)) + 0.5f));
+		if (body.velocity.magnitude > 1f) {
+			body.velocity = body.velocity.normalized * 1f;
+		}*/
+
 		body.velocity = direction * speed;
 		tile = gm.getClosestTile(transform.position);
 		if (Vector2.Distance((Vector2)transform.position, targetPositions[currPosIndex + 1]) <= .1) {
 			print("Reached point " + currPosIndex + ", moving to point " + (currPosIndex + 1));
 			currPosIndex++;
 		}
-		lookingAt = direction.normalized;
+		lookingAt = body.velocity.normalized;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
 			//TODO: Make sure it's not something boring like a wall
 			if (c != coll && c.gameObject.name != "Wall") {

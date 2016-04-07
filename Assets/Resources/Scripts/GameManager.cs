@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour {
 		chemicalList = new List<Chemical> ();
 		buildBoard(8, 8);
 		addGuard(2, 3);
+		addGuard(2, 4);
+		addGuard(1, 2);
 		addFrank (5, 4);
 		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		//addBurner(new Vector2(1, 1));
@@ -51,7 +53,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > .8f)
+					if (UnityEngine.Random.value > .9f)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
