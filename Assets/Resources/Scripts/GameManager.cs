@@ -99,13 +99,15 @@ public class GameManager : MonoBehaviour {
 		for (int i = path.Count - 1; i > 0; i--) {
 			
 		}
+		return new List<Vector2>();
 	}
 
 	public List<Vector2> pathToPoints(List<Tile> path){
 		List<Vector2> points = new List<Vector2>();
 		foreach (Tile tile in path) {
-			points.Add(new Vector2(tile.transform.position.x, tile.transform.position.y));
+			points.Add(tile.transform.position);
 		}
+		return points;
 	}
 
 	public List<Tile> getTilePath(Tile startTile,Tile endTile){
