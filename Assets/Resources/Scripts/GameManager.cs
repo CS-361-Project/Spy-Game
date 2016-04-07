@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour {
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
 		chemicalList = new List<Chemical> ();
-		buildBoard(10, 10);
+		//buildBoard(10, 10);
+		buildLevel(10, 10);
 		addGuard(2, 3);
 		addGuard(2, 4);
 		addGuard(1, 2);
@@ -34,9 +35,39 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		count++;
-		/*if (count == 150) {
-			getTile(1, 1).setFire(1);
-		}*/
+//		if (count == 150) {
+//			getTile(1, 1).setFire(1);
+//		}
+	}
+
+	void buildLevel(int width, int height){
+		this.width = width;
+		this.height = height;
+		board = new Tile[width, height];
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+					board[x, y] = addWall(x, y);
+				}
+				else if (x == 1 && y == 1) {
+					board[x, y] = addTile(x, y, 0);
+					addBurner(new Vector2 (x, y));
+				} else if((x==4 && y==3) || (x==3 && y==7) || (x==5 && y==7)){
+					board[x, y] = addDoor(x, y);
+				} else if ((x==1 && y==3) || (x==2 && y==3) || (x==3 && y==3) || (x==5 && y==3) || (x==6 && y==3) || (x==6 && y==2) || (x==6 && y==1) ){
+					board[x, y] = addWall(x, y);
+				} else if ((x==3 && y==3) || (x==5 && y==3) || (x==3 && y==4) || (x==5 && y==4) || (x==3 && y==5) || (x==5 && y==5) || (x==3 && y==6) || (x==5 && y==6) || (x==3 && y==8) || (x==5 && y==8) || (x==4 && y==8)){
+					board[x, y] = addWall(x, y);
+				}
+				else {
+
+						board[x, y] = addTile(x, y, 0);
+				}
+			}
+		}
+
+
+
 	}
 
 	void buildBoard(int width, int height){
