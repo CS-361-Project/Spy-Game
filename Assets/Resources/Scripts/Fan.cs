@@ -7,9 +7,12 @@ public class Fan : MonoBehaviour {
 	Vector2 position;
 	Vector2 velocity;
 	SpriteRenderer rend;
-	float direction;
+	string direction;
 
-	float viewportLength, viewportWidth;
+	float viewportHeight, viewportWidth;
+	Vector2 leftCorner, rightCorner;
+
+	BoxCollider2D coll;
 
 	// Class to encapsulate all data sent to subscribers when a fan event happens
 	public class FanEventArgs : EventArgs {
@@ -34,7 +37,7 @@ public class Fan : MonoBehaviour {
 		state = false;
 		position = transform.position;
 		velocity = new Vector2(1, 0);
-		gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
+		coll = gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 1;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
@@ -42,16 +45,48 @@ public class Fan : MonoBehaviour {
 
 		gameObject.layer = LayerMask.NameToLayer("Room Objects");
 
-		direction = Mathf.PI/2F;
+		direction = "N";
 		viewportHeight = 3F;
 		viewportWidth = 3F;
+		leftCorner = new Vector2(0,0);
+		rightCorner = new Vector2(0,0);
+
+		switch (direction) {
+		case "E":
+			leftCorner = new Vector2 (transform.position.x, transform.position.y + viewportWidth);
+			rightCorner = new Vector2 (transform.position.x + viewportHeight, transform.position.y - viewportWidth);
+			break;
+		case "N":
+			leftCorner = new Vector2 (transform.position.x - viewportWidth, transform.position.y);
+			rightCorner = new Vector2 (transform.position.x + viewportWidth, transform.position.y + viewportHeight);
+			break;
+		case "W":
+			leftCorner = new Vector2 (transform.position.x, transform.position.y - viewportWidth);
+			rightCorner = new Vector2 (transform.position.x - viewportHeight, transform.position.y + viewportWidth);
+			break;
+		case "S":
+			leftCorner = new Vector2 (transform.position.x + viewportWidth, transform.position.y);
+			rightCorner = new Vector2 (transform.position.x - viewportWidth, transform.position.y - viewportHeight);
+			break;
+		default:
+			print ("Not a valid direction. Must be N, E, S, or W.");
+			break;
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		Vector2 leftCorner = new Vector2 (transform.position.x - (viewportWidth * Mathf.Cos (direction+(Mathf.PI/2F))), transform.position.y + (viewportWidth * Mathf.Sin (direction+(Mathf.PI/2F))));
-		Vector2 rightCorner = new Vector2 (transform.position.x + (viewportWidth * Mathf.Cos (direction+(Mathf.PI/2F))), transform.position.y + (viewportLength * Mathf.Sin (direction)));
-		foreach (Collider2D c in Physics2D.OverlapAreaAll(
+		
+		if (state) {
+			foreach (Collider2D c in Physics2D.OverlapAreaAll(leftCorner, rightCorner)) {
+				if (c != coll && c.gameObject.name != "Wall") {
+					float distance = Vector2.Distance ((Vector2)coll.transform.position, (Vector2)c.transform.position);
+					float angle = Vector2.Angle ((Vector2)coll.transform.position, (Vector2)c.transform.position);
+					c.attachedRigidbody.AddForce (new Vector2 ((1 / distance) * (Mathf.Cos (angle)), (1 / distance) * (Mathf.Cos (angle))));
+				}
+			}
+		}
+	}
 
 	void OnMouseDown() {
 		toggle();

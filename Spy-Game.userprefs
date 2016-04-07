@@ -2,21 +2,11 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Resources/Scripts/Fan.cs">
     <Files>
-<<<<<<< HEAD
+      <File FileName="Assets/Resources/Scripts/Fan.cs" Line="50" Column="35" />
       <File FileName="Assets/Resources/Scripts/GameManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Resources/Scripts/Fan.cs" Line="50" Column="52" />
-      <File FileName="Assets/Resources/Scripts/Guard.cs" Line="112" Column="91" />
+      <File FileName="Assets/Resources/Scripts/Guard.cs" Line="1" Column="1" />
       <File FileName="Assets/Resources/Scripts/Wall.cs" Line="1" Column="1" />
-      <File FileName="Assets/Resources/Scripts/Door.cs" Line="1" Column="1" />
-=======
-      <File FileName="Assets\Resources\Scripts\Guard.cs" Line="56" Column="47" />
-      <File FileName="Assets\Resources\Scripts\Person.cs" Line="10" Column="23" />
-      <File FileName="Assets\Resources\Scripts\Frank.cs" Line="54" Column="15" />
-      <File FileName="Assets\Resources\Scripts\Tile.cs" Line="1" Column="1" />
-      <File FileName="Assets\Resources\Scripts\GameManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Resources\Scripts\AlertIcon.cs" Line="1" Column="1" />
-      <File FileName="Assets\Resources\Scripts\Wall.cs" Line="1" Column="1" />
->>>>>>> master
+      <File FileName="Assets/Resources/Scripts/Frank.cs" Line="63" Column="62" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
