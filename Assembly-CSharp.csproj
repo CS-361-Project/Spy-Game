@@ -55,7 +55,7 @@
      <Compile Include="Assets\Resources\Scripts\FrankIcon.cs" />
      <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
      <Compile Include="Assets\Resources\Scripts\Guard.cs" />
-     <Compile Include="Assets\Resources\Scripts\Player.cs" />
+     <Compile Include="Assets\Resources\Scripts\Person.cs" />
      <Compile Include="Assets\Resources\Scripts\Tile.cs" />
      <Compile Include="Assets\Resources\Scripts\Wall.cs" />
  <Reference Include="UnityEngine.UI">

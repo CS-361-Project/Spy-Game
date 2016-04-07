@@ -11,6 +11,7 @@ public class FOV : MonoBehaviour {
 		rend.sortingOrder = 1;
 		rend.color = new Color(.43137f, .7294f, .94118f, .2f);
 		transform.localScale = Vector3.one * size;
+		transform.localPosition = Vector3.zero;
 	}
 	public void setDirection(Vector2 dir) {
 		float angle = Mathf.Atan2(dir.y, dir.x);

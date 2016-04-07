@@ -3,29 +3,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Frank : MonoBehaviour {
-	BoxCollider2D coll;
-	GameManager gm;
-	Tile currentTile;
+public class Frank : Person {
 	SpriteRenderer rend;
 	bool onFire;
 
 	public enum behavior {drinking, smoking, talking, puking};
 
 	Queue<int> toDoList;
-
-	Vector2 position;
-	Vector2 direction;
-	Vector2 lineOfSight;
-	float speed;
 	float clock;
 
 	FrankIcon icon;
 
 	// Use this for initialization
-	public void init (Tile t, GameManager man) {
-		
-		gm = man;
+	public override void init (Tile t, GameManager man) {
+		base.init(t, man);
+		viewLayerMask = 1 << 8 | 1 << 10;
+
 		speed = 1F;
 		clock = 0; 
 
@@ -47,32 +40,23 @@ public class Frank : MonoBehaviour {
 
 		onFire = false;
 
-		coll = gameObject.AddComponent<BoxCollider2D> ();
-		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
-		body.gravityScale = 0;
-		body.isKinematic = true;
 		gameObject.layer = LayerMask.NameToLayer("Frank");
-
-		currentTile = t;
-		position = currentTile.transform.position;
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
 		transform.localScale = new Vector3(0.7f, 0.7f, 1);
 		direction = new Vector2 (1f, 0f);
-		lineOfSight = direction;
 
 	}
 	// Update is called once per frame
 	void Update () {
+		base.move();
 		clock += Time.deltaTime;
-		Wander ();
 		lookAround();
 		if (clock >= 1) {
 			clock = 0;
 			updateToDoList ();
 
 		}
-
 	}
 
 	void updateToDoList(){
@@ -105,34 +89,15 @@ public class Frank : MonoBehaviour {
 		toDoList.Enqueue (rand);
 	}
 
-	void Wander(){
-		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
-	}
-
 	void lookAround(){
-		currentTile = gm.getClosestTile(transform.position);	
-		lineOfSight = direction;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, 5)) {
 			//TODO: Make sure it's not something boring like a wall
 			if (c != coll && c.gameObject.name != "Wall") {
-				Vector2 toObject = (c.transform.position - transform.position).normalized;
-				float angle = Vector2.Dot(lineOfSight, toObject);
-				if (angle <= 1 && angle >= 0.866025404) { // 0 to 60
-					if (Physics2D.Raycast(transform.position, toObject, 10, 1 << 8).collider == c) {
-						print("Frank sees an object: " + c.gameObject.name);
-						Debug.DrawLine(c.transform.position, transform.position, new Color(angle / 2.0f + .5f, angle / 2f + .5f, angle / 2f + .5f));
-						// found object code
-					}
+				if (canSee(c.transform.position)) {
+					print("Frank sees " + c.gameObject.name);
 				}
 			}
 		}
-	}
-
-	void OnTriggerEnter2D(Collider2D c) {
-		//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
-		//		float sin = Mathf.Sin(Mathf.PI / 2);
-		//		float cos = Mathf.Cos(Mathf.PI / 2);
-		direction *= -1;
 	}
 
 	void smoking(){
