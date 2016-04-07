@@ -32,9 +32,9 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		count++;
-		if (count == 150) {
+		/*if (count == 150) {
 			getTile(1, 1).setFire(1);
-		}
+		}*/
 	}
 
 	void buildBoard(int width, int height){
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > .9f)
+					if (UnityEngine.Random.value > .8f)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
@@ -94,28 +94,74 @@ public class GameManager : MonoBehaviour {
 			t.dist = -1;
 		}
 	}
-
+	
 	public List<Vector2> getPath(Tile start, Tile end) {
 		return optimizePath(pathToPoints(getTilePath(start, end)));
 	}
 
 
-	public List<Vector2> optimizePath(List<Vector2> path){
+//	public List<Vector2> optimizePath(List<Vector2> path){
+//		for (int i = path.Count - 2; i >= 0; i--) {
+//			for (int j = i + 1; j <= path.Count - 1; j++) {
+//				Vector2 v = path[j] - path[i];
+//				float playerRad = .35f;
+//				Vector2 perpVec = new Vector2(v.normalized.y, -v.normalized.x);
+//				RaycastHit2D rayHit = Physics2D.Raycast(path[i] + perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
+//				RaycastHit2D rayHit2 = Physics2D.Raycast(path[i] - perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
+//				Debug.DrawRay(path[i] + perpVec * playerRad, v);
+//				Debug.DrawRay(path[i] - perpVec * playerRad, v);
+//				if (rayHit.collider == null && rayHit2.collider == null) {
+//					path.RemoveRange(i + 1, j - i - 1);
+//				}
+//			}
+//		}
+//		return path;
+//	}
+
+	public List<Vector2> optimizePath(List<Vector2> path) {
+		float[] S = new float[path.Count];
+		List<Vector2>[] allPaths = new List<Vector2>[path.Count];
+
+		allPaths[path.Count - 1] = new List<Vector2>();
+		allPaths[path.Count - 1].Add(path[path.Count - 1]);
+		S[path.Count - 1] = 0;
 		for (int i = path.Count - 2; i >= 0; i--) {
-			for (int j = i + 1; j <= path.Count - 1; j++) {
-				Vector2 v = path[j] - path[i];
-				float playerRad = .35f;
-				Vector2 perpVec = new Vector2(v.normalized.y, -v.normalized.x);
-				RaycastHit2D rayHit = Physics2D.Raycast(path[i] + perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
-				RaycastHit2D rayHit2 = Physics2D.Raycast(path[i] - perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
-				Debug.DrawRay(path[i] + perpVec * playerRad, v);
-				Debug.DrawRay(path[i] - perpVec * playerRad, v);
-				if (rayHit.collider == null && rayHit2.collider == null) {
-					path.RemoveRange(i + 1, j - i - 1);
+			print("Index: " + i);
+			float minDist = float.MaxValue;
+			int minDistIndex = i + 1;
+			for (int j = i + 1; j < path.Count; j++) {
+				if (!pathObstructed(path[i], path[j])) {
+					float dist = Vector2.Distance(path[i], path[j]) + S[j];
+					if (dist < minDist) {
+						minDist = dist;
+						minDistIndex = j;
+					}
 				}
 			}
+			S[i] = minDist;
+			allPaths[i] = new List<Vector2>();
+			allPaths[i].Add(path[i]);
+//			allPaths[i].AddRange(allPaths[minDistIndex]);
+			foreach (Vector2 v in allPaths[minDistIndex]) {
+				allPaths[i].Add(v);
+			}
+			print("minDistIndex for " + i + " is " + minDistIndex);
+			print("Printing path for tile " + i);
+			foreach (Vector2 v in allPaths[i]) {
+				print(v);
+			}
 		}
-		return path;
+		return allPaths[0];
+	}
+
+	bool pathObstructed(Vector2 pos1, Vector2 pos2) {
+		Vector2 v = pos2 - pos1;
+		float playerRad = .35f;
+		Vector2 perpVec = new Vector2(v.normalized.y, -v.normalized.x);
+		RaycastHit2D rayHit = Physics2D.Raycast(pos1 + perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
+		RaycastHit2D rayHit2 = Physics2D.Raycast(pos1 - perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
+		return (rayHit.collider != null || rayHit2.collider != null);
+
 	}
 
 	public List<Vector2> pathToPoints(List<Tile> path){
