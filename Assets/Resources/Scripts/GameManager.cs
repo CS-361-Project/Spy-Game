@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > 0.7)
+					if (UnityEngine.Random.value > 1.1)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
@@ -105,14 +105,19 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
+<<<<<<< HEAD
 		return path;
+=======
+		return new List<Vector2>();
+>>>>>>> origin/master
 	}
 
 	public List<Vector2> pathToPoints(List<Tile> path){
 		List<Vector2> points = new List<Vector2>();
 		foreach (Tile tile in path) {
-			points.Add(new Vector2(tile.transform.position.x, tile.transform.position.y));
+			points.Add(tile.transform.position);
 		}
+		return points;
 	}
 
 	public List<Tile> getTilePath(Tile startTile,Tile endTile){
