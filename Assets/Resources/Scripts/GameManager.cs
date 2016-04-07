@@ -95,7 +95,11 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+<<<<<<< HEAD
 
+=======
+<<<<<<< Updated upstream
+>>>>>>> master
 	public List<Vector2> getPath(Tile start, Tile end) {
 		return optimizePath(pathToPoints(getTilePath(start, end)));
 	}
@@ -106,6 +110,17 @@ public class GameManager : MonoBehaviour {
 				Vector2 v = path[j] - path[i];
 				RaycastHit2D rayHit = Physics2D.Raycast(path[i], v.normalized, v.magnitude);
 				if (rayHit.collider == null) {
+=======
+	public List<Vector2> optimizePath(List<Vector2> path){
+		for (int i = path.Count - 1; i > 0; i--) {
+			for (int j = i; j < path.Count - 1; j++) {
+				Vector2 v = path[j] - path[i];
+				float playerRad = 0.3f;
+				Vector2 perpVec = new Vector2(-v.normalized.y, v.normalized.x);
+				RaycastHit2D rayHit = Physics2D.Raycast(path[i] + perpVec * playerRad, v.normalized, v.magnitude);
+				RaycastHit2D rayHit2 = Physics2D.Raycast(path[i] - perpVec * playerRad, v.normalized, v.magnitude);
+				if (rayHit.collider == null && rayHit2.collider == null) {
+>>>>>>> Stashed changes
 					path.RemoveRange(i, j - i);
 				}
 			}
