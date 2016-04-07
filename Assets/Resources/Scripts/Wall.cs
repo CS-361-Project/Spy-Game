@@ -13,6 +13,7 @@ public class Wall : Tile {
 		coll.sharedMaterial = Resources.Load<PhysicsMaterial2D>("WallMaterial");
 		gameObject.name = "Wall";
 		flammable = false;
+		gameObject.layer = LayerMask.NameToLayer("Room Objects");
 	}
 }
 
