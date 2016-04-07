@@ -4,8 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Frank : MonoBehaviour {
-	CircleCollider2D coll;
-	Rigidbody2D body;
+	BoxCollider2D coll;
 	GameManager gm;
 	Tile currentTile;
 	SpriteRenderer rend;
@@ -25,7 +24,6 @@ public class Frank : MonoBehaviour {
 	Vector2 lineOfSight;
 	float speed;
 	float clock;
-
 	FrankIcon icon;
 
 	// Use this for initialization
@@ -56,12 +54,9 @@ public class Frank : MonoBehaviour {
 		onFire = false;
 		isDrunk = false;
 
-		coll = gameObject.AddComponent<CircleCollider2D>();
-		body = gameObject.AddComponent<Rigidbody2D>();
+		coll = gameObject.AddComponent<BoxCollider2D> ();
+		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
 		body.gravityScale = 0;
-		//		body.isKinematic = true;
-		body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-		body.constraints = RigidbodyConstraints2D.FreezeRotation;
 //		body.isKinematic = true;
 		gameObject.layer = LayerMask.NameToLayer("Frank");
 
@@ -91,6 +86,7 @@ public class Frank : MonoBehaviour {
 	void updateToDoList(){
 		if (isSmoking) {
 			throwCigarette ();
+			isSmoking = false;
 		}
 		int behaviorCount = Enum.GetNames(typeof(behavior)).Length;
 		int rand = (int)UnityEngine.Random.Range (0, behaviorCount);
@@ -122,7 +118,6 @@ public class Frank : MonoBehaviour {
 	}
 
 	void Wander(){
-<<<<<<< HEAD
 		if (!isDrunk) {
 			speed = 1.0F;
 		} else {
@@ -138,11 +133,34 @@ public class Frank : MonoBehaviour {
 			}*/
 			speed = 10F;
 		}
-		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
-=======
-//		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
+		//transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
+		if (patrolDirection == 1 && currPosIndex == targetPositions.Count - 1) {
+			print("finished path in direction 1");
+			//			targetPositions = gm.getPath(endTile, startTile);
+			targetPositions = new List<Vector2>();
+			targetPositions.Add(endTile.transform.position);
+			targetPositions.Add(startTile.transform.position);
+			patrolDirection = -1;
+			currPosIndex = 0;
+		}
+		else if (patrolDirection == -1 && currPosIndex == targetPositions.Count - 1) {
+			print("finished path in direction -1");
+			//			targetPositions = gm.getPath(startTile, endTile);
+			targetPositions = new List<Vector2>();
+			targetPositions.Add(startTile.transform.position);
+			targetPositions.Add(endTile.transform.position);
+			patrolDirection = 1;
+			currPosIndex = 0;
+		}
+		Vector2 targetDirection = (targetPositions[currPosIndex + 1] - targetPositions[currPosIndex]).normalized;
+		direction = Vector2.Lerp(direction, targetDirection, .05f);
+
 		body.velocity = direction * speed;
->>>>>>> master
+		tile = gm.getClosestTile(transform.position);
+		if (gm.getClosestTile(targetPositions[currPosIndex + 1]) == tile) {
+			currPosIndex++;
+		}
+		lookingAt = direction.normalized;
 	}
 
 	void lookAround(){
@@ -164,18 +182,9 @@ public class Frank : MonoBehaviour {
 		}
 	}
 
-<<<<<<< HEAD
 	void OnTriggerEnter2D(Collider2D c) {
 		direction *= -1;
 	}
-=======
-//	void OnTriggerEnter2D(Collider2D c) {
-//		//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
-//		//		float sin = Mathf.Sin(Mathf.PI / 2);
-//		//		float cos = Mathf.Cos(Mathf.PI / 2);
-//		direction *= -1;
-//	}
->>>>>>> master
 
 	void smoking(){
 		icon.init ((int)behavior.smoking);
