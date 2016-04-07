@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > 0.7)
+					if (UnityEngine.Random.value > 1.1)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
@@ -87,6 +87,62 @@ public class GameManager : MonoBehaviour {
 		int i = (int)Mathf.Floor(check.x);
 		int j = (int)Mathf.Floor(check.y);
 		return getTile(i, j);
+	}
+
+	public void resetPathTiles(){
+		foreach (Tile t in board) {
+			t.dist = -1;
+		}
+	}
+
+	public List<Vector2> optimizePath(List<Tile> path){
+		for (int i = path.Count - 1; i > 0; i--) {
+			
+		}
+	}
+
+	public List<Vector2> pathToPoints(List<Tile> path){
+		List<Vector2> points = new List<Vector2>();
+		foreach (Tile tile in path) {
+			points.Add(new Vector2(tile.transform.position.x, tile.transform.position.y));
+		}
+	}
+
+	public List<Tile> getTilePath(Tile startTile,Tile endTile){
+		List<Tile> queue = new List<Tile>();
+		startTile.dist = 0;
+		queue.Add(startTile);
+		while (queue.Count > 0) {
+			Tile currTile = queue[0];
+			queue.RemoveAt(0);
+			bool end = false;
+			foreach (Tile neighbor in currTile.getNeighbors()) {
+				if (neighbor.dist < 0 && neighbor.isPassable()) {
+					neighbor.dist = currTile.dist + 1;
+					if (neighbor == endTile) {
+						end = true;
+						break;
+					}
+					queue.Add(neighbor);
+				}
+			}
+			if (end)
+				break;
+		}
+		List<Tile> path = new List<Tile>();
+		path.Add(endTile);
+		Tile curr = endTile;
+		while (curr.dist > 0) {
+			foreach (Tile neighbor in curr.getNeighbors()) {
+				if (neighbor.dist == curr.dist - 1) {
+					curr = neighbor;
+					path.Add(curr);
+				}
+			}
+		}
+		path.Reverse();
+		resetPathTiles();
+		return path;
 	}
 
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added

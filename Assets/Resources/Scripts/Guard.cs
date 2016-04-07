@@ -10,7 +10,8 @@ public class Guard : MonoBehaviour {
 
 	Tile tile;
 	GameManager gm;
-	BoxCollider2D coll;
+	CircleCollider2D coll;
+	Rigidbody2D body;
 
 	float speed;
 	float suspicion;
@@ -19,6 +20,10 @@ public class Guard : MonoBehaviour {
 	FOV fovDisplay;
 
 	const float viewDistance = 2.5f;
+	Tile startTile, endTile;
+	int patrolDirection;
+	List<Vector2> targetPositions;
+	int currPosIndex;
 
 	// Use this for initialization
 	public void init(Tile t, GameManager m) {
@@ -29,10 +34,12 @@ public class Guard : MonoBehaviour {
 		tile = t;
 		position = t.transform.position;
 
-		coll = gameObject.AddComponent<BoxCollider2D>();
-		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
+		coll = gameObject.AddComponent<CircleCollider2D>();
+		body = gameObject.AddComponent<Rigidbody2D>();
 		body.gravityScale = 0;
-		body.isKinematic = true;
+//		body.isKinematic = true;
+		body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+		body.constraints = RigidbodyConstraints2D.FreezeRotation;
 		gameObject.layer = LayerMask.NameToLayer("Guard");
 		GameObject fovObj = new GameObject();
 		fovObj.name = "FOV";
@@ -50,6 +57,13 @@ public class Guard : MonoBehaviour {
 
 		suspicion = 0.0f;
 		speed = 2.0f;
+		startTile = t;
+		endTile = m.getTile(t.posX + 2, t.posY + 3);
+		patrolDirection = 1;
+//		targetPositions = gm.getPath(startTile, endTile);
+		targetPositions = new List<Vector2>();
+		targetPositions.Add(startTile.transform.position);
+		targetPositions.Add(endTile.transform.position);
 	}
 	
 	// Update is called once per frame
@@ -68,8 +82,32 @@ public class Guard : MonoBehaviour {
 				Destroy(alert.gameObject);
 			}
 		}
-		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
-		tile = gm.getClosestTile(transform.position);	
+		if (patrolDirection == 1 && currPosIndex == targetPositions.Count - 1) {
+			print("finished path in direction 1");
+//			targetPositions = gm.getPath(endTile, startTile);
+			targetPositions = new List<Vector2>();
+			targetPositions.Add(endTile.transform.position);
+			targetPositions.Add(startTile.transform.position);
+			patrolDirection = -1;
+			currPosIndex = 0;
+		}
+		else if (patrolDirection == -1 && currPosIndex == targetPositions.Count - 1) {
+			print("finished path in direction -1");
+//			targetPositions = gm.getPath(startTile, endTile);
+			targetPositions = new List<Vector2>();
+			targetPositions.Add(startTile.transform.position);
+			targetPositions.Add(endTile.transform.position);
+			patrolDirection = 1;
+			currPosIndex = 0;
+		}
+		Vector2 targetDirection = (targetPositions[currPosIndex + 1] - targetPositions[currPosIndex]).normalized;
+		direction = Vector2.Lerp(direction, targetDirection, .05f);
+
+		body.velocity = direction * speed;
+		tile = gm.getClosestTile(transform.position);
+		if (gm.getClosestTile(targetPositions[currPosIndex + 1]) == tile) {
+			currPosIndex++;
+		}
 		lookingAt = direction.normalized;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
 			//TODO: Make sure it's not something boring like a wall
@@ -102,10 +140,10 @@ public class Guard : MonoBehaviour {
 		return false;
 	}
 
-	void OnTriggerEnter2D(Collider2D c) {
-//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
-		direction *= -1;
-	}
+//	void OnTriggerEnter2D(Collider2D c) {
+////		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
+//		direction *= -1;
+//	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
 		if (canSee(args.position)) {

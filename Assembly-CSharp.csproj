@@ -56,6 +56,8 @@
      <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
      <Compile Include="Assets\Resources\Scripts\Guard.cs" />
      <Compile Include="Assets\Resources\Scripts\Player.cs" />
+     <Compile Include="Assets\Resources\Scripts\SmallPhysics.cs" />
+     <Compile Include="Assets\Resources\Scripts\SmallPhysicsObject.cs" />
      <Compile Include="Assets\Resources\Scripts\Tile.cs" />
      <Compile Include="Assets\Resources\Scripts\Wall.cs" />
  <Reference Include="UnityEngine.Networking">

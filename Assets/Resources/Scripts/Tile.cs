@@ -11,10 +11,13 @@ public class Tile : MonoBehaviour {
 	protected bool flammable;
 	public float fire;
 	public float gas;
-	int posX;
-	int posY;
+	public int posX;
+	public int posY;
 
 	float TimeBeforeSpread = 1.5f;
+
+	//Used for path finding
+	public int dist = -1;
 
 	// Use this for initialization
 	public void init (int x, int y, GameManager game, float fire, float gas, bool flammable) {
