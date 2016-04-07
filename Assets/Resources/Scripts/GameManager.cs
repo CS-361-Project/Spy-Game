@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour {
 		chemicalList = new List<Chemical> ();
 		//buildBoard(10, 10);
 		buildLevel(10, 10);
-		addGuard(2, 3);
+		addGuard(2, 5);
 		addGuard(2, 4);
 		addGuard(1, 2);
 		addFrank (5, 4);
@@ -147,6 +147,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public List<Vector2> optimizePath(List<Vector2> path) {
+		if (path.Count == 0)
+			return new List<Vector2>();
 		float[] S = new float[path.Count];
 		List<Vector2>[] allPaths = new List<Vector2>[path.Count];
 
@@ -198,6 +200,7 @@ public class GameManager : MonoBehaviour {
 		List<Tile> queue = new List<Tile>();
 		startTile.dist = 0;
 		queue.Add(startTile);
+		bool foundEnd = false;
 		while (queue.Count > 0) {
 			Tile currTile = queue[0];
 			queue.RemoveAt(0);
@@ -212,9 +215,13 @@ public class GameManager : MonoBehaviour {
 					queue.Add(neighbor);
 				}
 			}
-			if (end)
+			if (end) {
+				foundEnd = true;
 				break;
+			}
 		}
+		if (!foundEnd)
+			return new List<Tile>();
 		List<Tile> path = new List<Tile>();
 		path.Add(endTile);
 		Tile curr = endTile;
