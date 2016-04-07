@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
 		chemicalList = new List<Chemical> ();
-		buildBoard(8, 8);
+		buildBoard(10, 10);
 		addGuard(2, 3);
 		addGuard(2, 4);
 		addGuard(1, 2);
@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour {
 				else if (x == 1 && y == 1) {
 					board[x, y] = addTile(x, y, 0);
 					addBurner(new Vector2 (x, y));
+				} else if(x==4 && y==5){
+					board[x, y] = addDoor(x, y);
 				}
 				else {
 					if (UnityEngine.Random.value > .9f)
@@ -79,6 +81,14 @@ public class GameManager : MonoBehaviour {
 		wall.init(x, y, this);
 		wall.transform.localPosition = new Vector3(x, y, 0);
 		return wall;
+	}
+
+	Door addDoor(int x, int y) {
+		GameObject doorObj = new GameObject();
+		Door door = doorObj.AddComponent<Door>();
+		door.init(x, y, this);
+		door.transform.localPosition = new Vector3(x, y, 0);
+		return door;
 	}
 
 	public Tile getTile(int x,int y){
