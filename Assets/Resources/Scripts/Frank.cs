@@ -8,6 +8,7 @@ public class Frank : MonoBehaviour {
 	GameManager gm;
 	Tile currentTile;
 	SpriteRenderer rend;
+	Rigidbody2D body;
 
 	bool onFire;
 	bool isDrunk;
@@ -25,6 +26,11 @@ public class Frank : MonoBehaviour {
 	float speed;
 	float clock;
 	FrankIcon icon;
+
+	Tile startTile, endTile;
+	int patrolDirection;
+	List<Vector2> targetPositions;
+	int currPosIndex;
 
 	// Use this for initialization
 	public void init (Tile t, GameManager man) {
@@ -55,7 +61,7 @@ public class Frank : MonoBehaviour {
 		isDrunk = false;
 
 		coll = gameObject.AddComponent<BoxCollider2D> ();
-		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
+		body = gameObject.AddComponent<Rigidbody2D>();
 		body.gravityScale = 0;
 //		body.isKinematic = true;
 		gameObject.layer = LayerMask.NameToLayer("Frank");
@@ -67,6 +73,14 @@ public class Frank : MonoBehaviour {
 		transform.localScale = new Vector3(0.7f, 0.7f, 1);
 		direction = new Vector2 (1f, 0f);
 		lineOfSight = direction;
+
+		startTile = t;
+		endTile = gm.getTile(t.posX + 2, t.posY + 3);
+		patrolDirection = 1;
+		//		targetPositions = gm.getPath(startTile, endTile);
+		targetPositions = new List<Vector2>();
+		targetPositions.Add(startTile.transform.position);
+		targetPositions.Add(endTile.transform.position);
 
 	}
 	// Update is called once per frame
@@ -156,11 +170,11 @@ public class Frank : MonoBehaviour {
 		direction = Vector2.Lerp(direction, targetDirection, .05f);
 
 		body.velocity = direction * speed;
-		tile = gm.getClosestTile(transform.position);
-		if (gm.getClosestTile(targetPositions[currPosIndex + 1]) == tile) {
+		currentTile = gm.getClosestTile(transform.position);
+		if (gm.getClosestTile(targetPositions[currPosIndex + 1]) == currentTile) {
 			currPosIndex++;
 		}
-		lookingAt = direction.normalized;
+		lineOfSight = direction.normalized;
 	}
 
 	void lookAround(){

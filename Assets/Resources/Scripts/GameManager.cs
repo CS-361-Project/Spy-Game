@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public List<Vector2> optimizePath(List<Tile> path){
+	public List<Vector2> optimizePath(List<Vector2> path){
 		for (int i = path.Count - 1; i > 0; i--) {
 			for (int j = i; j < path.Count - 1; j++) {
 				Vector2 v = path[j] - path[i];
@@ -105,17 +105,13 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-<<<<<<< HEAD
 		return path;
-=======
-		return new List<Vector2>();
->>>>>>> origin/master
 	}
 
-	public List<Vector2> pathToPoints(List<Tile> path){
+	public List<Vector2> pathToPoints(List<Vector2> path){
 		List<Vector2> points = new List<Vector2>();
 		foreach (Tile tile in path) {
-			points.Add(tile.transform.position);
+			points.Add(tile);
 		}
 		return points;
 	}
