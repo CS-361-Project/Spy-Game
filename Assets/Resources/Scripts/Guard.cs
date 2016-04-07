@@ -100,8 +100,9 @@ public class Guard : MonoBehaviour {
 			patrolDirection = 1;
 			currPosIndex = 0;
 		}
-		Vector2 targetDirection = (targetPositions[currPosIndex + 1] - targetPositions[currPosIndex]).normalized;
-		direction = Vector2.Lerp(direction, targetDirection, .05f);
+//		Vector2 targetDirection = (targetPositions[currPosIndex + 1] - targetPositions[currPosIndex]).normalized;
+//		direction = Vector2.Lerp(direction, targetDirection, .05f);
+		direction = (targetPositions[currPosIndex + 1] - (Vector2)transform.position).normalized;
 
 		body.velocity = direction * speed;
 		tile = gm.getClosestTile(transform.position);

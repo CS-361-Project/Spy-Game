@@ -4,7 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Frank : MonoBehaviour {
-	BoxCollider2D coll;
+	CircleCollider2D coll;
+	Rigidbody2D body;
 	GameManager gm;
 	Tile currentTile;
 	SpriteRenderer rend;
@@ -47,9 +48,12 @@ public class Frank : MonoBehaviour {
 
 		onFire = false;
 
-		coll = gameObject.AddComponent<BoxCollider2D> ();
-		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
+		coll = gameObject.AddComponent<CircleCollider2D>();
+		body = gameObject.AddComponent<Rigidbody2D>();
 		body.gravityScale = 0;
+		//		body.isKinematic = true;
+		body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+		body.constraints = RigidbodyConstraints2D.FreezeRotation;
 //		body.isKinematic = true;
 		gameObject.layer = LayerMask.NameToLayer("Frank");
 
@@ -106,7 +110,8 @@ public class Frank : MonoBehaviour {
 	}
 
 	void Wander(){
-		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
+//		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
+		body.velocity = direction * speed;
 	}
 
 	void lookAround(){
@@ -128,12 +133,12 @@ public class Frank : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter2D(Collider2D c) {
-		//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
-		//		float sin = Mathf.Sin(Mathf.PI / 2);
-		//		float cos = Mathf.Cos(Mathf.PI / 2);
-		direction *= -1;
-	}
+//	void OnTriggerEnter2D(Collider2D c) {
+//		//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
+//		//		float sin = Mathf.Sin(Mathf.PI / 2);
+//		//		float cos = Mathf.Cos(Mathf.PI / 2);
+//		direction *= -1;
+//	}
 
 	void smoking(){
 		icon.init ((int)behavior.smoking);
