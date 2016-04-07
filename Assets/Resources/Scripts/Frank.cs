@@ -11,6 +11,9 @@ public class Frank : MonoBehaviour {
 
 	bool onFire;
 	bool isDrunk;
+	bool isSmoking;
+	bool isTalking;
+	bool isPuking;
 
 	public enum behavior {drinking, smoking, talking, puking};
 
@@ -41,6 +44,7 @@ public class Frank : MonoBehaviour {
 		icon = iconObj.AddComponent<FrankIcon>();
 		icon.transform.parent = transform;
 		icon.transform.localPosition = Vector3.up;
+
 		updateToDoList ();
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
@@ -81,6 +85,9 @@ public class Frank : MonoBehaviour {
 	}
 
 	void updateToDoList(){
+		if (isSmoking) {
+			throwCigarette ();
+		}
 		int behaviorCount = Enum.GetNames(typeof(behavior)).Length;
 		int rand = (int)UnityEngine.Random.Range (0, behaviorCount);
 
@@ -114,7 +121,17 @@ public class Frank : MonoBehaviour {
 		if (!isDrunk) {
 			speed = 1.0F;
 		} else {
-			speed = UnityEngine.Random.Range (0, 2F);
+			/*float rand = UnityEngine.Random.Range (0, 10);
+			if (rand < 2.5F) {
+				direction = new Vector2 (1F, 0);
+			} else if (rand < 5F) {
+				direction = new Vector2 (0, 1F);
+			} else if (rand < 7.5F) {
+				direction = new Vector2 (0, -1F);
+			} else if (rand < 10F) {
+				direction = new Vector2 (-1F, 0);
+			}*/
+			speed = 10F;
 		}
 		transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
 	}
@@ -139,17 +156,24 @@ public class Frank : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D c) {
-		//		transform.position = (Vector2)transform.position - (direction * Time.deltaTime * speed); // get unstuck
-		//		float sin = Mathf.Sin(Mathf.PI / 2);
-		//		float cos = Mathf.Cos(Mathf.PI / 2);
 		direction *= -1;
 	}
 
 	void smoking(){
 		icon.init ((int)behavior.smoking);
 		Tile location = gm.getClosestTile (transform.position);
-		if (location.gas > 0) {
-			location.fire = Mathf.Max(1, location.fire);
+		/*if (location.gas > .07f) {
+			location.fire = Mathf.Max(2, location.fire);
+		}*/
+		isSmoking = true; 
+	}
+
+	void throwCigarette(){
+		isSmoking = false;
+		Vector2 radius = new Vector2 (transform.position.x + UnityEngine.Random.Range (-5F, 5F), transform.position.y + UnityEngine.Random.Range (-2F, 2F));
+		Tile cigTile = gm.getClosestTile(radius);
+		if (cigTile.isFlammable()){
+			cigTile.setFire(1F);
 		}
 	}
 

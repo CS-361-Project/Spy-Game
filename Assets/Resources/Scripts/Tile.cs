@@ -69,6 +69,10 @@ public class Tile : MonoBehaviour {
 		return true;
 	}
 
+	public  bool isFlammable(){
+		return flammable;
+	}
+
 	public Tile[] getNeighbors() {
 		List<Tile> neighbors = new List<Tile>();
 		for (int i = posX - 1; i <= posX + 1; i++) {

@@ -31,10 +31,10 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		count++;
+		/*count++;
 		if (count == 150) {
 			getTile(1, 1).setFire(1);
-		}
+		}*/
 	}
 
 	void buildBoard(int width, int height){
