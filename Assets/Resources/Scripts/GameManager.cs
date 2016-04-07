@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > 1.1)
+					if (UnityEngine.Random.value > .7f)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
@@ -95,12 +95,22 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+<<<<<<< HEAD
 	public List<Vector2> optimizePath(List<Vector2> path){
 		for (int i = path.Count - 1; i > 0; i--) {
 			for (int j = i; j < path.Count - 1; j++) {
+=======
+	public List<Vector2> getPath(Tile start, Tile end) {
+		return optimizePath(pathToPoints(getTilePath(start, end)));
+	}
+
+	public List<Vector2> optimizePath(List<Vector2> path){
+		for (int i = path.Count - 1; i >= 0; i--) {
+			for (int j = i; j <= path.Count - 1; j++) {
+>>>>>>> master
 				Vector2 v = path[j] - path[i];
-				RaycastHit2D rayHit = Physics2D.Raycast(path[i], v, v.magnitude);
-				if (rayHit.collider != null) {
+				RaycastHit2D rayHit = Physics2D.Raycast(path[i], v.normalized, v.magnitude);
+				if (rayHit.collider == null) {
 					path.RemoveRange(i, j - i);
 				}
 			}

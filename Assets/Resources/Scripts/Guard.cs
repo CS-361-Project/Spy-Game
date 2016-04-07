@@ -56,14 +56,17 @@ public class Guard : MonoBehaviour {
 		gm = m;
 
 		suspicion = 0.0f;
-		speed = 2.0f;
+		speed = 2f;
 		startTile = t;
 		endTile = m.getTile(t.posX + 2, t.posY + 3);
 		patrolDirection = 1;
-//		targetPositions = gm.getPath(startTile, endTile);
-		targetPositions = new List<Vector2>();
-		targetPositions.Add(startTile.transform.position);
-		targetPositions.Add(endTile.transform.position);
+		targetPositions = gm.getPath(startTile, endTile);
+		foreach (Vector2 v in targetPositions) {
+			print("(" + v.x + ", " + v.y + ")");
+		}
+//		targetPositions = new List<Vector2>();
+//		targetPositions.Add(startTile.transform.position);
+//		targetPositions.Add(endTile.transform.position);
 	}
 	
 	// Update is called once per frame
@@ -84,29 +87,25 @@ public class Guard : MonoBehaviour {
 		}
 		if (patrolDirection == 1 && currPosIndex == targetPositions.Count - 1) {
 			print("finished path in direction 1");
-//			targetPositions = gm.getPath(endTile, startTile);
-			targetPositions = new List<Vector2>();
-			targetPositions.Add(endTile.transform.position);
-			targetPositions.Add(startTile.transform.position);
+			targetPositions = gm.getPath(endTile, startTile);
 			patrolDirection = -1;
 			currPosIndex = 0;
 		}
 		else if (patrolDirection == -1 && currPosIndex == targetPositions.Count - 1) {
 			print("finished path in direction -1");
-//			targetPositions = gm.getPath(startTile, endTile);
-			targetPositions = new List<Vector2>();
-			targetPositions.Add(startTile.transform.position);
-			targetPositions.Add(endTile.transform.position);
+			targetPositions = gm.getPath(startTile, endTile);
 			patrolDirection = 1;
 			currPosIndex = 0;
 		}
 //		Vector2 targetDirection = (targetPositions[currPosIndex + 1] - targetPositions[currPosIndex]).normalized;
 //		direction = Vector2.Lerp(direction, targetDirection, .05f);
 		direction = (targetPositions[currPosIndex + 1] - (Vector2)transform.position).normalized;
+		Debug.DrawLine(transform.position, targetPositions[currPosIndex + 1]);
 
 		body.velocity = direction * speed;
 		tile = gm.getClosestTile(transform.position);
-		if (gm.getClosestTile(targetPositions[currPosIndex + 1]) == tile) {
+		if (Vector2.Distance((Vector2)transform.position, targetPositions[currPosIndex + 1]) <= .1) {
+			print("Reached point " + currPosIndex + ", moving to point " + (currPosIndex + 1));
 			currPosIndex++;
 		}
 		lookingAt = direction.normalized;
