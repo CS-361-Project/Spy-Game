@@ -7,6 +7,9 @@ public class Fan : MonoBehaviour {
 	Vector2 position;
 	Vector2 velocity;
 	SpriteRenderer rend;
+	float direction;
+
+	float viewportLength, viewportWidth;
 
 	// Class to encapsulate all data sent to subscribers when a fan event happens
 	public class FanEventArgs : EventArgs {
@@ -38,12 +41,17 @@ public class Fan : MonoBehaviour {
 		rend.color = Color.red;
 
 		gameObject.layer = LayerMask.NameToLayer("Room Objects");
+
+		direction = Mathf.PI/2F;
+		viewportHeight = 3F;
+		viewportWidth = 3F;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
+		Vector2 leftCorner = new Vector2 (transform.position.x - (viewportWidth * Mathf.Cos (direction+(Mathf.PI/2F))), transform.position.y + (viewportWidth * Mathf.Sin (direction+(Mathf.PI/2F))));
+		Vector2 rightCorner = new Vector2 (transform.position.x + (viewportWidth * Mathf.Cos (direction+(Mathf.PI/2F))), transform.position.y + (viewportLength * Mathf.Sin (direction)));
+		foreach (Collider2D c in Physics2D.OverlapAreaAll(
 
 	void OnMouseDown() {
 		toggle();
