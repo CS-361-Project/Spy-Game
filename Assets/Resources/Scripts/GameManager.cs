@@ -95,11 +95,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-<<<<<<< HEAD
-	public List<Vector2> optimizePath(List<Vector2> path){
-		for (int i = path.Count - 1; i > 0; i--) {
-			for (int j = i; j < path.Count - 1; j++) {
-=======
+
 	public List<Vector2> getPath(Tile start, Tile end) {
 		return optimizePath(pathToPoints(getTilePath(start, end)));
 	}
@@ -107,7 +103,6 @@ public class GameManager : MonoBehaviour {
 	public List<Vector2> optimizePath(List<Vector2> path){
 		for (int i = path.Count - 1; i >= 0; i--) {
 			for (int j = i; j <= path.Count - 1; j++) {
->>>>>>> master
 				Vector2 v = path[j] - path[i];
 				RaycastHit2D rayHit = Physics2D.Raycast(path[i], v.normalized, v.magnitude);
 				if (rayHit.collider == null) {
@@ -118,10 +113,10 @@ public class GameManager : MonoBehaviour {
 		return path;
 	}
 
-	public List<Vector2> pathToPoints(List<Vector2> path){
+	public List<Vector2> pathToPoints(List<Tile> path){
 		List<Vector2> points = new List<Vector2>();
 		foreach (Tile tile in path) {
-			points.Add(tile);
+			points.Add(tile.transform.position);
 		}
 		return points;
 	}

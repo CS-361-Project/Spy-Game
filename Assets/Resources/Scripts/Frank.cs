@@ -27,11 +27,6 @@ public class Frank : MonoBehaviour {
 	float clock;
 	FrankIcon icon;
 
-	Tile startTile, endTile;
-	int patrolDirection;
-	List<Vector2> targetPositions;
-	int currPosIndex;
-
 	// Use this for initialization
 	public void init (Tile t, GameManager man) {
 		
@@ -73,14 +68,6 @@ public class Frank : MonoBehaviour {
 		transform.localScale = new Vector3(0.7f, 0.7f, 1);
 		direction = new Vector2 (1f, 0f);
 		lineOfSight = direction;
-
-		startTile = t;
-		endTile = gm.getTile(t.posX + 2, t.posY + 3);
-		patrolDirection = 1;
-		//		targetPositions = gm.getPath(startTile, endTile);
-		targetPositions = new List<Vector2>();
-		targetPositions.Add(startTile.transform.position);
-		targetPositions.Add(endTile.transform.position);
 
 	}
 	// Update is called once per frame
@@ -148,33 +135,7 @@ public class Frank : MonoBehaviour {
 			speed = 10F;
 		}
 		//transform.position = (Vector2)transform.position + (direction * Time.deltaTime * speed);
-		if (patrolDirection == 1 && currPosIndex == targetPositions.Count - 1) {
-			print("finished path in direction 1");
-			//			targetPositions = gm.getPath(endTile, startTile);
-			targetPositions = new List<Vector2>();
-			targetPositions.Add(endTile.transform.position);
-			targetPositions.Add(startTile.transform.position);
-			patrolDirection = -1;
-			currPosIndex = 0;
-		}
-		else if (patrolDirection == -1 && currPosIndex == targetPositions.Count - 1) {
-			print("finished path in direction -1");
-			//			targetPositions = gm.getPath(startTile, endTile);
-			targetPositions = new List<Vector2>();
-			targetPositions.Add(startTile.transform.position);
-			targetPositions.Add(endTile.transform.position);
-			patrolDirection = 1;
-			currPosIndex = 0;
-		}
-		Vector2 targetDirection = (targetPositions[currPosIndex + 1] - targetPositions[currPosIndex]).normalized;
-		direction = Vector2.Lerp(direction, targetDirection, .05f);
-
 		body.velocity = direction * speed;
-		currentTile = gm.getClosestTile(transform.position);
-		if (gm.getClosestTile(targetPositions[currPosIndex + 1]) == currentTile) {
-			currPosIndex++;
-		}
-		lineOfSight = direction.normalized;
 	}
 
 	void lookAround(){
