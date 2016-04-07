@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > .7f)
+					if (UnityEngine.Random.value > .9f)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
@@ -95,29 +95,23 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-<<<<<<< Updated upstream
 	public List<Vector2> getPath(Tile start, Tile end) {
 		return optimizePath(pathToPoints(getTilePath(start, end)));
 	}
 
+
 	public List<Vector2> optimizePath(List<Vector2> path){
-		for (int i = path.Count - 1; i >= 0; i--) {
-			for (int j = i; j <= path.Count - 1; j++) {
+		for (int i = path.Count - 2; i >= 0; i--) {
+			for (int j = i + 1; j <= path.Count - 1; j++) {
 				Vector2 v = path[j] - path[i];
-				RaycastHit2D rayHit = Physics2D.Raycast(path[i], v.normalized, v.magnitude);
-				if (rayHit.collider == null) {
-=======
-	public List<Vector2> optimizePath(List<Vector2> path){
-		for (int i = path.Count - 1; i > 0; i--) {
-			for (int j = i; j < path.Count - 1; j++) {
-				Vector2 v = path[j] - path[i];
-				float playerRad = 0.3f;
-				Vector2 perpVec = new Vector2(-v.normalized.y, v.normalized.x);
-				RaycastHit2D rayHit = Physics2D.Raycast(path[i] + perpVec * playerRad, v.normalized, v.magnitude);
-				RaycastHit2D rayHit2 = Physics2D.Raycast(path[i] - perpVec * playerRad, v.normalized, v.magnitude);
+				float playerRad = .35f;
+				Vector2 perpVec = new Vector2(v.normalized.y, -v.normalized.x);
+				RaycastHit2D rayHit = Physics2D.Raycast(path[i] + perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
+				RaycastHit2D rayHit2 = Physics2D.Raycast(path[i] - perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
+				Debug.DrawRay(path[i] + perpVec * playerRad, v);
+				Debug.DrawRay(path[i] - perpVec * playerRad, v);
 				if (rayHit.collider == null && rayHit2.collider == null) {
->>>>>>> Stashed changes
-					path.RemoveRange(i, j - i);
+					path.RemoveRange(i + 1, j - i - 1);
 				}
 			}
 		}
