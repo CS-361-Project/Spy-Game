@@ -91,6 +91,10 @@ public class GameManager : MonoBehaviour {
 		return getTile(i, j);
 	}
 
+	public Tile getFinishTile() {
+		return getTile(width - 2, 1);
+	}
+
 	public void resetPathTiles(){
 		foreach (Tile t in board) {
 			t.dist = -1;
@@ -101,25 +105,6 @@ public class GameManager : MonoBehaviour {
 		return optimizePath(pathToPoints(getTilePath(start, end)));
 	}
 
-
-//	public List<Vector2> optimizePath(List<Vector2> path){
-//		for (int i = path.Count - 2; i >= 0; i--) {
-//			for (int j = i + 1; j <= path.Count - 1; j++) {
-//				Vector2 v = path[j] - path[i];
-//				float playerRad = .35f;
-//				Vector2 perpVec = new Vector2(v.normalized.y, -v.normalized.x);
-//				RaycastHit2D rayHit = Physics2D.Raycast(path[i] + perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
-//				RaycastHit2D rayHit2 = Physics2D.Raycast(path[i] - perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
-//				Debug.DrawRay(path[i] + perpVec * playerRad, v);
-//				Debug.DrawRay(path[i] - perpVec * playerRad, v);
-//				if (rayHit.collider == null && rayHit2.collider == null) {
-//					path.RemoveRange(i + 1, j - i - 1);
-//				}
-//			}
-//		}
-//		return path;
-//	}
-
 	public List<Vector2> optimizePath(List<Vector2> path) {
 		float[] S = new float[path.Count];
 		List<Vector2>[] allPaths = new List<Vector2>[path.Count];
@@ -128,7 +113,6 @@ public class GameManager : MonoBehaviour {
 		allPaths[path.Count - 1].Add(path[path.Count - 1]);
 		S[path.Count - 1] = 0;
 		for (int i = path.Count - 2; i >= 0; i--) {
-			print("Index: " + i);
 			float minDist = float.MaxValue;
 			int minDistIndex = i + 1;
 			for (int j = i + 1; j < path.Count; j++) {
@@ -146,11 +130,6 @@ public class GameManager : MonoBehaviour {
 //			allPaths[i].AddRange(allPaths[minDistIndex]);
 			foreach (Vector2 v in allPaths[minDistIndex]) {
 				allPaths[i].Add(v);
-			}
-			print("minDistIndex for " + i + " is " + minDistIndex);
-			print("Printing path for tile " + i);
-			foreach (Vector2 v in allPaths[i]) {
-				print(v);
 			}
 		}
 		return allPaths[0];
