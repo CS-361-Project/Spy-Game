@@ -31,11 +31,13 @@ public class Fan : MonoBehaviour {
 		state = false;
 		position = transform.position;
 		velocity = new Vector2(1, 0);
-		gameObject.AddComponent<BoxCollider2D>();
+		gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 1;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
 		rend.color = Color.red;
+
+		gameObject.layer = LayerMask.NameToLayer("Room Objects");
 	}
 	
 	// Update is called once per frame
@@ -67,15 +69,11 @@ public class Fan : MonoBehaviour {
 
 	public virtual void onFanToggled() {
 		if (FanToggled != null) {
-			print("Triggering toggle event.");
 			FanEventArgs args = new FanEventArgs();
 			args.state = this.state;
 			args.position = this.position;
 			args.velocity = this.velocity;
 			FanToggled(this, args);
-		}
-		else {
-			print("Not triggering toggle event - no listeners.");
 		}
 	}
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 
 public class Chemical : MonoBehaviour {
-	bool state;
+	public bool state;
 	Vector2 position;
 	SpriteRenderer rend;
 	// Use this for initialization
@@ -12,30 +12,23 @@ public class Chemical : MonoBehaviour {
 		position = transform.position;
 		gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
-		rend.sprite = Resources.Load<Sprite>("Sprites/Beaker");
+		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
 		rend.sortingOrder = 1;
 		rend.color = Color.green;
+
+		gameObject.layer = LayerMask.NameToLayer("Room Objects");
 	}
 
 	public class ChemicalEventArgs : EventArgs {
 		public Vector2 position { get; set; }
 		public bool state { get; set; }
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 	
 	}
-
-	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
-		if (args.state) {
-			rend.color = Color.yellow;
-		}
-		else {
-			rend.color = Color.green;
-		}
-	}
-
+		
 	void OnMouseDown() {
 		toggle();
 	}
@@ -51,10 +44,10 @@ public class Chemical : MonoBehaviour {
 	public void toggle() {
 		state = !state;
 		if (state) {
-			rend.color = Color.green;
+			rend.color = Color.white;
 		}
 		else {
-			rend.color = Color.yellow;
+			rend.color = Color.green;
 		}
 		onChemicalToggled();
 	}
@@ -62,14 +55,10 @@ public class Chemical : MonoBehaviour {
 
 	public virtual void onChemicalToggled() {
 		if (ChemicalToggled != null) {
-			print("Triggering toggle event.");
 			ChemicalEventArgs args = new ChemicalEventArgs();
 			args.state = this.state;
 			args.position = this.position;
 			ChemicalToggled(this, args);
-		}
-		else {
-			print("Not triggering toggle event - no listeners.");
 		}
 	}
 }

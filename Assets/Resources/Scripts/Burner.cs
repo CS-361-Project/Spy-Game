@@ -7,6 +7,7 @@ public class Burner : MonoBehaviour {
 	Vector2 position;
 	//Vector2 velocity;
 	SpriteRenderer rend;
+	Tile location;
 
 	// Class to encapsulate all data sent to subscribers when a burner event happens
 	public class BurnerEventArgs : EventArgs {
@@ -16,7 +17,8 @@ public class Burner : MonoBehaviour {
 	}
 
 
-	void Start () {
+	public void init (Tile loc) {
+		this.location = loc;
 		state = false;
 		position = transform.position;
 		gameObject.AddComponent<BoxCollider2D>();
@@ -24,10 +26,14 @@ public class Burner : MonoBehaviour {
 		rend.sortingOrder = 1;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
 		rend.color = Color.yellow;
+
+		gameObject.layer = LayerMask.NameToLayer("Room Objects");
 	}
 
 	void Update () {
-
+		if (state) {
+			location.setGas(.1f);
+		}
 	}
 
 	void OnMouseDown() {
@@ -56,14 +62,10 @@ public class Burner : MonoBehaviour {
 
 	public virtual void onBurnerToggled() {
 		if (BurnerToggled != null) {
-			print("Triggering toggle event.");
 			BurnerEventArgs args = new BurnerEventArgs();
 			args.state = this.state;
 			args.position = this.position;
 			BurnerToggled(this, args);
-		}
-		else {
-			print("Not triggering toggle event - no listeners.");
 		}
 	}
 
