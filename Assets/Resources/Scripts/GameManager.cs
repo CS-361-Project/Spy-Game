@@ -97,9 +97,19 @@ public class GameManager : MonoBehaviour {
 
 	public List<Vector2> optimizePath(List<Tile> path){
 		for (int i = path.Count - 1; i > 0; i--) {
-			
+			for (int j = i; j < path.Count - 1; j++) {
+				Vector2 v = path[j] - path[i];
+				RaycastHit2D rayHit = Physics2D.Raycast(path[i], v, v.magnitude);
+				if (rayHit.collider != null) {
+					path.RemoveRange(i, j - i);
+				}
+			}
 		}
+<<<<<<< HEAD
+		return path;
+=======
 		return new List<Vector2>();
+>>>>>>> origin/master
 	}
 
 	public List<Vector2> pathToPoints(List<Tile> path){
