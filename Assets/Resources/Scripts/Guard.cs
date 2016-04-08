@@ -36,8 +36,11 @@ public class Guard : Person {
 
 		startTile = t;
 		endTile = m.getTile(4, 6);
-		patrolDirection = 1;
-		targetPositions = gm.getPath(startTile, endTile);
+		patrolDirection = 0;
+//		targetPositions = gm.getPath(tile, endTile);
+		targetPositions = new List<Vector2>();
+		Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
+		Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 2f;
 	}
 	
@@ -57,22 +60,27 @@ public class Guard : Person {
 				Destroy(alert.gameObject);
 			}
 		}
-		if (patrolDirection == 1 && currPosIndex == targetPositions.Count - 1) {
-			print("finished path in direction 1");
-			targetPositions = gm.getPath(endTile, startTile);
-			patrolDirection = -1;
-			currPosIndex = 0;
+//		if (targetPositions.Count > 0) {
+//			print("Count: " + targetPositions.Count);
+//		}
+		if (patrolDirection == 1) {
+			if (targetPositions.Count <= 0) {
+				targetPositions = gm.getPath(endTile, startTile);
+				patrolDirection = -1;
+			}
 		}
-		else if (patrolDirection == -1 && currPosIndex == targetPositions.Count - 1) {
-			print("finished path in direction -1");
-			targetPositions = gm.getPath(startTile, endTile);
-			patrolDirection = 1;
-			currPosIndex = 0;
+		else if (patrolDirection == -1) {
+			if (targetPositions.Count <= 0) {
+				targetPositions = gm.getPath(startTile, endTile);
+				patrolDirection = 1;
+			}
+		}
+		else if (patrolDirection == 0) {
+			wander();
 		}
 
 		move();
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
-			//TODO: Make sure it's not something boring like a wall
 			if (c != coll && c.gameObject.name != "Wall") {
 				if (canSee(c.transform.position)) {
 					switch (c.gameObject.name) {
@@ -80,7 +88,7 @@ public class Guard : Person {
 							suspicion = 2f;
 							break;
 						case "Chemical":
-							if (c.gameObject.GetComponent<Chemical>().state) {
+							if (c.gameObject.GetComponent<Chemical>().spilled) {
 								suspicion += .25f;
 							}
 							break;

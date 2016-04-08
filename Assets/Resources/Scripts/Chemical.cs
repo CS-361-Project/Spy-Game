@@ -3,12 +3,12 @@ using System;
 using System.Collections;
 
 public class Chemical : MonoBehaviour {
-	public bool state;
+	public bool spilled;
 	Vector2 position;
 	SpriteRenderer rend;
 	// Use this for initialization
 	void Start () {
-		state = false;
+		spilled = false;
 		position = transform.position;
 		gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
@@ -21,7 +21,7 @@ public class Chemical : MonoBehaviour {
 
 	public class ChemicalEventArgs : EventArgs {
 		public Vector2 position { get; set; }
-		public bool state { get; set; }
+		public bool spilled { get; set; }
 	}
 
 	// Update is called once per frame
@@ -37,13 +37,13 @@ public class Chemical : MonoBehaviour {
 
 
 	public void setState(bool newState) {
-		state = newState;
+		spilled = newState;
 		onChemicalToggled();
 	}
 
 	public void toggle() {
-		state = !state;
-		if (state) {
+		spilled = !spilled;
+		if (spilled) {
 			rend.color = Color.white;
 		}
 		else {
@@ -56,7 +56,7 @@ public class Chemical : MonoBehaviour {
 	public virtual void onChemicalToggled() {
 		if (ChemicalToggled != null) {
 			ChemicalEventArgs args = new ChemicalEventArgs();
-			args.state = this.state;
+			args.spilled = this.spilled;
 			args.position = this.position;
 			ChemicalToggled(this, args);
 		}

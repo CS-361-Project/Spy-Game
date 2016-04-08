@@ -9,8 +9,8 @@ public class Person : MonoBehaviour {
 	protected Rigidbody2D body;
 
 	protected Vector2 direction;
+	protected Vector2 intDirection;
 	protected List<Vector2> targetPositions;
-	protected int currPosIndex;
 
 	protected float speed;
 	protected float viewDistance = 2.5f;
@@ -35,25 +35,70 @@ public class Person : MonoBehaviour {
 		speed = 1f;
 
 		direction = new Vector2(1, 0);
-		targetPositions = gm.getPath(tile, gm.getFinishTile());
-		currPosIndex = 0;
+		intDirection = new Vector2(1, 0);
+//		targetPositions = gm.getPath(tile, gm.getFinishTile());
+	}
+
+	Vector2 nextPosition() {
+		if (targetPositions.Count == 0) {
+			return transform.position;
+		}
+		else {
+			return targetPositions[0];
+		}
+	}
+
+	public void wander() {
+		if (targetPositions.Count == 0) {
+			intDirection.Normalize();
+			Vector2 dir = intDirection;
+			print("IntDirection: " + intDirection);
+			print("Transform + direction = " + ((Vector2)transform.position + intDirection));
+
+			Tile nextTile = gm.getClosestTile((Vector2)transform.position + dir);
+			if (!nextTile.isPassable()) {
+				print("Next tile is blocked");
+				dir = MathHelper.rotate90(intDirection);
+				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
+			}
+			if (!nextTile.isPassable()) {
+				print("Right tile is blocked");
+				dir = -MathHelper.rotate90(intDirection);
+				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
+			}
+			if (!nextTile.isPassable()) {
+				print("Left tile is blocked");
+				dir = -intDirection;
+				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
+			}
+			intDirection = dir.normalized;
+			targetPositions.Add(nextTile.transform.position);
+			print("Next tile: " + nextTile.transform.position);
+		}
 	}
 	
-	// Update is called once per frame
+	// called once per frame
 	public void move() {
-		if (currPosIndex < targetPositions.Count - 1) {
-			Vector2 targetDirection = (targetPositions[currPosIndex + 1] - (Vector2)transform.position).normalized;
-			Debug.DrawLine(transform.position, targetPositions[currPosIndex + 1]);
+		if (targetPositions.Count >= 1) {
+			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .1) {
+				print("Removing point");
+				targetPositions.RemoveAt(0);
+				if (targetPositions.Count < 1) {
+					return;
+				}
+			}
 
-			direction = Vector2.Lerp(direction, targetDirection, 0.22f);
+			Debug.DrawLine(transform.position, targetPositions[0]);
+
+			Vector2 targetDirection = (targetPositions[0] - (Vector2)transform.position).normalized;
+//			Debug.DrawLine(transform.position, targetPositions[0]);
+
+			direction = Vector2.Lerp(direction, targetDirection, 0.3f);
 
 			body.velocity = direction * speed;
 			direction = body.velocity.normalized;
 			tile = gm.getClosestTile(transform.position);
-			if (Vector2.Distance((Vector2)transform.position, targetPositions[currPosIndex + 1]) <= .1) {
-				print("Reached point " + currPosIndex + ", moving to point " + (currPosIndex + 1));
-				currPosIndex++;
-			}
+
 		}
 	}
 

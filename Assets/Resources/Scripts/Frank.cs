@@ -132,7 +132,7 @@ public class Frank : Person {
 	}
 
 	public virtual void onChemicalToggled(object source, Chemical.ChemicalEventArgs args) {
-		if (args.state) {
+		if (args.spilled) {
 			rend.color = Color.green;
 		}
 		else {

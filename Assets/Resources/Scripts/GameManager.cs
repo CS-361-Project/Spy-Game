@@ -20,10 +20,10 @@ public class GameManager : MonoBehaviour {
 		chemicalList = new List<Chemical> ();
 		//buildBoard(10, 10);
 		buildLevel(10, 10);
-		addGuard(2, 3);
-		addGuard(2, 4);
+//		addGuard(2, 3);
+//		addGuard(2, 4);
 		addGuard(1, 2);
-		addFrank (5, 4);
+//		addFrank (5, 4);
 		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
@@ -93,9 +93,6 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-
-
-
 	}
 
 	Tile addTile(int x, int y, float fire){
@@ -123,11 +120,20 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public Tile getTile(int x,int y){
-		return board[x, y];
+		if (onBoard(x, y)) {
+			return board[x, y];
+		}
+		else {
+			return null;
+		}
+	}
+
+	public bool onBoard(int x, int y) {
+		return x >= 0 && x < width && y >= 0 && y < height;
 	}
 
 	public Tile getClosestTile(Vector2 check){
-		int i = (int)Mathf.Floor(check.x);
+		int i = (int)Mathf.RoundToInt(check.x);
 		int j = (int)Mathf.Floor(check.y);
 		return getTile(i, j);
 	}
@@ -143,10 +149,18 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	public List<Vector2> getPath(Tile start, Tile end) {
-		return optimizePath(pathToPoints(getTilePath(start, end)));
+//		return optimizePath(pathToPoints(getTilePath(start, end)));
+		List<Vector2> result = pathToPoints(getTilePath(start, end));
+		for (int i = 0; i < result.Count - 1; i++) {
+			Debug.DrawLine(result[i], result[i + 1], new Color(.25f, (float)i / (float)(result.Count-1), (float)i / (float)(result.Count-1)));
+		}
+		return result;
 	}
 
 	public List<Vector2> optimizePath(List<Vector2> path) {
+		if (path.Count  < 3) {
+			return path;
+		}
 		float[] S = new float[path.Count];
 		List<Vector2>[] allPaths = new List<Vector2>[path.Count];
 
@@ -168,7 +182,6 @@ public class GameManager : MonoBehaviour {
 			S[i] = minDist;
 			allPaths[i] = new List<Vector2>();
 			allPaths[i].Add(path[i]);
-//			allPaths[i].AddRange(allPaths[minDistIndex]);
 			foreach (Vector2 v in allPaths[minDistIndex]) {
 				allPaths[i].Add(v);
 			}
@@ -182,6 +195,8 @@ public class GameManager : MonoBehaviour {
 		Vector2 perpVec = new Vector2(v.normalized.y, -v.normalized.x);
 		RaycastHit2D rayHit = Physics2D.Raycast(pos1 + perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
 		RaycastHit2D rayHit2 = Physics2D.Raycast(pos1 - perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
+//		Debug.DrawRay(pos1 + perpVec * playerRad, v);
+//		Debug.DrawRay(pos1 - perpVec * playerRad, v);
 		return (rayHit.collider != null || rayHit2.collider != null);
 
 	}
@@ -197,6 +212,7 @@ public class GameManager : MonoBehaviour {
 	public List<Tile> getTilePath(Tile startTile,Tile endTile){
 		List<Tile> queue = new List<Tile>();
 		startTile.dist = 0;
+		bool foundPath = false;
 		queue.Add(startTile);
 		while (queue.Count > 0) {
 			Tile currTile = queue[0];
@@ -212,8 +228,13 @@ public class GameManager : MonoBehaviour {
 					queue.Add(neighbor);
 				}
 			}
-			if (end)
+			if (end) {
+				foundPath = true;
 				break;
+			}
+		}
+		if (!foundPath) {
+			return new List<Tile>();
 		}
 		List<Tile> path = new List<Tile>();
 		path.Add(endTile);
@@ -223,6 +244,7 @@ public class GameManager : MonoBehaviour {
 				if (neighbor.dist == curr.dist - 1) {
 					curr = neighbor;
 					path.Add(curr);
+					break;
 				}
 			}
 		}
