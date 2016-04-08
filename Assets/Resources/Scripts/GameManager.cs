@@ -214,6 +214,7 @@ public class GameManager : MonoBehaviour {
 		startTile.dist = 0;
 		bool foundPath = false;
 		queue.Add(startTile);
+		bool foundEnd = false;
 		while (queue.Count > 0) {
 			Tile currTile = queue[0];
 			queue.RemoveAt(0);
@@ -236,6 +237,8 @@ public class GameManager : MonoBehaviour {
 		if (!foundPath) {
 			return new List<Tile>();
 		}
+		if (!foundEnd)
+			return new List<Tile>();
 		List<Tile> path = new List<Tile>();
 		path.Add(endTile);
 		Tile curr = endTile;
