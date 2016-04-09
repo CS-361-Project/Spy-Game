@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour {
 
 	public Tile getClosestTile(Vector2 check){
 		int i = (int)Mathf.RoundToInt(check.x);
-		int j = (int)Mathf.Floor(check.y);
+		int j = (int)Mathf.RoundToInt(check.y);
 		return getTile(i, j);
 	}
 
