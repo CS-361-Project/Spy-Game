@@ -41,7 +41,7 @@ public class Guard : Person {
 		targetPositions = new List<Vector2>();
 		Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
-		speed = 2f;
+		speed = 1f;
 	}
 	
 	// Update is called once per frame
@@ -86,6 +86,8 @@ public class Guard : Person {
 					switch (c.gameObject.name) {
 						case "Frank":
 							suspicion = 2f;
+							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position));
+							patrolDirection = 2;
 							break;
 						case "Chemical":
 							if (c.gameObject.GetComponent<Chemical>().spilled) {

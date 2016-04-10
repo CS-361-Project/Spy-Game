@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
 //		addGuard(2, 3);
 //		addGuard(2, 4);
 		addGuard(1, 2);
-//		addFrank (5, 4);
+		addFrank (1, 1);
 		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 				}
 				else if (x == 1 && y == 1) {
 					board[x, y] = addTile(x, y, 0);
-					addBurner(new Vector2 (x, y));
+					//addBurner(new Vector2 (x, y));
 				} else if((x==4 && y==3) || (x==3 && y==7) || (x==5 && y==7)){
 					board[x, y] = addDoor(x, y);
 				} else if ((x==1 && y==3) || (x==2 && y==3) || (x==3 && y==3) || (x==5 && y==3) || (x==6 && y==3) || (x==6 && y==2) || (x==6 && y==1) ){
@@ -149,12 +149,12 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	public List<Vector2> getPath(Tile start, Tile end) {
-//		return optimizePath(pathToPoints(getTilePath(start, end)));
-		List<Vector2> result = pathToPoints(getTilePath(start, end));
+		return optimizePath(pathToPoints(getTilePath(start, end)));
+		/*List<Vector2> result = pathToPoints(getTilePath(start, end));
 		for (int i = 0; i < result.Count - 1; i++) {
 			Debug.DrawLine(result[i], result[i + 1], new Color(.25f, (float)i / (float)(result.Count-1), (float)i / (float)(result.Count-1)));
 		}
-		return result;
+		return result;*/
 	}
 
 	public List<Vector2> optimizePath(List<Vector2> path) {
@@ -186,6 +186,7 @@ public class GameManager : MonoBehaviour {
 				allPaths[i].Add(v);
 			}
 		}
+		allPaths[0].RemoveAt(0);
 		return allPaths[0];
 	}
 
@@ -214,7 +215,6 @@ public class GameManager : MonoBehaviour {
 		startTile.dist = 0;
 		bool foundPath = false;
 		queue.Add(startTile);
-		bool foundEnd = false;
 		while (queue.Count > 0) {
 			Tile currTile = queue[0];
 			queue.RemoveAt(0);
@@ -237,8 +237,6 @@ public class GameManager : MonoBehaviour {
 		if (!foundPath) {
 			return new List<Tile>();
 		}
-		if (!foundEnd)
-			return new List<Tile>();
 		List<Tile> path = new List<Tile>();
 		path.Add(endTile);
 		Tile curr = endTile;

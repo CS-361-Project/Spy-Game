@@ -35,7 +35,6 @@ public class Door : Tile {
 			col.a = 0;
 			gasRend.color = col;
 			flammable = false;
-
 		}
 		else {
 			rend.color = Color.grey;

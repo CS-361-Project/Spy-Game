@@ -36,7 +36,7 @@ public class Person : MonoBehaviour {
 
 		direction = new Vector2(1, 0);
 		intDirection = new Vector2(1, 0);
-//		targetPositions = gm.getPath(tile, gm.getFinishTile());
+		//targetPositions = gm.getPath(tile, gm.getFinishTile());
 	}
 
 	Vector2 nextPosition() {
