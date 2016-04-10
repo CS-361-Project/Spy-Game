@@ -22,6 +22,9 @@ public class GameManager : MonoBehaviour {
 		buildLevel(10, 10);
 //		addGuard(2, 3);
 //		addGuard(2, 4);
+		addGuard(4, 2);
+		addGuard(3, 2);
+		addGuard(2, 2);
 		addGuard(1, 2);
 		addFrank (2, 2);
 		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
