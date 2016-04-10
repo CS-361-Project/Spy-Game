@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
 //		addGuard(2, 3);
 //		addGuard(2, 4);
 		addGuard(1, 2);
-		addFrank (1, 1);
+		addFrank (2, 2);
 		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
@@ -65,9 +65,6 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-
-
-
 	}
 
 	void buildBoard(int width, int height){

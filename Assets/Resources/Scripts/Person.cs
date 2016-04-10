@@ -93,7 +93,9 @@ public class Person : MonoBehaviour {
 			Vector2 targetDirection = (targetPositions[0] - (Vector2)transform.position).normalized;
 //			Debug.DrawLine(transform.position, targetPositions[0]);
 
-			direction = Vector2.Lerp(direction, targetDirection, 0.3f);
+//			direction = Vector2.Lerp(direction, targetDirection, 0.3f).normalized;
+			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), .3f);
+			direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
 
 			body.velocity = direction * speed;
 			direction = body.velocity.normalized;
@@ -103,11 +105,18 @@ public class Person : MonoBehaviour {
 	}
 
 	public bool canSee(Vector3 pos) {
-		Vector2 toObject = (pos - transform.position).normalized;
+		bool view = canSee(pos, Mathf.Deg2Rad * 60, viewDistance);
+		bool peripheral = canSee(pos, Mathf.Deg2Rad * 180, viewDistance / 2);
+		return view || peripheral;
+	}
+
+	// angle in radians
+	public bool canSee(Vector3 pos, float viewAngle, float maxDist) {
+		Vector2 toObject = (pos - transform.position);
 		float angle = Vector2.Dot(direction, toObject);
-		if (angle <= 1 && angle >= 0.866025404) { // cos 0 to cos 60
-			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject, viewDistance, viewLayerMask);
-			if (rayHit.collider != null && rayHit.collider.transform.position == pos) {
+		if (angle <= 1 && angle >= Mathf.Cos(viewAngle)) { // cos 0 to cos 60
+			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, 1 << 10);
+			if (rayHit.collider == null && toObject.magnitude <= maxDist) {
 				return true;
 			}
 		}

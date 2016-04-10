@@ -11,6 +11,7 @@ public class Guard : Person {
 	FOV fovDisplay;
 
 	Tile startTile, endTile;
+	[SerializeField]
 	int patrolDirection;
 
 
@@ -63,6 +64,33 @@ public class Guard : Person {
 //		if (targetPositions.Count > 0) {
 //			print("Count: " + targetPositions.Count);
 //		}
+		if (patrolDirection == 2) {
+			patrolDirection = 0;
+		}
+		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
+			if (c != coll && c.gameObject.name != "Wall") {
+				if (Vector2.Distance(c.transform.position, transform.position) <= viewDistance / 2 || canSee(c.transform.position)) {
+					switch (c.gameObject.name) {
+						case "Frank":
+							print("Guard sees Frank");
+							suspicion = 2f;
+							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position));
+							if (targetPositions.Count >= 2) {
+								targetPositions.RemoveAt(targetPositions.Count - 1);
+								targetPositions.RemoveAt(0);
+							}
+							targetPositions.Add(c.transform.position);
+							patrolDirection = 2;
+							break;
+						case "Chemical":
+							if (c.gameObject.GetComponent<Chemical>().spilled) {
+								suspicion += .25f;
+							}
+							break;
+					}
+				}
+			}
+		}
 		if (patrolDirection == 1) {
 			if (targetPositions.Count <= 0) {
 				targetPositions = gm.getPath(endTile, startTile);
@@ -78,26 +106,7 @@ public class Guard : Person {
 		else if (patrolDirection == 0) {
 			wander();
 		}
-
 		move();
-		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
-			if (c != coll && c.gameObject.name != "Wall") {
-				if (canSee(c.transform.position)) {
-					switch (c.gameObject.name) {
-						case "Frank":
-							suspicion = 2f;
-							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position));
-							patrolDirection = 2;
-							break;
-						case "Chemical":
-							if (c.gameObject.GetComponent<Chemical>().spilled) {
-								suspicion += .25f;
-							}
-							break;
-					}
-				}
-			}
-		}
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
