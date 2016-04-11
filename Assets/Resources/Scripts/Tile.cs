@@ -11,6 +11,10 @@ public class Tile : MonoBehaviour {
 	protected bool flammable;
 	public float fire;
 	public float gas;
+
+	bool fanEffect;
+	string fanDirec;
+
 	public int posX;
 	public int posY;
 	public Color col;
@@ -23,6 +27,7 @@ public class Tile : MonoBehaviour {
 	// Use this for initialization
 	public void init (int x, int y, GameManager game, float fire, float gas, bool flammable) {
 		fireTimer = 0;
+		fanEffect = false;
 		this.flammable = flammable;
 		this.gas = gas;
 		this.fire = fire;
@@ -74,6 +79,17 @@ public class Tile : MonoBehaviour {
 		return true;
 	}
 
+	public void applyFanForce(string direc){
+		fanEffect = true;
+		fanDirec = direc;
+		flammable = false;
+	}
+
+	public void unApplyFanForce(){
+		fanEffect = false;
+		flammable = true;
+	}
+
 	public Tile[] getNeighbors() {
 		List<Tile> neighbors = new List<Tile>();
 		for (int i = posX - 1; i <= posX + 1; i++) {
@@ -86,15 +102,44 @@ public class Tile : MonoBehaviour {
 				}
 			}
 		}
+		//Remove all neighbors effected by fan
+//		foreach(Tile neighbor in neighbors){
+//			if (fanEffect) {
+//				switch (fanDirec) {
+//					case "E":
+//						if (neighbor.posX < posX) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "S":
+//						if (neighbor.posY > posY) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "W":
+//						if (neighbor.posX > posX) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "N":
+//						if (neighbor.posY < posY) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//				}
+//			}
+//		}
+
+
 		return neighbors.ToArray();
 	}
 
 	void checkForFire(){
 		//if one of the neighbors is burning then start burning
-		foreach (Tile neighbor in getNeighbors()) {
+		Tile [] Neighbors =getNeighbors();
+		foreach (Tile neighbor in Neighbors) {
+			
 			if (neighbor.fire >= 2){
-				
-				//In the case where there is gas skip straight to a higher level of fire
 				if (gas >= 0) {
 					fire = Mathf.Max(fire, 1);
 					fire = Mathf.Min(Mathf.Max(fire, (gas*10) * fire), 3);

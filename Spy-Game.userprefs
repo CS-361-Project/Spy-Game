@@ -1,5 +1,6 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+<<<<<<< Updated upstream
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Resources/Scripts/Fan.cs">
     <Files>
       <File FileName="Assets/Resources/Scripts/Fan.cs" Line="50" Column="35" />
@@ -18,6 +19,14 @@
       <File FileName="Assets\Resources\Scripts\Wall.cs" Line="1" Column="1" />
       <File FileName="Assets/Resources/Scripts/Guard.cs" Line="109" Column="24" />
       <File FileName="Assets/Resources/Scripts/Frank.cs" Line="1" Column="1" />
+=======
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Resources/Scripts/Frank.cs">
+    <Files>
+      <File FileName="Assets/Resources/Scripts/Person.cs" Line="1" Column="1" />
+      <File FileName="Assets/Resources/Scripts/Frank.cs" Line="60" Column="17" />
+      <File FileName="Assets/Resources/Scripts/Door.cs" Line="1" Column="1" />
+      <File FileName="Assets/Resources/Scripts/GameManager.cs" Line="1" Column="1" />
+>>>>>>> Stashed changes
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

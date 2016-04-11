@@ -35,16 +35,19 @@ public class GameManager : MonoBehaviour {
 		fanFolder = new GameObject();
 		fanFolder.name = "Fans";
 		//buildBoard(10, 10);
-		buildLevel(10, 10);
+		buildTestChamber(10, 10);
 //		addGuard(2, 3);
 //		addGuard(2, 4);
 		addGuard(4, 2);
 		addGuard(3, 2);
 		addGuard(2, 2);
 		addGuard(1, 2);
-		addFrank (5, 4);
-		addFan(new Vector2(2, 1), "E");
-		addFan(new Vector2(1, 6), "E");
+		//addFrank (1, 1);
+		addFan(new Vector2(1, 1), "E");
+//		addFan(new Vector2(1, 6), "E");
+//		addFan(new Vector2(1, 4), "E");
+//		addFan(new Vector2(1, 5), "E");
+//		addFan(new Vector2(1, 3), "E");
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 
@@ -55,9 +58,9 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		count++;
-//		if (count == 150) {
-//			getTile(1, 1).setFire(1);
-//		}
+		if (count == 150) {
+			getTile(6, 6).setFire(1);
+		}
 	}
 
 	void buildLevel(int width, int height){
@@ -82,6 +85,28 @@ public class GameManager : MonoBehaviour {
 				else {
 
 						board[x, y] = addTile(x, y, 0);
+				}
+			}
+		}
+	}
+
+	void buildTestChamber(int width, int height){
+		this.width = width;
+		this.height = height;
+		board = new Tile[width, height];
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+					board[x, y] = addWall(x, y);
+				}
+				else if (x == 1 && y == 1) {
+					board[x, y] = addTile(x, y, 0);
+					//addBurner(new Vector2 (x, y));
+				} else if(x==4 && y==5){
+					board[x, y] = addDoor(x, y);
+				}
+				else {
+					board[x, y] = addTile(x, y, 0);
 				}
 			}
 		}
@@ -282,8 +307,12 @@ public class GameManager : MonoBehaviour {
 		fanObj.name = "Fan";
 		fanObj.transform.position = position;
 		Fan fan = fanObj.AddComponent<Fan>();
+<<<<<<< Updated upstream
 		fan.init(direction);
 		fan.transform.parent = fanFolder.transform;
+=======
+		fan.init(position.x, position.y, direction, this);
+>>>>>>> Stashed changes
 		foreach (Guard g in guardList) {
 			fan.FanToggled += g.onFanToggled;
 		}
