@@ -136,10 +136,11 @@ public class Guard : Person {
 		// sort of a way of saying "all clear"
 		// actually would be good to send message to all other guards letting them know there's nothing to see there
 //		print("Moving to position " + args.position);
-		List<Vector2> path = gm.getPath(tile, gm.getClosestTile(args.position), false);
-		if (path.Count <= 10) {
+		Tile t = gm.getClosestTile(args.position);
+		List<Vector2> path = gm.getPath(tile, t, true);
+		if (path.Count <= 15) {
 			suspicion = 2f;
-			print("Alarm " + path.Count + " tiles away.");
+			print("Path from " + tile.transform.position + " to " + t.transform.position + " is " + path.Count + " tiles.");
 			targetPositions = path;
 		}
 	}

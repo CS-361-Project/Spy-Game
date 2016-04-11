@@ -28,7 +28,7 @@ public class LaserSensor : MonoBehaviour {
 		rend.color = red;
 		rend.sortingLayerName = "Foreground";
 		gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-		transform.position = pos - dir/2.0f + dir*0.0001f;
+		transform.position = pos - dir/2.0f + dir*0.001f;
 		direction = dir;
 		lastCoveredTiles = new List<Tile>();
 	}
