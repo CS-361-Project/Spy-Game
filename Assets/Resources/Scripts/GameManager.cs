@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour {
 	public int width;
 	public int height;
 	int count;
+
+	List<Tile[]> sections;
+
 	// Use this for initialization
 	void Start() {
 		fanList = new List<Fan>();
@@ -52,7 +55,7 @@ public class GameManager : MonoBehaviour {
 		addSensor(1, 2, new Vector2(1, 0));
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
-
+		constructSections();
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
 	}
@@ -115,6 +118,38 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	void constructSections(){
+		int numSections = 0;
+		sections = new List<Tile[]>();
+		foreach (Tile tile in board) {
+			if (tile.section == -1 && tile.isPassable()) {
+				numSections++;
+				sections.Add(fillSection(tile, numSections - 1));
+			}
+		}
+	}
+
+	Tile[] fillSection(Tile section,int sectionNum){
+		List<Tile> sectionQueue = new List<Tile>();
+		List<Tile> sectionMembers = new List<Tile>();
+		sectionQueue.Add(section);
+		while (sectionQueue.Count > 0) {
+			Tile tile = sectionQueue[0];
+			sectionQueue.RemoveAt(0);
+			tile.section = sectionNum;
+			sectionMembers.Add(tile);
+			foreach (Tile neighbor in tile.getNeighbors()) {
+				if (neighbor.section == -1 && neighbor.isPassable())
+					sectionQueue.Add(neighbor);
+			}
+		}
+		return sectionMembers.ToArray();
+	}
+
+	Tile[] getSection(int sectionNum){
+		return sections[sectionNum];
 	}
 
 	Tile addTile(int x, int y, float fire){

@@ -19,6 +19,8 @@ public class Tile : MonoBehaviour {
 
 	float TimeBeforeSpread = 1.5f;
 
+	public int section = -1;
+
 	//Used for path finding
 	public int dist = -1;
 
