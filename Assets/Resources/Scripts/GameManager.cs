@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour {
 		addGuard(2, 4);
 		addGuard(1, 2);
 		addFrank (5, 4);
-		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
+		addFan(new Vector2(4, 1), "E");
+		addFan(new Vector2(1, 6), "E");
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 
@@ -53,7 +54,7 @@ public class GameManager : MonoBehaviour {
 					addBurner(new Vector2 (x, y));
 				}
 				else {
-					if (UnityEngine.Random.value > .9f)
+					if (UnityEngine.Random.value > 1f)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
@@ -193,11 +194,12 @@ public class GameManager : MonoBehaviour {
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
 
 	// register each guard to be notified when new fan is toggled
-	void addFan(Vector2 position, Vector2 direction) {
+	void addFan(Vector2 position, string direction) {
 		GameObject fanObj = new GameObject();
 		fanObj.name = "Fan";
 		fanObj.transform.position = position;
 		Fan fan = fanObj.AddComponent<Fan>();
+		fan.init(direction);
 		foreach (Guard g in guardList) {
 			fan.FanToggled += g.onFanToggled;
 		}

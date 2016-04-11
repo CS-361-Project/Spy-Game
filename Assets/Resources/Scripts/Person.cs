@@ -17,6 +17,8 @@ public class Person : MonoBehaviour {
 
 	protected int viewLayerMask = 1 << 10;
 
+	protected bool beingPushed = false;
+
 	// Use this for initialization
 	public virtual void init(Tile t, GameManager m) {
 		tile = t;
@@ -41,7 +43,7 @@ public class Person : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void move() {
-		if (currPosIndex < targetPositions.Count - 1) {
+		if (!beingPushed && currPosIndex < targetPositions.Count - 1) {
 			Vector2 targetDirection = (targetPositions[currPosIndex + 1] - (Vector2)transform.position).normalized;
 			Debug.DrawLine(transform.position, targetPositions[currPosIndex + 1]);
 
@@ -55,6 +57,7 @@ public class Person : MonoBehaviour {
 				currPosIndex++;
 			}
 		}
+		beingPushed = false;
 	}
 
 	public bool canSee(Vector3 pos) {
@@ -67,6 +70,11 @@ public class Person : MonoBehaviour {
 			}
 		}
 		return false;
+	}
+
+	public void applyFanForce(Vector2 force) {
+		beingPushed = true;
+		body.AddForce(force);
 	}
 }
 
