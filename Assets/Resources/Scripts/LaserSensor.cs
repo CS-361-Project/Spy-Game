@@ -16,10 +16,10 @@ public class LaserSensor : MonoBehaviour {
 		laserBeam.transform.parent = transform;
 		SpriteRenderer rend = laserBeam.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Beam");
-		rend.color = Color.red;
+		rend.color = new Color(1, 0, 0, 0.5f);
 		rend.sortingLayerName = "Foreground";
 		gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-		transform.position = pos;
+		transform.position = pos - dir/2.0f + dir*0.0001f;
 		direction = dir;
 	}
 	
@@ -46,7 +46,7 @@ public class LaserSensor : MonoBehaviour {
 	}
 
 	void setBeamEndpoint(Vector2 pos) {
-		laserBeam.transform.localScale = new Vector2(Vector2.Distance(pos, transform.position), 0.25f);
+		laserBeam.transform.localScale = new Vector2(Vector2.Distance(pos, transform.position), 0.1f);
 		laserBeam.transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(pos.y - transform.position.y, pos.x - transform.position.x));
 	}
 }

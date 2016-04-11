@@ -46,8 +46,9 @@ public class Frank : Person {
 		transform.localScale = new Vector3(0.7f, 0.7f, 1);
 		direction = new Vector2 (1f, 0f);
 
-		targetPositions = gm.getPath(t, gm.getTile(7, 1));
+		//targetPositions = gm.getPath(t, gm.getTile(7, 1));
 		print(gm.getTile(3, 1).isPassable());
+		targetPositions = new List<Vector2>();
 		print(targetPositions.Count);
 		//speed = 2f;
 

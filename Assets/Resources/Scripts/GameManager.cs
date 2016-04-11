@@ -173,13 +173,8 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	
-	public List<Vector2> getPath(Tile start, Tile end) {
-		return optimizePath(pathToPoints(getTilePath(start, end)));
-		/*List<Vector2> result = pathToPoints(getTilePath(start, end));
-		for (int i = 0; i < result.Count - 1; i++) {
-			Debug.DrawLine(result[i], result[i + 1], new Color(.25f, (float)i / (float)(result.Count-1), (float)i / (float)(result.Count-1)));
-		}
-		return result;*/
+	public List<Vector2> getPath(Tile start, Tile end, bool ignoreDoors) {
+		return optimizePath(pathToPoints(getTilePath(start, end, ignoreDoors)));
 	}
 
 	public List<Vector2> optimizePath(List<Vector2> path) {
@@ -235,7 +230,7 @@ public class GameManager : MonoBehaviour {
 		return points;
 	}
 
-	public List<Tile> getTilePath(Tile startTile,Tile endTile){
+	public List<Tile> getTilePath(Tile startTile,Tile endTile,bool ignoreDoors){
 		List<Tile> queue = new List<Tile>();
 		startTile.dist = 0;
 		bool foundPath = false;
@@ -245,7 +240,7 @@ public class GameManager : MonoBehaviour {
 			queue.RemoveAt(0);
 			bool end = false;
 			foreach (Tile neighbor in currTile.getNeighbors()) {
-				if (neighbor.dist < 0 && neighbor.isPassable()) {
+				if (neighbor.dist < 0 && (neighbor.isPassable() || (neighbor is Door && ignoreDoors))) {
 					neighbor.dist = currTile.dist + 1;
 					if (neighbor == endTile) {
 						end = true;

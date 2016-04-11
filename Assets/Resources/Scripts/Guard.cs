@@ -74,7 +74,7 @@ public class Guard : Person {
 						case "Frank":
 							print("Guard sees Frank");
 							suspicion = 2f;
-							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position));
+							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position), false);
 							if (targetPositions.Count >= 2) {
 								targetPositions.RemoveAt(targetPositions.Count - 1);
 								targetPositions.RemoveAt(0);
@@ -93,13 +93,13 @@ public class Guard : Person {
 		}
 		if (patrolDirection == 1) {
 			if (targetPositions.Count <= 0) {
-				targetPositions = gm.getPath(endTile, startTile);
+				targetPositions = gm.getPath(endTile, startTile, false);
 				patrolDirection = -1;
 			}
 		}
 		else if (patrolDirection == -1) {
 			if (targetPositions.Count <= 0) {
-				targetPositions = gm.getPath(startTile, endTile);
+				targetPositions = gm.getPath(startTile, endTile, false);
 				patrolDirection = 1;
 			}
 		}

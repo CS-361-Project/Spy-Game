@@ -15,7 +15,7 @@ public class Person : MonoBehaviour {
 	protected float speed;
 	protected float viewDistance = 2.5f;
 
-	public float radius = 0.5f;
+	public float radius = 1f;
 
 	protected int viewLayerMask = 1 << 10;
 
@@ -88,7 +88,7 @@ public class Person : MonoBehaviour {
 			RaycastHit2D hit;
 			if ((hit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, 1 << 10)).collider !=  null) {
 				print("Raycast hit " + hit.collider.gameObject.name + " at " + hit.collider.transform.position);
-				List<Vector2> path = gm.getPath(tile, gm.getClosestTile(targetPositions[0]));
+				List<Vector2> path = gm.getPath(tile, gm.getClosestTile(targetPositions[0]), false);
 				targetPositions.RemoveAt(0);
 				if (path.Count > 0) {
 					targetPositions.InsertRange(0, path);
@@ -124,8 +124,8 @@ public class Person : MonoBehaviour {
 		beingPushed = false;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, radius)) {
 			if (c.gameObject.name == "Guard")
-				body.AddForce((transform.position-c.transform.position).normalized*
-					radius/Mathf.Min(Vector2.Distance((Vector2)c.transform.position,(Vector2)transform.position),radius));
+				body.AddForce(-(c.transform.position-transform.position).normalized*
+					radius/Mathf.Max(Mathf.Min(Vector2.Distance((Vector2)c.transform.position,(Vector2)transform.position),radius),0.001f));
 		}
 	}
 
