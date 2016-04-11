@@ -15,6 +15,8 @@ public class Tile : MonoBehaviour {
 	public int posY;
 	public Color col;
 
+	public bool containsLaser;
+
 	float TimeBeforeSpread = 1.5f;
 
 	//Used for path finding
@@ -45,6 +47,7 @@ public class Tile : MonoBehaviour {
 		col.a = 0f;
 		gasRend.color = col;
 
+		containsLaser = false;
 	}
 	
 	// Update is called once per frame

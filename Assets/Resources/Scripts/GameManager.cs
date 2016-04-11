@@ -230,7 +230,7 @@ public class GameManager : MonoBehaviour {
 		return points;
 	}
 
-	public List<Tile> getTilePath(Tile startTile,Tile endTile,bool ignoreDoors){
+	public List<Tile> getTilePath(Tile startTile,Tile endTile, bool ignoreDoors){
 		List<Tile> queue = new List<Tile>();
 		startTile.dist = 0;
 		bool foundPath = false;
@@ -313,7 +313,7 @@ public class GameManager : MonoBehaviour {
 		foreach (Guard g in guardList) {
 			sensor.MotionDetected += g.onMotionDetected;
 		}
-		sensor.init(getTile(x, y).transform.position, direction);
+		sensor.init(this, getTile(x, y).transform.position, direction);
 		sensor.transform.parent = sensorFolder.transform;
 		sensorList.Add(sensor);
 	}

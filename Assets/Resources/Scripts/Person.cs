@@ -52,33 +52,30 @@ public class Person : MonoBehaviour {
 		}
 	}
 
-	public void wander() {
+	public void wander(bool avoidLasers) {
 		if (targetPositions.Count == 0) {
 			intDirection.Normalize();
 			Vector2 dir = intDirection;
-//			print("IntDirection: " + intDirection);
-//			print("Transform + direction = " + ((Vector2)transform.position + intDirection));
 
 			Tile nextTile = gm.getClosestTile((Vector2)transform.position + dir);
-			if (!nextTile.isPassable()) {
-//				print("Next tile is blocked");
+			if (!nextTile.isPassable() || (avoidLasers && nextTile.containsLaser)) {
 				dir = MathHelper.rotate90(intDirection);
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
-			if (!nextTile.isPassable()) {
-//				print("Right tile is blocked");
+			if (!nextTile.isPassable() || (avoidLasers && nextTile.containsLaser)) {
 				dir = -MathHelper.rotate90(intDirection);
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
-			if (!nextTile.isPassable()) {
-//				print("Left tile is blocked");
+			if (!nextTile.isPassable() || (avoidLasers && nextTile.containsLaser)) {
 				dir = -intDirection;
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
 			intDirection = dir.normalized;
 			targetPositions.Add(nextTile.transform.position);
-//			print("Next tile: " + nextTile.transform.position);
 		}
+//		else {
+//			print("Not wandering..." + targetPositions.Count + " better things to do.");
+//		}
 	}
 	
 	// called once per frame
@@ -97,7 +94,7 @@ public class Person : MonoBehaviour {
 					targetPositions.Clear();
 					int x = Mathf.RoundToInt(direction.normalized.x);
 					intDirection = new Vector2(x, 1 - x);
-					wander();
+					wander(true);
 				}
 			}
 			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .1) {

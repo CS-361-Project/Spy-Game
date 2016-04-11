@@ -104,7 +104,7 @@ public class Guard : Person {
 			}
 		}
 		else if (patrolDirection == 0) {
-			wander();
+			wander(true);
 		}
 		move();
 	}
@@ -136,11 +136,12 @@ public class Guard : Person {
 		// sort of a way of saying "all clear"
 		// actually would be good to send message to all other guards letting them know there's nothing to see there
 //		print("Moving to position " + args.position);
-//		targetPositions = gm.getPath(tile, gm.getClosestTile(args.position));
-//		if (targetPositions.Count > 0) {
-//			targetPositions.RemoveAt(targetPositions.Count - 1);
-//		}
-//		targetPositions.Add(args.position);
+		List<Vector2> path = gm.getPath(tile, gm.getClosestTile(args.position), false);
+		if (path.Count <= 10) {
+			suspicion = 2f;
+			print("Alarm " + path.Count + " tiles away.");
+			targetPositions = path;
+		}
 	}
 }
 
