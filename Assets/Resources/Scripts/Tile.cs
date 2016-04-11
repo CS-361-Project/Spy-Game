@@ -13,6 +13,7 @@ public class Tile : MonoBehaviour {
 	public float gas;
 	public int posX;
 	public int posY;
+	public Color col;
 
 	float TimeBeforeSpread = 1.5f;
 
@@ -39,20 +40,20 @@ public class Tile : MonoBehaviour {
 		gasRend = obj.AddComponent<SpriteRenderer>();
 		gasRend.sortingOrder = 1;
 		gasRend.sprite = Resources.Load<Sprite>("Sprites/Fan");
-		Color col = Color.green;
+		col = Color.green;
 		col.a = 0f;
 		gasRend.color = col;
 
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public void Update () {
 		if (flammable) {
 			checkForFire();
 		}
 		if (isPassable()) {
 			checkForGas();
-			Color col = Color.green;
+			col = Color.green;
 			//TODO we are capping ALPHA VALUE not GAS PER TILE come back to this later and think more
 			col.a = Mathf.Min(gas, 0.25f);
 			gasRend.color = col;
@@ -76,8 +77,11 @@ public class Tile : MonoBehaviour {
 		List<Tile> neighbors = new List<Tile>();
 		for (int i = posX - 1; i <= posX + 1; i++) {
 			for (int j = posY - 1; j <= posY + 1; j++) {
-				if ((i != posX || j != posY) && (i == posX || j == posY) && !(i==posX&&j==posY) && (i > -1 && i < game.width) && (j > -1 && j < game.height)) {
-					neighbors.Add(game.getTile(i, j));
+				if (i == posX ^ j == posY) {
+					Tile t = game.getTile(i, j);
+					if (t != null) {
+						neighbors.Add(t);
+					}
 				}
 			}
 		}

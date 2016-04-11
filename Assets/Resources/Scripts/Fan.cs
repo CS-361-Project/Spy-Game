@@ -3,11 +3,12 @@ using System;
 using System.Collections;
 
 public class Fan : MonoBehaviour {
-	bool state;
+	
 	Vector2 position;
 	Vector2 velocity;
 	SpriteRenderer rend;
-	string direction;
+	public string direction;
+	public bool state;
 
 	float viewportHeight, viewportWidth;
 	Vector2 leftCorner, rightCorner;
@@ -48,7 +49,7 @@ public class Fan : MonoBehaviour {
 
 		direction = dir;
 		viewportHeight = 1F;
-		viewportWidth = 5F;
+		viewportWidth = 3F;
 		leftCorner = new Vector2(0,0);
 		rightCorner = new Vector2(0,0);
 
@@ -79,13 +80,17 @@ public class Fan : MonoBehaviour {
 	void Update () {
 		if (state) {
 			foreach (Collider2D c in Physics2D.OverlapAreaAll(leftCorner, rightCorner)) {
-				Person p = c.gameObject.GetComponent<Person>();
-				if (p != null && c != coll) {
-					float distance = Vector2.Distance ((Vector2)coll.transform.position, (Vector2)c.transform.position);
+				// change viewportwidth part of this for when not east
+				RaycastHit2D ray = Physics2D.Raycast(transform.position, velocity.normalized, viewportWidth, LayerMask.NameToLayer("Wall"));
+				if (ray.collider == null || ray.collider == c) {
+					Person p = c.gameObject.GetComponent<Person>();
+					if (p != null && c != coll) {
+						float distance = Vector2.Distance((Vector2)coll.transform.position, (Vector2)c.transform.position);
 //					float angle = Vector2.Angle ((Vector2)coll.transform.position, (Vector2)c.transform.position);
-					Debug.DrawLine(transform.position, c.transform.position);
-					p.applyFanForce(10 / distance * velocity);
+						Debug.DrawLine(transform.position, c.transform.position);
+						p.applyFanForce(10 / distance * velocity);
 //					c.attachedRigidbody.AddForce (new Vector2 ((1 / distance) * (Mathf.Cos (angle)), (1 / distance) * (Mathf.Cos (angle))));
+					}
 				}
 			}
 		}

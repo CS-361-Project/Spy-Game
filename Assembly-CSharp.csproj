@@ -49,12 +49,14 @@
      <Compile Include="Assets\Resources\Scripts\Burner.cs" />
      <Compile Include="Assets\Resources\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Resources\Scripts\Chemical.cs" />
+     <Compile Include="Assets\Resources\Scripts\Door.cs" />
      <Compile Include="Assets\Resources\Scripts\FOV.cs" />
      <Compile Include="Assets\Resources\Scripts\Fan.cs" />
      <Compile Include="Assets\Resources\Scripts\Frank.cs" />
      <Compile Include="Assets\Resources\Scripts\FrankIcon.cs" />
      <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
      <Compile Include="Assets\Resources\Scripts\Guard.cs" />
+     <Compile Include="Assets\Resources\Scripts\MathHelper.cs" />
      <Compile Include="Assets\Resources\Scripts\Person.cs" />
      <Compile Include="Assets\Resources\Scripts\Tile.cs" />
      <Compile Include="Assets\Resources\Scripts\Wall.cs" />
