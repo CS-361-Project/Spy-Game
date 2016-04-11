@@ -15,6 +15,8 @@ public class Person : MonoBehaviour {
 	protected float speed;
 	protected float viewDistance = 2.5f;
 
+	public float radius = 0.5f;
+
 	protected int viewLayerMask = 1 << 10;
 
 	protected bool beingPushed = false;
@@ -106,6 +108,11 @@ public class Person : MonoBehaviour {
 
 		}
 		beingPushed = false;
+		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, radius)) {
+			if (c.gameObject.name == "Guard")
+				body.AddForce((transform.position-c.transform.position).normalized*
+					radius/Mathf.Min(Vector2.Distance((Vector2)c.transform.position,(Vector2)transform.position),radius));
+		}
 	}
 
 	public bool canSee(Vector3 pos) {
