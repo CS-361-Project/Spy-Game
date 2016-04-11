@@ -7,8 +7,9 @@ public class GameManager : MonoBehaviour {
 	List<Guard> guardList;
 	List<Burner> burnerList;
 	List<Chemical> chemicalList;
+	List<LaserSensor> sensorList;
 
-	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder;
+	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder, sensorFolder;
 
 	Tile[,] board;
 	public int width;
@@ -19,7 +20,8 @@ public class GameManager : MonoBehaviour {
 		fanList = new List<Fan>();
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
-		chemicalList = new List<Chemical> ();
+		chemicalList = new List<Chemical>();
+		sensorList = new List<LaserSensor>();
 		wallFolder = new GameObject();
 		wallFolder.name = "Walls";
 		tileFolder = new GameObject();
@@ -34,6 +36,8 @@ public class GameManager : MonoBehaviour {
 		chemicalFolder.name = "Chemicals";
 		fanFolder = new GameObject();
 		fanFolder.name = "Fans";
+		sensorFolder = new GameObject();
+		sensorFolder.name = "Sensors";
 		//buildBoard(10, 10);
 		buildLevel(10, 10);
 //		addGuard(2, 3);
@@ -45,6 +49,7 @@ public class GameManager : MonoBehaviour {
 		addFrank (5, 4);
 		addFan(new Vector2(2, 1), "E");
 		addFan(new Vector2(1, 6), "E");
+		addSensor(1, 2, new Vector2(1, 0));
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 
@@ -306,6 +311,18 @@ public class GameManager : MonoBehaviour {
 		frank.init(getTile(x, y), this);
 	}
 
+	void addSensor(int x, int y, Vector2 direction) {
+		GameObject sensorObj = new GameObject();
+		sensorObj.name = "Laser Sensor";
+		LaserSensor sensor = sensorObj.AddComponent<LaserSensor>();
+		foreach (Guard g in guardList) {
+			sensor.MotionDetected += g.onMotionDetected;
+		}
+		sensor.init(getTile(x, y).transform.position, direction);
+		sensor.transform.parent = sensorFolder.transform;
+		sensorList.Add(sensor);
+	}
+
 
 	// register each guard to be notified when a fan is toggled
 	void addGuard(int x, int y) {
@@ -320,6 +337,9 @@ public class GameManager : MonoBehaviour {
 		}
 		foreach (Chemical chem in chemicalList) {
 			chem.ChemicalToggled += guard.onChemicalToggled;
+		}
+		foreach (LaserSensor sensor in sensorList) {
+			sensor.MotionDetected += guard.onMotionDetected;
 		}
 		guard.init(getTile(x, y), this);
 		guard.transform.parent = guardFolder.transform;

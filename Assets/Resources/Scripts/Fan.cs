@@ -15,6 +15,8 @@ public class Fan : MonoBehaviour {
 
 	BoxCollider2D coll;
 
+	public event EventHandler<FanEventArgs> FanToggled;
+
 	// Class to encapsulate all data sent to subscribers when a fan event happens
 	public class FanEventArgs : EventArgs {
 		public Vector2 position { get; set; }
@@ -99,8 +101,6 @@ public class Fan : MonoBehaviour {
 	void OnMouseDown() {
 		toggle();
 	}
-
-	public event EventHandler<FanEventArgs> FanToggled;
 
 	public void setState(bool newState) {
 		state = newState;

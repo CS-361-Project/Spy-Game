@@ -130,5 +130,17 @@ public class Guard : Person {
 			print("that's supsicious");
 		}
 	}
+
+	public virtual void onMotionDetected(object source, LaserSensor.LaserEventArgs args) {
+		// TODO: System if reached source of motion and haven't seen frank, ignore that sensor for x seconds
+		// sort of a way of saying "all clear"
+		// actually would be good to send message to all other guards letting them know there's nothing to see there
+//		print("Moving to position " + args.position);
+//		targetPositions = gm.getPath(tile, gm.getClosestTile(args.position));
+//		if (targetPositions.Count > 0) {
+//			targetPositions.RemoveAt(targetPositions.Count - 1);
+//		}
+//		targetPositions.Add(args.position);
+	}
 }
 
