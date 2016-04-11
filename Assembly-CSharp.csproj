@@ -56,6 +56,7 @@
      <Compile Include="Assets\Resources\Scripts\FrankIcon.cs" />
      <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
      <Compile Include="Assets\Resources\Scripts\Guard.cs" />
+     <Compile Include="Assets\Resources\Scripts\LaserSensor.cs" />
      <Compile Include="Assets\Resources\Scripts\MathHelper.cs" />
      <Compile Include="Assets\Resources\Scripts\Person.cs" />
      <Compile Include="Assets\Resources\Scripts\Tile.cs" />

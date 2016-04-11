@@ -56,37 +56,51 @@ public class Person : MonoBehaviour {
 		if (targetPositions.Count == 0) {
 			intDirection.Normalize();
 			Vector2 dir = intDirection;
-			print("IntDirection: " + intDirection);
-			print("Transform + direction = " + ((Vector2)transform.position + intDirection));
+//			print("IntDirection: " + intDirection);
+//			print("Transform + direction = " + ((Vector2)transform.position + intDirection));
 
 			Tile nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			if (!nextTile.isPassable()) {
-				print("Next tile is blocked");
+//				print("Next tile is blocked");
 				dir = MathHelper.rotate90(intDirection);
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
 			if (!nextTile.isPassable()) {
-				print("Right tile is blocked");
+//				print("Right tile is blocked");
 				dir = -MathHelper.rotate90(intDirection);
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
 			if (!nextTile.isPassable()) {
-				print("Left tile is blocked");
+//				print("Left tile is blocked");
 				dir = -intDirection;
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
 			intDirection = dir.normalized;
 			targetPositions.Add(nextTile.transform.position);
-			print("Next tile: " + nextTile.transform.position);
+//			print("Next tile: " + nextTile.transform.position);
 		}
 	}
 	
 	// called once per frame
 	public void move() {
 		if (!beingPushed && targetPositions.Count >= 1) {
-			print("Moving normally.");
+			Vector2 toObject = targetPositions[0] - (Vector2)transform.position;
+			RaycastHit2D hit;
+			if ((hit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, 1 << 10)).collider !=  null) {
+				print("Raycast hit " + hit.collider.gameObject.name + " at " + hit.collider.transform.position);
+				List<Vector2> path = gm.getPath(tile, gm.getClosestTile(targetPositions[0]));
+				targetPositions.RemoveAt(0);
+				if (path.Count > 0) {
+					targetPositions.InsertRange(0, path);
+				}
+				else {
+					targetPositions.Clear();
+					int x = Mathf.RoundToInt(direction.normalized.x);
+					intDirection = new Vector2(x, 1 - x);
+					wander();
+				}
+			}
 			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .1) {
-				print("Removing point");
 				targetPositions.RemoveAt(0);
 				if (targetPositions.Count < 1) {
 					return;
@@ -116,9 +130,14 @@ public class Person : MonoBehaviour {
 	}
 
 	public bool canSee(Vector3 pos) {
-		bool view = canSee(pos, Mathf.Deg2Rad * 60, viewDistance);
-		bool peripheral = canSee(pos, Mathf.Deg2Rad * 180, viewDistance / 2);
-		return view || peripheral;
+		bool view = canSee(pos, Mathf.Deg2Rad * 30, viewDistance);
+		if (!view) {
+			bool peripheral = canSee(pos, Mathf.Deg2Rad * 90, viewDistance / 2);
+			return peripheral;
+		}
+		else {
+			return view;
+		}
 	}
 
 	// angle in radians
@@ -126,7 +145,7 @@ public class Person : MonoBehaviour {
 		Vector2 toObject = (pos - transform.position);
 		float angle = Vector2.Dot(direction, toObject);
 		if (angle <= 1 && angle >= Mathf.Cos(viewAngle)) { // cos 0 to cos 60
-			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, 1 << 10);
+			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, LayerMask.NameToLayer("Wall") | LayerMask.NameToLayer("Room Objects"));
 			if (rayHit.collider == null && toObject.magnitude <= maxDist) {
 				return true;
 			}

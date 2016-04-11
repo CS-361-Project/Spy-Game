@@ -36,7 +36,8 @@ public class Tile : MonoBehaviour {
 		rend.color = Color.grey;
 
 		GameObject obj = new GameObject();
-		obj.transform.position = new Vector3(posX, posY, 0);
+		obj.transform.parent = transform;
+		obj.transform.localPosition = Vector3.zero;
 		gasRend = obj.AddComponent<SpriteRenderer>();
 		gasRend.sortingOrder = 1;
 		gasRend.sprite = Resources.Load<Sprite>("Sprites/Fan");

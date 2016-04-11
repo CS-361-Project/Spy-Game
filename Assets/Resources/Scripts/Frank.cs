@@ -54,7 +54,8 @@ public class Frank : Person {
 	}
 	// Update is called once per frame
 	void Update () {
-		base.move();
+		wander();
+		move();
 		clock += Time.deltaTime;
 		lookAround();
 		if (clock >= 1) {
