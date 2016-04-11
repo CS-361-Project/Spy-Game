@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour {
 	List<Burner> burnerList;
 	List<Chemical> chemicalList;
 
+	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder;
+
 	Tile[,] board;
 	public int width;
 	public int height;
@@ -18,6 +20,20 @@ public class GameManager : MonoBehaviour {
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
 		chemicalList = new List<Chemical> ();
+		wallFolder = new GameObject();
+		wallFolder.name = "Walls";
+		tileFolder = new GameObject();
+		tileFolder.name = "Tiles";
+		doorFolder = new GameObject();
+		doorFolder.name = "Doors";
+		guardFolder = new GameObject();
+		guardFolder.name = "Guards";
+		burnerFolder = new GameObject();
+		burnerFolder.name = "Burners";
+		chemicalFolder = new GameObject();
+		chemicalFolder.name = "Chemicals";
+		fanFolder = new GameObject();
+		fanFolder.name = "Fans";
 		//buildBoard(10, 10);
 		buildLevel(10, 10);
 //		addGuard(2, 3);
@@ -101,6 +117,7 @@ public class GameManager : MonoBehaviour {
 		Tile tile = tileObj.AddComponent<Tile>();
 		tile.init(x,y,this, fire, 0, true);
 		tile.transform.localPosition = new Vector3(x, y, 0);
+		tile.transform.parent = tileFolder.transform;
 		return tile;
 	}
 
@@ -109,6 +126,7 @@ public class GameManager : MonoBehaviour {
 		Wall wall = wallObj.AddComponent<Wall>();
 		wall.init(x, y, this);
 		wall.transform.localPosition = new Vector3(x, y, 0);
+		wall.transform.parent = wallFolder.transform;
 		return wall;
 	}
 
@@ -117,6 +135,7 @@ public class GameManager : MonoBehaviour {
 		Door door = doorObj.AddComponent<Door>();
 		door.init(x, y, this);
 		door.transform.localPosition = new Vector3(x, y, 0);
+		door.transform.parent = doorFolder.transform;
 		return door;
 	}
 
@@ -264,6 +283,7 @@ public class GameManager : MonoBehaviour {
 		fanObj.transform.position = position;
 		Fan fan = fanObj.AddComponent<Fan>();
 		fan.init(direction);
+		fan.transform.parent = fanFolder.transform;
 		foreach (Guard g in guardList) {
 			fan.FanToggled += g.onFanToggled;
 		}
@@ -302,6 +322,7 @@ public class GameManager : MonoBehaviour {
 			chem.ChemicalToggled += guard.onChemicalToggled;
 		}
 		guard.init(getTile(x, y), this);
+		guard.transform.parent = guardFolder.transform;
 		guardList.Add(guard);
 	}
 
@@ -315,6 +336,7 @@ public class GameManager : MonoBehaviour {
 		foreach (Guard g in guardList) {
 			burner.BurnerToggled += g.onBurnerToggled;
 		}
+		burner.transform.parent = burnerFolder.transform;
 		burnerList.Add(burner);
 	}
 
@@ -326,6 +348,7 @@ public class GameManager : MonoBehaviour {
 		foreach (Guard g in guardList) {
 			chemical.ChemicalToggled += g.onChemicalToggled;
 		}
+		chemical.transform.parent = chemicalFolder.transform;
 		chemicalList.Add(chemical);
 	}
 }

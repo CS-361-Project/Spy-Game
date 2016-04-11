@@ -93,6 +93,8 @@ public class Person : MonoBehaviour {
 				}
 				else {
 					targetPositions.Clear();
+					int x = Mathf.RoundToInt(direction.normalized.x);
+					intDirection = new Vector2(x, 1 - x);
 					wander();
 				}
 			}
