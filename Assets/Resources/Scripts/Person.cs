@@ -17,6 +17,8 @@ public class Person : MonoBehaviour {
 
 	protected int viewLayerMask = 1 << 10;
 
+	protected bool beingPushed = false;
+
 	// Use this for initialization
 	public virtual void init(Tile t, GameManager m) {
 		tile = t;
@@ -79,7 +81,8 @@ public class Person : MonoBehaviour {
 	
 	// called once per frame
 	public void move() {
-		if (targetPositions.Count >= 1) {
+		if (!beingPushed && targetPositions.Count >= 1) {
+			print("Moving normally.");
 			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .1) {
 				print("Removing point");
 				targetPositions.RemoveAt(0);
@@ -102,6 +105,7 @@ public class Person : MonoBehaviour {
 			tile = gm.getClosestTile(transform.position);
 
 		}
+		beingPushed = false;
 	}
 
 	public bool canSee(Vector3 pos) {
@@ -121,6 +125,11 @@ public class Person : MonoBehaviour {
 			}
 		}
 		return false;
+	}
+
+	public void applyFanForce(Vector2 force) {
+		beingPushed = true;
+		body.AddForce(force);
 	}
 }
 

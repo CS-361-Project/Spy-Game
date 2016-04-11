@@ -35,10 +35,12 @@ public class Door : Tile {
 			col.a = 0;
 			gasRend.color = col;
 			flammable = false;
+			gameObject.layer = LayerMask.NameToLayer("Wall");
 		}
 		else {
 			rend.color = Color.grey;
 			flammable = true;
+			gameObject.layer = LayerMask.NameToLayer("Default");
 		}
 		coll.isTrigger = !closed;
 	}
