@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public class Frank : Person {
 	SpriteRenderer rend;
-	bool onFire;
 
 	public enum behavior {drinking, smoking, talking, puking};
 

@@ -39,7 +39,7 @@ public class LaserSensor : MonoBehaviour {
 		Person p = hit.collider.gameObject.GetComponent<Person>();
 		Vector2 hitPos = transform.position;
 		if (p != null) {
-			hitPos = p.transform.position;
+			hitPos = hit.point;
 			if (!alarmOn) {
 				onMotionDetected();
 			}
@@ -49,8 +49,13 @@ public class LaserSensor : MonoBehaviour {
 			hitPos = hit.point;
 			alarmOn = false;
 		}
+		else {
+			print("This shouldn't happen");
+			hitPos = (Vector2)transform.position + direction * 2000;
+		}
 		rend.color = alarmOn ? red : green;
 		setBeamEndpoint(hitPos);
+		print("Setting beam endpoint : " + hitPos);
 	}
 
 	public virtual void onMotionDetected() {
@@ -66,34 +71,19 @@ public class LaserSensor : MonoBehaviour {
 		setLaser(startTile, endTile);
 
 		laserBeam.transform.localScale = new Vector2(Vector2.Distance(pos, transform.position), 0.1f);
-		laserBeam.transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(pos.y - transform.position.y, pos.x - transform.position.x));
+		laserBeam.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(pos.y - transform.position.y, pos.x - transform.position.x));
 	}
 
 	void setLaser(Tile startTile, Tile endTile) {
-		int x0 = startTile.posX;
-		int x1 = endTile.posX;
-		if (x0 > x1) {
-			int temp = x1;
-			x1 = x0;
-			x0 = temp;
-		}
-		int y0 = startTile.posY;
-		int y1 = endTile.posY;
-		if (y0 < y1) {
-			int temp = y1;
-			y1 = y0;
-			y0 = temp;
-		}
 		foreach (Tile t in lastCoveredTiles) {
 			t.containsLaser = false;
 		}
 		lastCoveredTiles.Clear();
-		for (int x = x0; x <= x1; x++) {
-			for (int y = y0; y <= y1; y++) {
-				Tile t = gm.getTile(x, y);
-				t.containsLaser = true;
-				lastCoveredTiles.Add(t);
-			}
+		Vector2 dir = endTile.transform.position - startTile.transform.position;
+		for (float i = 0; i <= 1; i+=1/dir.magnitude) {
+			Tile t = gm.getClosestTile(Vector2.Lerp(startTile.transform.position, endTile.transform.position, i));
+			t.containsLaser = true;
+			lastCoveredTiles.Add(t);
 		}
 	}
 }

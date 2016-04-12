@@ -15,5 +15,11 @@ public class Wall : Tile {
 		flammable = false;
 		gameObject.layer = LayerMask.NameToLayer("Wall");
 	}
+
+	public override void applyFanForce(string direc, int fanPosX, int fanPosY) {
+	}
+
+	public override void removeFanForce() {
+	}
 }
 

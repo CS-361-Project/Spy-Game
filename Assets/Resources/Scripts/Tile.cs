@@ -11,13 +11,19 @@ public class Tile : MonoBehaviour {
 	protected bool flammable;
 	public float fire;
 	public float gas;
+
+	bool fanEffect;
+	string fanDirec;
+	int fanPosX;
+	int fanPosY;
+
 	public int posX;
 	public int posY;
 	public Color col;
 
 	public bool containsLaser;
 
-	float TimeBeforeSpread = 1.5f;
+	float TimeBeforeSpread = 3f;
 
 	public int section = -1;
 
@@ -27,6 +33,7 @@ public class Tile : MonoBehaviour {
 	// Use this for initialization
 	public void init (int x, int y, GameManager game, float fire, float gas, bool flammable) {
 		fireTimer = 0;
+		fanEffect = false;
 		this.flammable = flammable;
 		this.gas = gas;
 		this.fire = fire;
@@ -79,6 +86,19 @@ public class Tile : MonoBehaviour {
 		return true;
 	}
 
+	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY){
+		fanEffect = true;
+		fanDirec = direc;
+		flammable = false;
+		this.fanPosX = fanPosX;
+		this.fanPosY = fanPosY;
+	}
+
+	public virtual void removeFanForce(){
+		fanEffect = false;
+		flammable = true;
+	}
+
 	public Tile[] getNeighbors() {
 		List<Tile> neighbors = new List<Tile>();
 		for (int i = posX - 1; i <= posX + 1; i++) {
@@ -91,15 +111,44 @@ public class Tile : MonoBehaviour {
 				}
 			}
 		}
+		//Remove all neighbors effected by fan
+//		foreach(Tile neighbor in neighbors){
+//			if (fanEffect) {
+//				switch (fanDirec) {
+//					case "E":
+//						if (neighbor.posX < posX) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "S":
+//						if (neighbor.posY > posY) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "W":
+//						if (neighbor.posX > posX) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "N":
+//						if (neighbor.posY < posY) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//				}
+//			}
+//		}
+
+
 		return neighbors.ToArray();
 	}
 
 	void checkForFire(){
 		//if one of the neighbors is burning then start burning
-		foreach (Tile neighbor in getNeighbors()) {
+		Tile [] Neighbors =getNeighbors();
+		foreach (Tile neighbor in Neighbors) {
+			
 			if (neighbor.fire >= 2){
-				
-				//In the case where there is gas skip straight to a higher level of fire
 				if (gas >= 0) {
 					fire = Mathf.Max(fire, 1);
 					fire = Mathf.Min(Mathf.Max(fire, (gas*10) * fire), 3);
@@ -113,13 +162,49 @@ public class Tile : MonoBehaviour {
 	}
 
 	void checkForGas(){
-		//steal gas
-		float numToDonate = 0;
-		foreach (Tile neighbor in getNeighbors()) {
-			if (neighbor.gas < gas && neighbor.isPassable()) {
-				float amt = (gas - neighbor.gas);
-				neighbor.gas += amt * Time.deltaTime;
-				gas -= amt * Time.deltaTime;
+		if (fanEffect) {
+			if(gas>0){
+			Tile neighbor;
+			switch (fanDirec) {
+			case "E":
+				neighbor = game.getTile(posX + 1, posY);
+				if (neighbor.isPassable()) {
+						neighbor.gas = neighbor.gas + (gas/((posX-fanPosX)));
+						gas = gas-(gas / (posX - fanPosX));
+				}
+				break;
+			case "S":
+				neighbor = game.getTile(posX + 1, posY);
+				if (neighbor.isPassable()) {
+					neighbor.gas = neighbor.gas + gas;
+					gas = 0;
+				}
+				break;
+			case "W":
+				neighbor = game.getTile(posX + 1, posY);
+				if (neighbor.isPassable()) {
+					neighbor.gas = neighbor.gas + gas;
+					gas = 0;
+				}
+				break;
+			case "N":
+				neighbor = game.getTile(posX + 1, posY);
+				if (neighbor.isPassable()) {
+					neighbor.gas = neighbor.gas + gas;
+					gas = 0;
+				}
+				break;
+			}
+
+				}
+		}else {
+
+			foreach (Tile neighbor in getNeighbors()) {
+				if (neighbor.gas < gas && neighbor.isPassable()) {
+					float amt = (gas - neighbor.gas);
+					neighbor.gas += amt * Time.deltaTime;
+					gas -= amt * Time.deltaTime;
+				}
 			}
 		}
 	}

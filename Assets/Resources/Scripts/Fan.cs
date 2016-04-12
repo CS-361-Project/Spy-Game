@@ -9,8 +9,11 @@ public class Fan : MonoBehaviour {
 	SpriteRenderer rend;
 	public string direction;
 	public bool state;
+	GameManager game;
+	int posX;
+	int posY;
 
-	float viewportHeight, viewportWidth;
+	public float viewportHeight, viewportWidth;
 	Vector2 leftCorner, rightCorner;
 
 	BoxCollider2D coll;
@@ -36,7 +39,10 @@ public class Fan : MonoBehaviour {
 	// SomeClass.OnFanEnabled(object source, EventArgs e)
 
 	// Use this for initialization
-	public void init(string dir) {
+	public void init(float posX, float posY, string dir, GameManager game) {
+		this.posX = (int) posX;
+		this.posY = (int) posY;
+		this.game = game;
 		state = false;
 		position = transform.position;
 		velocity = new Vector2(1, 0);
@@ -51,10 +57,12 @@ public class Fan : MonoBehaviour {
 
 		direction = dir;
 		viewportHeight = 1F;
-		viewportWidth = 3F;
+		viewportWidth = 5F;
 		leftCorner = new Vector2(0,0);
 		rightCorner = new Vector2(0,0);
 
+
+		//TODO: correct all box drawings
 		switch (direction) {
 			case "E":
 				leftCorner = new Vector2(transform.position.x, transform.position.y - viewportHeight / 2);
@@ -94,6 +102,59 @@ public class Fan : MonoBehaviour {
 						//					c.attachedRigidbody.AddForce (new Vector2 ((1 / distance) * (Mathf.Cos (angle)), (1 / distance) * (Mathf.Cos (angle))));
 					}
 				}
+			}
+			//TODO: Tell all Tiles in box to 
+			//tile.applyFanForce(direction);
+			switch (direction) {
+			case "E":
+				for (int i = posX + 1; i < posX + 1 + viewportWidth; i++) {
+					game.getTile(i, posY).applyFanForce("E", posX,posY);
+				}
+				break;
+			case "N":
+				for (int i = posX; i < viewportWidth; i++) {
+					game.getTile(i, posY).applyFanForce("N",posX,posY);
+				}
+				break;
+			case "W":
+				leftCorner = new Vector2(transform.position.x, transform.position.y - viewportWidth);
+				rightCorner = new Vector2(transform.position.x - viewportHeight, transform.position.y + viewportWidth);
+				break;
+			case "S":
+				leftCorner = new Vector2(transform.position.x + viewportWidth, transform.position.y);
+				rightCorner = new Vector2(transform.position.x - viewportWidth, transform.position.y - viewportHeight);
+				break;
+			default:
+				print("Not a valid direction. Must be N, E, S, or W.");
+				break;
+			}
+
+
+		}
+		else
+		if (!state) {
+			switch (direction) {
+				case "E":
+					for (int i = posX + 1; i < posX + 1 + viewportWidth; i++) {
+						game.getTile(i, posY).removeFanForce();
+					}
+					break;
+				case "N":
+					for (int i = posX; i < viewportWidth; i++) {
+						game.getTile(i, posY).removeFanForce();
+					}
+					break;
+				case "W":
+					leftCorner = new Vector2(transform.position.x, transform.position.y - viewportWidth);
+					rightCorner = new Vector2(transform.position.x - viewportHeight, transform.position.y + viewportWidth);
+					break;
+				case "S":
+					leftCorner = new Vector2(transform.position.x + viewportWidth, transform.position.y);
+					rightCorner = new Vector2(transform.position.x - viewportWidth, transform.position.y - viewportHeight);
+					break;
+				default:
+					print("Not a valid direction. Must be N, E, S, or W.");
+					break;
 			}
 		}
 	}
