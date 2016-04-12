@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 				}
 				else if (x == 1 && y == 1) {
 					board[x, y] = addTile(x, y, 0);
-					addBurner(new Vector2 (x, y));
+					addFan(new Vector2 (x, y));
 				} else if((x==4 && y==3) || (x==3 && y==7) || (x==5 && y==7)){
 					board[x, y] = addDoor(x, y);
 				} else if ((x==1 && y==3) || (x==2 && y==3) || (x==3 && y==3) || (x==5 && y==3) || (x==6 && y==3) || (x==6 && y==2) || (x==6 && y==1) ){
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	void buildBoard(int width, int height){
+	/*void buildBoard(int width, int height){
 		this.width = width;
 		this.height = height;
 		board = new Tile[width, height];
@@ -93,10 +93,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-
-
-
-	}
+	}*/
 
 	Tile addTile(int x, int y, float fire){
 		GameObject tileObj = new GameObject();
@@ -234,11 +231,12 @@ public class GameManager : MonoBehaviour {
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
 
 	// register each guard to be notified when new fan is toggled
-	void addFan(Vector2 position, Vector2 direction) {
+	void addFan(Vector2 position) {
 		GameObject fanObj = new GameObject();
 		fanObj.name = "Fan";
 		fanObj.transform.position = position;
 		Fan fan = fanObj.AddComponent<Fan>();
+		
 		foreach (Guard g in guardList) {
 			fan.FanToggled += g.onFanToggled;
 		}

@@ -23,7 +23,6 @@ public class Guard : Person {
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
 		rend.color = Color.blue;
 		rend.sortingOrder = 1;
-
 		gameObject.layer = LayerMask.NameToLayer("Guard");
 
 		GameObject fovObj = new GameObject();

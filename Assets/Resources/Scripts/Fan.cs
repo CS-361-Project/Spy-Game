@@ -37,7 +37,8 @@ public class Fan : MonoBehaviour {
 		state = false;
 		position = transform.position;
 		velocity = new Vector2(1, 0);
-		coll = gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
+		coll = gameObject.AddComponent<BoxCollider2D>();
+		coll.isTrigger = true;
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 1;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
@@ -79,7 +80,9 @@ public class Fan : MonoBehaviour {
 		
 		if (state) {
 			foreach (Collider2D c in Physics2D.OverlapAreaAll(leftCorner, rightCorner)) {
-				if (c != coll && c.gameObject.name != "Wall") {
+				Debug.DrawLine (leftCorner, rightCorner);
+				if (c != coll && c.gameObject.name != "Wall" && c.gameObject.name != "Door") {
+					print (c.gameObject.name);
 					float distance = Vector2.Distance ((Vector2)coll.transform.position, (Vector2)c.transform.position);
 					float angle = Vector2.Angle ((Vector2)coll.transform.position, (Vector2)c.transform.position);
 					c.attachedRigidbody.AddForce (new Vector2 ((1 / distance) * (Mathf.Cos (angle)), (1 / distance) * (Mathf.Cos (angle))));
