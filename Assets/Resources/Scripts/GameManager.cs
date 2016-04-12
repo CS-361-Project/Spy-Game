@@ -93,12 +93,7 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else {
-
-<<<<<<< HEAD
-					board[x, y] = addTile(x, y, 0);
-=======
 					board[x, y] = addTile(x, y, 0, true);
->>>>>>> master
 				}
 			}
 		}
@@ -177,39 +172,6 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-
-	void buildLevel2(){
-		width = 15;
-		height = 15;
-		board = new Tile[width, height];
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (x == 0 || x == width-1 || y == 0 || y == height-1) {
-					board[x, y] = addWall(x, y);
-				}
-				else if (x == 1 && y == 12) {
-					board[x, y] = addTile(x, y, 0f, true);
-					//addFan(new Vector2(x, y), "E");
-					//addFrank(x,y);
-				}
-//				else if (x == 1 && y == 11) {
-//					board[x, y] = addTile(x, y, 0f, true);
-//					//addFrank(x, y);
-//				}
-//				else if ((x == 3 && y == 2) || (x == 9 && y == 2)) {
-//					board[x, y] = addTile(x, y, 0f, true);
-//					addGuard(x, y);
-//				}
-//				else if ((y == 13 || y == 11 || y == 10 || y == 9 || y == 8 || y == 7 || y == 5 || y == 4) && x ==6) {
-//					board[x, y] = addWall(x, y);
-//				}
-				else {
-					board[x, y] = addTile(x, y, 0f, true);
-				}
-			}
-		}
-	}
-
 	void buildBoard(int width, int height){
 		this.width = width;
 		this.height = height;
@@ -272,8 +234,7 @@ public class GameManager : MonoBehaviour {
 					addSensor(x, y, new Vector2(0, 1));
 				}
 				else if (x == 5 && y == 3) {
-					board[x, y] = addTile(x, y, 0f, true
-					);
+					board[x, y] = addTile(x, y, 0f, true);
 					addGuard(x, y);
 				}
 				else {
@@ -281,6 +242,28 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	void buildLevel2(){
+		width = 15;
+		height = 15;
+		board = new Tile[width, height];
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (x == 0 || x == width-1 || y == 0 || y == height-1) {
+					board[x, y] = addWall(x, y);
+				}
+				else if ((y == 4 || y == 9) && x <= 7){
+					addWall (x, y);
+				}
+				else {
+					board[x, y] = addTile(x, y, 0f, true);
+				}
+			}
+		}
+//		addFrank(1,7);
+//		addGuard(3,2);
+//		addGuard(9,2);
 	}
 
 	void constructSections(){
