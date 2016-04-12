@@ -74,7 +74,7 @@ public class Guard : Person {
 						case "Frank":
 							print("Guard sees Frank");
 							suspicion = 2f;
-							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position));
+							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position), false);
 							if (targetPositions.Count >= 2) {
 								targetPositions.RemoveAt(targetPositions.Count - 1);
 								targetPositions.RemoveAt(0);
@@ -93,18 +93,18 @@ public class Guard : Person {
 		}
 		if (patrolDirection == 1) {
 			if (targetPositions.Count <= 0) {
-				targetPositions = gm.getPath(endTile, startTile);
+				targetPositions = gm.getPath(endTile, startTile, false);
 				patrolDirection = -1;
 			}
 		}
 		else if (patrolDirection == -1) {
 			if (targetPositions.Count <= 0) {
-				targetPositions = gm.getPath(startTile, endTile);
+				targetPositions = gm.getPath(startTile, endTile, false);
 				patrolDirection = 1;
 			}
 		}
 		else if (patrolDirection == 0) {
-			wander();
+			wander(true);
 		}
 		move();
 	}
@@ -128,6 +128,20 @@ public class Guard : Person {
 		if (canSee(args.position)) {
 			suspicion += .5f;
 			print("that's supsicious");
+		}
+	}
+
+	public virtual void onMotionDetected(object source, LaserSensor.LaserEventArgs args) {
+		// TODO: System if reached source of motion and haven't seen frank, ignore that sensor for x seconds
+		// sort of a way of saying "all clear"
+		// actually would be good to send message to all other guards letting them know there's nothing to see there
+//		print("Moving to position " + args.position);
+		Tile t = gm.getClosestTile(args.position);
+		List<Vector2> path = gm.getPath(tile, t, true);
+		if (path.Count <= 15) {
+			suspicion = 2f;
+			print("Path from " + tile.transform.position + " to " + t.transform.position + " is " + path.Count + " tiles.");
+			targetPositions = path;
 		}
 	}
 }

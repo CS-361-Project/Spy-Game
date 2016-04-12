@@ -16,7 +16,7 @@ public class Door : Tile {
 		flammable = false;
 		gameObject.layer = LayerMask.NameToLayer("Wall");
 		//True is door is closed, False is door is open
-		closed = true;
+		closed = false;
 
 		toggle();
 	}

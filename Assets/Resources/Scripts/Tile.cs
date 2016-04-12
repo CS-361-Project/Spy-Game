@@ -19,7 +19,11 @@ public class Tile : MonoBehaviour {
 	public int posY;
 	public Color col;
 
+	public bool containsLaser;
+
 	float TimeBeforeSpread = 1.5f;
+
+	public int section = -1;
 
 	//Used for path finding
 	public int dist = -1;
@@ -50,6 +54,7 @@ public class Tile : MonoBehaviour {
 		col.a = 0f;
 		gasRend.color = col;
 
+		containsLaser = false;
 	}
 	
 	// Update is called once per frame
