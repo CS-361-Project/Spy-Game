@@ -13,7 +13,7 @@ public class Fan : MonoBehaviour {
 	int posX;
 	int posY;
 
-	float viewportHeight, viewportWidth;
+	public float viewportHeight, viewportWidth;
 	Vector2 leftCorner, rightCorner;
 
 	BoxCollider2D coll;
@@ -108,12 +108,12 @@ public class Fan : MonoBehaviour {
 			switch (direction) {
 			case "E":
 				for (int i = posX + 1; i < posX + 1 + viewportWidth; i++) {
-					game.getTile(i, posY).applyFanForce("E");
+					game.getTile(i, posY).applyFanForce("E", posX,posY);
 				}
 				break;
 			case "N":
 				for (int i = posX; i < viewportWidth; i++) {
-					game.getTile(i, posY).applyFanForce("N");
+					game.getTile(i, posY).applyFanForce("N",posX,posY);
 				}
 				break;
 			case "W":
@@ -136,12 +136,12 @@ public class Fan : MonoBehaviour {
 			switch (direction) {
 				case "E":
 					for (int i = posX + 1; i < posX + 1 + viewportWidth; i++) {
-						game.getTile(i, posY).unApplyFanForce();
+						game.getTile(i, posY).removeFanForce();
 					}
 					break;
 				case "N":
 					for (int i = posX; i < viewportWidth; i++) {
-						game.getTile(i, posY).unApplyFanForce();
+						game.getTile(i, posY).removeFanForce();
 					}
 					break;
 				case "W":

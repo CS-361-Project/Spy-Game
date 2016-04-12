@@ -103,14 +103,17 @@ public class GameManager : MonoBehaviour {
 		board = new Tile[width, height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+				if (x == 0 || x == width - 1 || y == 0 || y == height - 1 || x == 1 && y == 2 || x == 2 && y == 2 || x == 3 && y == 2 || x == 4 && y == 2 || x == 5 && y == 2) {
 					board[x, y] = addWall(x, y);
 				}
-				else if (x == 1 && y == 1) {
+				else
+				if (x == 2 && y == 1) {
 					board[x, y] = addTile(x, y, 0);
-					//addBurner(new Vector2 (x, y));
-				} else if(x==4 && y==5){
-					board[x, y] = addDoor(x, y);
+					addBurner(new Vector2(x, y));
+				}
+				else
+				if (x == 5 && y == 1) {
+					board[x,y] = addDoor(x, y);
 				}
 				else {
 					board[x, y] = addTile(x, y, 0);
