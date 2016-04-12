@@ -63,9 +63,9 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		count++;
-//		if (count == 150) {
-//			getTile(1, 1).setFire(1);
-//		}
+		/*if (count == 150) {
+			getTile(1, 1).setFire(1);
+		}*/
 	}
 
 	void buildLevel(int width, int height){
@@ -79,16 +79,8 @@ public class GameManager : MonoBehaviour {
 				}
 				else if (x == 1 && y == 1) {
 					board[x, y] = addTile(x, y, 0);
-<<<<<<< HEAD
-					addFan(new Vector2 (x, y));
-=======
 					//addBurner(new Vector2 (x, y));
-<<<<<<< HEAD
->>>>>>> origin/sam-dev
-				} else if((x==4 && y==3) || (x==3 && y==7) || (x==5 && y==7)){
-=======
 				} else if((x==4 && y==3) || (x==3 && y==7) || (x==6 && y==1)){
->>>>>>> master
 					board[x, y] = addDoor(x, y);
 				} else if ((x==1 && y==3) || (x==2 && y==3) || (x==3 && y==3) || (x==5 && y==3) || (x==6 && y==3) || (x==6 && y==2) || (x==6 && y==1) ){
 					board[x, y] = addWall(x, y);
@@ -97,13 +89,13 @@ public class GameManager : MonoBehaviour {
 				}
 				else {
 
-						board[x, y] = addTile(x, y, 0);
+					board[x, y] = addTile(x, y, 0);
 				}
 			}
 		}
 	}
 
-	/*void buildBoard(int width, int height){
+	void buildBoard(int width, int height){
 		this.width = width;
 		this.height = height;
 		board = new Tile[width, height];
@@ -126,11 +118,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-<<<<<<< HEAD
-	}*/
-=======
 	}
->>>>>>> origin/sam-dev
 
 	void constructSections(){
 		int numSections = 0;
@@ -328,24 +316,14 @@ public class GameManager : MonoBehaviour {
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
 
 	// register each guard to be notified when new fan is toggled
-<<<<<<< HEAD
-	void addFan(Vector2 position) {
-=======
+
 	void addFan(Vector2 position, string direction) {
->>>>>>> origin/sam-dev
 		GameObject fanObj = new GameObject();
 		fanObj.name = "Fan";
 		fanObj.transform.position = position;
 		Fan fan = fanObj.AddComponent<Fan>();
-<<<<<<< HEAD
-		
-=======
 		fan.init(direction);
-<<<<<<< HEAD
->>>>>>> origin/sam-dev
-=======
 		fan.transform.parent = fanFolder.transform;
->>>>>>> master
 		foreach (Guard g in guardList) {
 			fan.FanToggled += g.onFanToggled;
 		}

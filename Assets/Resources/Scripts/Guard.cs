@@ -46,6 +46,7 @@ public class Guard : Person {
 	
 	// Update is called once per frame
 	void Update() {
+		checkForFire ();
 		fovDisplay.setDirection(direction);
 		if (suspicion >= 1f) {
 			if (alert == null) {
@@ -106,6 +107,13 @@ public class Guard : Person {
 			wander(true);
 		}
 		move();
+	}
+
+	public void checkForFire(){
+		if (gm.getClosestTile ((Vector2)transform.position).fire >= 2) {
+			onFire ();
+			rend.color = Color.red;
+		}
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {

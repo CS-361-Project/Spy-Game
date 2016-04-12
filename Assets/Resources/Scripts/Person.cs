@@ -154,5 +154,9 @@ public class Person : MonoBehaviour {
 		beingPushed = true;
 		body.AddForce(force);
 	}
+
+	public void onFire(){
+
+	}
 }
 
