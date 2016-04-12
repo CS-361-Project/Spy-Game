@@ -231,8 +231,8 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	public List<Vector2> getPath(Tile start, Tile end, bool ignoreDoors) {
-//		return optimizePath(pathToPoints(getTilePath(start, end, ignoreDoors)));
-		return pathToPoints(getTilePath(start, end, ignoreDoors));
+		return optimizePath(pathToPoints(getTilePath(start, end, ignoreDoors)));
+//		return pathToPoints(getTilePath(start, end, ignoreDoors));
 	}
 
 	public List<Vector2> optimizePath(List<Vector2> path) {
@@ -313,7 +313,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		if (!foundPath) {
-			print("No path from " + startTile.transform.position + " to " + endTile.transform.position);
+//			print("No path from " + startTile.transform.position + " to " + endTile.transform.position);
 			resetPathTiles();
 			return new List<Tile>();
 		}
@@ -329,7 +329,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-		print("Found path of length " + path.Count + " from " + path[0].transform.position + " to " + path[path.Count - 1].transform.position);
+//		print("Found path of length " + path.Count + " from " + path[0].transform.position + " to " + path[path.Count - 1].transform.position);
 		path.Reverse();
 		resetPathTiles();
 		return path;

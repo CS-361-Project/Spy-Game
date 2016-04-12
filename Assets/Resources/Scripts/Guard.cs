@@ -30,6 +30,7 @@ public class Guard : Person {
 		GameObject fovObj = new GameObject();
 		fovObj.name = "FOV";
 		fovObj.transform.parent = transform;
+		fovObj.transform.localScale = new Vector3(1 / .7f, 1 / .7f, 1);
 		fovDisplay = fovObj.AddComponent<FOV>();
 		fovDisplay.init(viewDistance);
 
@@ -140,7 +141,7 @@ public class Guard : Person {
 		List<Vector2> path = gm.getPath(tile, t, true);
 		if (path.Count <= 15) {
 			suspicion = 2f;
-			print("Path from " + tile.transform.position + " to " + t.transform.position + " is " + path.Count + " tiles.");
+//			print("Path from " + tile.transform.position + " to " + t.transform.position + " is " + path.Count + " tiles.");
 			targetPositions = path;
 		}
 	}
