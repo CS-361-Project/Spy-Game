@@ -13,7 +13,7 @@ public class Fan : MonoBehaviour {
 	int posX;
 	int posY;
 
-	float viewportHeight, viewportWidth;
+	public float viewportHeight, viewportWidth;
 	Vector2 leftCorner, rightCorner;
 
 	BoxCollider2D coll;
