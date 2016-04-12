@@ -57,7 +57,7 @@ public class Fan : MonoBehaviour {
 
 		direction = dir;
 		viewportHeight = 1F;
-		viewportWidth = 3F;
+		viewportWidth = 5F;
 		leftCorner = new Vector2(0,0);
 		rightCorner = new Vector2(0,0);
 

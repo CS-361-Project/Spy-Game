@@ -42,19 +42,21 @@ public class GameManager : MonoBehaviour {
 		sensorFolder = new GameObject();
 		sensorFolder.name = "Sensors";
 		//buildBoard(10, 10);
-		buildTestChamber(10, 10);
+//		buildLevel(10, 10);
+//		buildTestChamber(10, 10);
 //		addGuard(2, 3);
 //		addGuard(2, 4);
-		addGuard(4, 2);
-		addGuard(3, 2);
-		addGuard(2, 2);
-		addGuard(1, 2);
-		addFrank (5, 4);
-		addFan(new Vector2(2, 1), "E");
-		addFan(new Vector2(1, 6), "E");
-		addSensor(1, 2, new Vector2(1, 0));
+//		addGuard(4, 2);
+//		addGuard(3, 2);
+//		addGuard(2, 2);
+//		addGuard(1, 2);
+//		addFrank (5, 4);
+//		addFan(new Vector2(2, 1), "E");
+//		addFan(new Vector2(1, 6), "E");
+//		addSensor(1, 2, new Vector2(1, 0));
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
+		buildLevel1();
 		constructSections();
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
@@ -62,12 +64,12 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		count++;
-		if (count == 150) {
-			getTile(6, 6).setFire(1);
-		}
+//		count++;
+//		if (count == 150) {
+//			getTile(6, 6).setFire(1);
+//		}
 	}
-
+	#region building levels
 	void buildLevel(int width, int height){
 		this.width = width;
 		this.height = height;
@@ -142,6 +144,53 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	void buildLevel1() {
+		board = new Tile[15, 15];
+		width = 15;
+		height = 15;
+		for (int x = 0; x < 15; x++) {
+			for (int y = 0; y < 15; y++) {
+				if (x == 0 || x == 14 || y == 0 || y == 14) {
+					board[x, y] = addWall(x, y);
+				}
+				else if (x == 7 && y == 2) {
+					board[x, y] = addTile(x, y, 0f);
+					addFan(new Vector2(x, y), "E");
+				}
+				else if (x == 4 && y == 7) {
+					board[x, y] = addTile(x, y, 0f);
+					addFrank(x, y);
+				}
+				else if ((x == 5 && y == 13) || (x == 6 && y == 11)) {
+					board[x, y] = addTile(x, y, 0f);
+					addGuard(x, y);
+				}
+				else if ((y == 4 || y == 8) && x < 10) {
+					board[x, y] = addWall(x, y);
+				}
+				else if (x == 10) {
+					if (y == 2 || y == 6 || y == 11) {
+						board[x, y] = addDoor(x, y);
+					}
+					else {
+						board[x, y] = addWall(x, y);
+					}
+				}
+				else if (x == 12 && y == 1) {
+					board[x, y] = addTile(x, y, 0f);
+					addSensor(x, y, new Vector2(0, 1));
+				}
+				else if (x == 5 && y == 3) {
+					board[x, y] = addTile(x, y, 0f);
+					addGuard(x, y);
+				}
+				else {
+					board[x, y] = addTile(x, y, 0f);
+				}
+			}
+		}
+	}
+
 	void constructSections(){
 		int numSections = 0;
 		sections = new List<Tile[]>();
@@ -173,33 +222,7 @@ public class GameManager : MonoBehaviour {
 	Tile[] getSection(int sectionNum){
 		return sections[sectionNum];
 	}
-
-	Tile addTile(int x, int y, float fire){
-		GameObject tileObj = new GameObject();
-		Tile tile = tileObj.AddComponent<Tile>();
-		tile.init(x,y,this, fire, 0, true);
-		tile.transform.localPosition = new Vector3(x, y, 0);
-		tile.transform.parent = tileFolder.transform;
-		return tile;
-	}
-
-	Wall addWall(int x, int y) {
-		GameObject wallObj = new GameObject();
-		Wall wall = wallObj.AddComponent<Wall>();
-		wall.init(x, y, this);
-		wall.transform.localPosition = new Vector3(x, y, 0);
-		wall.transform.parent = wallFolder.transform;
-		return wall;
-	}
-
-	Door addDoor(int x, int y) {
-		GameObject doorObj = new GameObject();
-		Door door = doorObj.AddComponent<Door>();
-		door.init(x, y, this);
-		door.transform.localPosition = new Vector3(x, y, 0);
-		door.transform.parent = doorFolder.transform;
-		return door;
-	}
+	#endregion
 
 	public Tile getTile(int x,int y){
 		if (onBoard(x, y)) {
@@ -229,7 +252,8 @@ public class GameManager : MonoBehaviour {
 			t.dist = -1;
 		}
 	}
-	
+
+	#region pathfinding
 	public List<Vector2> getPath(Tile start, Tile end, bool ignoreDoors) {
 		return optimizePath(pathToPoints(getTilePath(start, end, ignoreDoors)));
 //		return pathToPoints(getTilePath(start, end, ignoreDoors));
@@ -334,7 +358,35 @@ public class GameManager : MonoBehaviour {
 		resetPathTiles();
 		return path;
 	}
+	#endregion
+	#region addObjects
 
+	Tile addTile(int x, int y, float fire){
+		GameObject tileObj = new GameObject();
+		Tile tile = tileObj.AddComponent<Tile>();
+		tile.init(x,y,this, fire, 0, true);
+		tile.transform.localPosition = new Vector3(x, y, 0);
+		tile.transform.parent = tileFolder.transform;
+		return tile;
+	}
+
+	Wall addWall(int x, int y) {
+		GameObject wallObj = new GameObject();
+		Wall wall = wallObj.AddComponent<Wall>();
+		wall.init(x, y, this);
+		wall.transform.localPosition = new Vector3(x, y, 0);
+		wall.transform.parent = wallFolder.transform;
+		return wall;
+	}
+
+	Door addDoor(int x, int y) {
+		GameObject doorObj = new GameObject();
+		Door door = doorObj.AddComponent<Door>();
+		door.init(x, y, this);
+		door.transform.localPosition = new Vector3(x, y, 0);
+		door.transform.parent = doorFolder.transform;
+		return door;
+	}
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
 
 	// register each guard to be notified when new fan is toggled
@@ -377,7 +429,6 @@ public class GameManager : MonoBehaviour {
 		sensor.transform.parent = sensorFolder.transform;
 		sensorList.Add(sensor);
 	}
-
 
 	// register each guard to be notified when a fan is toggled
 	void addGuard(int x, int y) {
@@ -426,5 +477,6 @@ public class GameManager : MonoBehaviour {
 		chemical.transform.parent = chemicalFolder.transform;
 		chemicalList.Add(chemical);
 	}
+	#endregion
 }
 
