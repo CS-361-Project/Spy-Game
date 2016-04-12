@@ -14,6 +14,8 @@ public class Tile : MonoBehaviour {
 
 	bool fanEffect;
 	string fanDirec;
+	int fanPosX;
+	int fanPosY;
 
 	public int posX;
 	public int posY;
@@ -21,7 +23,7 @@ public class Tile : MonoBehaviour {
 
 	public bool containsLaser;
 
-	float TimeBeforeSpread = 1.5f;
+	float TimeBeforeSpread = 3f;
 
 	public int section = -1;
 
@@ -84,13 +86,15 @@ public class Tile : MonoBehaviour {
 		return true;
 	}
 
-	public void applyFanForce(string direc){
+	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY){
 		fanEffect = true;
 		fanDirec = direc;
 		flammable = false;
+		this.fanPosX = fanPosX;
+		this.fanPosY = fanPosY;
 	}
 
-	public void unApplyFanForce(){
+	public virtual void removeFanForce(){
 		fanEffect = false;
 		flammable = true;
 	}
@@ -158,13 +162,49 @@ public class Tile : MonoBehaviour {
 	}
 
 	void checkForGas(){
-		//steal gas
-		float numToDonate = 0;
-		foreach (Tile neighbor in getNeighbors()) {
-			if (neighbor.gas < gas && neighbor.isPassable()) {
-				float amt = (gas - neighbor.gas);
-				neighbor.gas += amt * Time.deltaTime;
-				gas -= amt * Time.deltaTime;
+		if (fanEffect) {
+			if(gas>0){
+			Tile neighbor;
+			switch (fanDirec) {
+			case "E":
+				neighbor = game.getTile(posX + 1, posY);
+				if (neighbor.isPassable()) {
+						neighbor.gas = neighbor.gas + (gas/((posX-fanPosX)));
+						gas = gas-(gas / (posX - fanPosX));
+				}
+				break;
+			case "S":
+				neighbor = game.getTile(posX + 1, posY);
+				if (neighbor.isPassable()) {
+					neighbor.gas = neighbor.gas + gas;
+					gas = 0;
+				}
+				break;
+			case "W":
+				neighbor = game.getTile(posX + 1, posY);
+				if (neighbor.isPassable()) {
+					neighbor.gas = neighbor.gas + gas;
+					gas = 0;
+				}
+				break;
+			case "N":
+				neighbor = game.getTile(posX + 1, posY);
+				if (neighbor.isPassable()) {
+					neighbor.gas = neighbor.gas + gas;
+					gas = 0;
+				}
+				break;
+			}
+
+				}
+		}else {
+
+			foreach (Tile neighbor in getNeighbors()) {
+				if (neighbor.gas < gas && neighbor.isPassable()) {
+					float amt = (gas - neighbor.gas);
+					neighbor.gas += amt * Time.deltaTime;
+					gas -= amt * Time.deltaTime;
+				}
 			}
 		}
 	}

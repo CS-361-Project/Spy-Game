@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour {
 		sensorFolder.name = "Sensors";
 		//buildBoard(10, 10);
 		buildTestChamber(10, 10);
+		//buildLevel(10,10);
 //		addGuard(2, 3);
 //		addGuard(2, 4);
 		addGuard(4, 2);
@@ -62,10 +63,10 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		count++;
-		if (count == 150) {
-			getTile(6, 6).setFire(1);
-		}
+//		count++;
+//		if (count == 150) {
+//			getTile(6, 6).setFire(1);
+//		}
 	}
 
 	void buildLevel(int width, int height){
@@ -106,7 +107,7 @@ public class GameManager : MonoBehaviour {
 				}
 				else if (x == 1 && y == 1) {
 					board[x, y] = addTile(x, y, 0);
-					//addBurner(new Vector2 (x, y));
+					addBurner(new Vector2 (x, y));
 				} else if(x==4 && y==5){
 					board[x, y] = addDoor(x, y);
 				}
