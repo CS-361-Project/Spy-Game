@@ -11,6 +11,7 @@ public class Guard : Person {
 	FOV fovDisplay;
 
 	Tile startTile, endTile;
+	[SerializeField]
 	int patrolDirection;
 
 
@@ -35,9 +36,12 @@ public class Guard : Person {
 
 		startTile = t;
 		endTile = m.getTile(4, 6);
-		patrolDirection = 1;
-		targetPositions = gm.getPath(startTile, endTile);
-		speed = 2f;
+		patrolDirection = 0;
+//		targetPositions = gm.getPath(tile, endTile);
+		targetPositions = new List<Vector2>();
+		Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
+		Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
+		speed = 1f;
 	}
 	
 	// Update is called once per frame
@@ -56,30 +60,29 @@ public class Guard : Person {
 				Destroy(alert.gameObject);
 			}
 		}
-		if (patrolDirection == 1 && currPosIndex == targetPositions.Count - 1) {
-			print("finished path in direction 1");
-			targetPositions = gm.getPath(endTile, startTile);
-			patrolDirection = -1;
-			currPosIndex = 0;
+//		if (targetPositions.Count > 0) {
+//			print("Count: " + targetPositions.Count);
+//		}
+		if (patrolDirection == 2) {
+			patrolDirection = 0;
 		}
-		else if (patrolDirection == -1 && currPosIndex == targetPositions.Count - 1) {
-			print("finished path in direction -1");
-			targetPositions = gm.getPath(startTile, endTile);
-			patrolDirection = 1;
-			currPosIndex = 0;
-		}
-
-		move();
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
-			//TODO: Make sure it's not something boring like a wall
 			if (c != coll && c.gameObject.name != "Wall") {
-				if (canSee(c.transform.position)) {
+				if (Vector2.Distance(c.transform.position, transform.position) <= viewDistance / 2 || canSee(c.transform.position)) {
 					switch (c.gameObject.name) {
 						case "Frank":
+							print("Guard sees Frank");
 							suspicion = 2f;
+							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position));
+							if (targetPositions.Count >= 2) {
+								targetPositions.RemoveAt(targetPositions.Count - 1);
+								targetPositions.RemoveAt(0);
+							}
+							targetPositions.Add(c.transform.position);
+							patrolDirection = 2;
 							break;
 						case "Chemical":
-							if (c.gameObject.GetComponent<Chemical>().state) {
+							if (c.gameObject.GetComponent<Chemical>().spilled) {
 								suspicion += .25f;
 							}
 							break;
@@ -87,6 +90,22 @@ public class Guard : Person {
 				}
 			}
 		}
+		if (patrolDirection == 1) {
+			if (targetPositions.Count <= 0) {
+				targetPositions = gm.getPath(endTile, startTile);
+				patrolDirection = -1;
+			}
+		}
+		else if (patrolDirection == -1) {
+			if (targetPositions.Count <= 0) {
+				targetPositions = gm.getPath(startTile, endTile);
+				patrolDirection = 1;
+			}
+		}
+		else if (patrolDirection == 0) {
+			wander();
+		}
+		move();
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {

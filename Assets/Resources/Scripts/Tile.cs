@@ -77,8 +77,11 @@ public class Tile : MonoBehaviour {
 		List<Tile> neighbors = new List<Tile>();
 		for (int i = posX - 1; i <= posX + 1; i++) {
 			for (int j = posY - 1; j <= posY + 1; j++) {
-				if ((i != posX || j != posY) && (i == posX || j == posY) && !(i==posX&&j==posY) && (i > -1 && i < game.width) && (j > -1 && j < game.height)) {
-					neighbors.Add(game.getTile(i, j));
+				if (i == posX ^ j == posY) {
+					Tile t = game.getTile(i, j);
+					if (t != null) {
+						neighbors.Add(t);
+					}
 				}
 			}
 		}

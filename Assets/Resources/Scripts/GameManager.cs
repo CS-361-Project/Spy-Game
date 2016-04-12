@@ -20,11 +20,15 @@ public class GameManager : MonoBehaviour {
 		chemicalList = new List<Chemical> ();
 		//buildBoard(10, 10);
 		buildLevel(10, 10);
-		addGuard(2, 3);
-		addGuard(2, 4);
+//		addGuard(2, 3);
+//		addGuard(2, 4);
+		addGuard(4, 2);
+		addGuard(3, 2);
+		addGuard(2, 2);
 		addGuard(1, 2);
 		addFrank (5, 4);
-		//addFan(new Vector2(4, 1), new Vector2(-1, 0));
+		addFan(new Vector2(2, 1), "E");
+		addFan(new Vector2(1, 6), "E");
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 
@@ -51,7 +55,11 @@ public class GameManager : MonoBehaviour {
 				}
 				else if (x == 1 && y == 1) {
 					board[x, y] = addTile(x, y, 0);
+<<<<<<< HEAD
 					addFan(new Vector2 (x, y));
+=======
+					//addBurner(new Vector2 (x, y));
+>>>>>>> origin/sam-dev
 				} else if((x==4 && y==3) || (x==3 && y==7) || (x==5 && y==7)){
 					board[x, y] = addDoor(x, y);
 				} else if ((x==1 && y==3) || (x==2 && y==3) || (x==3 && y==3) || (x==5 && y==3) || (x==6 && y==3) || (x==6 && y==2) || (x==6 && y==1) ){
@@ -65,9 +73,6 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-
-
-
 	}
 
 	/*void buildBoard(int width, int height){
@@ -86,14 +91,18 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addDoor(x, y);
 				}
 				else {
-					if (UnityEngine.Random.value > .9f)
+					if (UnityEngine.Random.value > 1f)
 						board[x, y] = addWall(x, y);
 					else
 						board[x, y] = addTile(x, y, 0);
 				}
 			}
 		}
+<<<<<<< HEAD
 	}*/
+=======
+	}
+>>>>>>> origin/sam-dev
 
 	Tile addTile(int x, int y, float fire){
 		GameObject tileObj = new GameObject();
@@ -120,12 +129,21 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public Tile getTile(int x,int y){
-		return board[x, y];
+		if (onBoard(x, y)) {
+			return board[x, y];
+		}
+		else {
+			return null;
+		}
+	}
+
+	public bool onBoard(int x, int y) {
+		return x >= 0 && x < width && y >= 0 && y < height;
 	}
 
 	public Tile getClosestTile(Vector2 check){
-		int i = (int)Mathf.Floor(check.x);
-		int j = (int)Mathf.Floor(check.y);
+		int i = (int)Mathf.RoundToInt(check.x);
+		int j = (int)Mathf.RoundToInt(check.y);
 		return getTile(i, j);
 	}
 
@@ -141,9 +159,17 @@ public class GameManager : MonoBehaviour {
 	
 	public List<Vector2> getPath(Tile start, Tile end) {
 		return optimizePath(pathToPoints(getTilePath(start, end)));
+		/*List<Vector2> result = pathToPoints(getTilePath(start, end));
+		for (int i = 0; i < result.Count - 1; i++) {
+			Debug.DrawLine(result[i], result[i + 1], new Color(.25f, (float)i / (float)(result.Count-1), (float)i / (float)(result.Count-1)));
+		}
+		return result;*/
 	}
 
 	public List<Vector2> optimizePath(List<Vector2> path) {
+		if (path.Count  < 3) {
+			return path;
+		}
 		float[] S = new float[path.Count];
 		List<Vector2>[] allPaths = new List<Vector2>[path.Count];
 
@@ -165,11 +191,11 @@ public class GameManager : MonoBehaviour {
 			S[i] = minDist;
 			allPaths[i] = new List<Vector2>();
 			allPaths[i].Add(path[i]);
-//			allPaths[i].AddRange(allPaths[minDistIndex]);
 			foreach (Vector2 v in allPaths[minDistIndex]) {
 				allPaths[i].Add(v);
 			}
 		}
+		allPaths[0].RemoveAt(0);
 		return allPaths[0];
 	}
 
@@ -179,6 +205,8 @@ public class GameManager : MonoBehaviour {
 		Vector2 perpVec = new Vector2(v.normalized.y, -v.normalized.x);
 		RaycastHit2D rayHit = Physics2D.Raycast(pos1 + perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
 		RaycastHit2D rayHit2 = Physics2D.Raycast(pos1 - perpVec * playerRad, v.normalized, v.magnitude, 1 << 10);
+//		Debug.DrawRay(pos1 + perpVec * playerRad, v);
+//		Debug.DrawRay(pos1 - perpVec * playerRad, v);
 		return (rayHit.collider != null || rayHit2.collider != null);
 
 	}
@@ -194,6 +222,7 @@ public class GameManager : MonoBehaviour {
 	public List<Tile> getTilePath(Tile startTile,Tile endTile){
 		List<Tile> queue = new List<Tile>();
 		startTile.dist = 0;
+		bool foundPath = false;
 		queue.Add(startTile);
 		while (queue.Count > 0) {
 			Tile currTile = queue[0];
@@ -209,8 +238,13 @@ public class GameManager : MonoBehaviour {
 					queue.Add(neighbor);
 				}
 			}
-			if (end)
+			if (end) {
+				foundPath = true;
 				break;
+			}
+		}
+		if (!foundPath) {
+			return new List<Tile>();
 		}
 		List<Tile> path = new List<Tile>();
 		path.Add(endTile);
@@ -220,6 +254,7 @@ public class GameManager : MonoBehaviour {
 				if (neighbor.dist == curr.dist - 1) {
 					curr = neighbor;
 					path.Add(curr);
+					break;
 				}
 			}
 		}
@@ -231,12 +266,20 @@ public class GameManager : MonoBehaviour {
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
 
 	// register each guard to be notified when new fan is toggled
+<<<<<<< HEAD
 	void addFan(Vector2 position) {
+=======
+	void addFan(Vector2 position, string direction) {
+>>>>>>> origin/sam-dev
 		GameObject fanObj = new GameObject();
 		fanObj.name = "Fan";
 		fanObj.transform.position = position;
 		Fan fan = fanObj.AddComponent<Fan>();
+<<<<<<< HEAD
 		
+=======
+		fan.init(direction);
+>>>>>>> origin/sam-dev
 		foreach (Guard g in guardList) {
 			fan.FanToggled += g.onFanToggled;
 		}
