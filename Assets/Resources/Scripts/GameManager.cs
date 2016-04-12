@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour {
 	public int height;
 	int count;
 
+	int finishX = 0;
+	int finishY = 0;
+
 	List<Tile[]> sections;
 
 	// Use this for initialization
@@ -57,7 +60,6 @@ public class GameManager : MonoBehaviour {
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 		buildLevel1();
-		constructSections();
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
 	}
@@ -90,8 +92,7 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else {
-
-						board[x, y] = addTile(x, y, 0);
+					board[x, y] = addTile(x, y, 0);
 				}
 			}
 		}
@@ -162,7 +163,6 @@ public class GameManager : MonoBehaviour {
 				}
 				else if (x == 4 && y == 7) {
 					board[x, y] = addTile(x, y, 0f);
-					addFrank(x, y);
 				}
 				else if ((x == 5 && y == 13) || (x == 6 && y == 11)) {
 					board[x, y] = addTile(x, y, 0f);
@@ -170,6 +170,13 @@ public class GameManager : MonoBehaviour {
 				}
 				else if ((y == 4 || y == 8) && x < 10) {
 					board[x, y] = addWall(x, y);
+				}
+				else if (y == 5 && x > 10 && x < width) {
+					if (x == 12) {
+						board[x, y] = addDoor(x, y);
+					}
+					else
+						board[x, y] = addWall(x, y);
 				}
 				else if (x == 10) {
 					if (y == 2 || y == 6 || y == 11) {
@@ -192,6 +199,23 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
+		constructSections();
+		finishX = 1;
+		finishY = 12;
+		addFrank(4, 7);
+	}
+
+	public int[] planSectionPath(Tile startTile, Tile endTile){
+		List<int> integers = new List<int>();
+		List<Tile> pathTiles = getTilePath(startTile, endTile, true);
+		int currentSection = -1;
+		foreach (Tile t in pathTiles) {
+			if (t.section != currentSection && t.section > -1) {
+				currentSection = t.section;
+				integers.Add(currentSection);
+			}
+		}
+		return integers.ToArray();
 	}
 
 	void constructSections(){
@@ -222,7 +246,8 @@ public class GameManager : MonoBehaviour {
 		return sectionMembers.ToArray();
 	}
 
-	Tile[] getSection(int sectionNum){
+	public Tile[] getSection(int sectionNum){
+		print(sections.Count + ":" + sectionNum);
 		return sections[sectionNum];
 	}
 	#endregion
@@ -247,7 +272,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public Tile getFinishTile() {
-		return getTile(width - 2, 1);
+		return getTile(finishX, finishY);
 	}
 
 	public void resetPathTiles(){

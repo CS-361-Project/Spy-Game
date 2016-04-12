@@ -13,6 +13,8 @@ public class Frank : Person {
 
 	FrankIcon icon;
 
+	int[] sectionPath;
+
 	// Use this for initialization
 	public override void init (Tile t, GameManager man) {
 		base.init(t, man);
@@ -46,6 +48,11 @@ public class Frank : Person {
 		direction = new Vector2 (1f, 0f);
 
 		//targetPositions = gm.getPath(t, gm.getTile(7, 1));
+
+		sectionPath = gm.planSectionPath(t, gm.getFinishTile());
+
+		print(sectionPath.GetLength(0));
+
 		print(gm.getTile(3, 1).isPassable());
 		targetPositions = new List<Vector2>();
 		print(targetPositions.Count);
@@ -54,7 +61,22 @@ public class Frank : Person {
 	}
 	// Update is called once per frame
 	void Update () {
-		wander(false);
+		int currSection = tile.section;
+		for (int i = sectionPath.GetLength(0) - 1; i >= 0; i--) {
+			print(sectionPath[i] + " m " + i);
+			if (currSection == sectionPath[i]) {
+				//wander(false);
+				frankWander();
+				break;
+			}
+			List<Vector2> points = gm.getPath(tile, gm.getSection(sectionPath[i])[2], false);
+//			print(gm.getSection(sectionPath[i])[0].transform.position);
+			if (points.Count > 0) {
+				print("Trying to get from " + points[0] + " to " + points[points.Count - 1]);
+				targetPositions = points;
+				break;
+			}
+		}
 		move();
 		clock += Time.deltaTime;
 		lookAround();
@@ -62,6 +84,19 @@ public class Frank : Person {
 			clock = 0;
 			updateToDoList ();
 
+		}
+	}
+
+	public override void wander(bool something){
+		
+	}
+
+	void frankWander(){
+		if (tile.section == gm.getFinishTile().section)
+			targetPositions = gm.getPath(tile, gm.getFinishTile(),false);
+		else if (targetPositions.Count == 0) {
+			Tile[] sectionTiles = gm.getSection(tile.section);
+			targetPositions = gm.getPath(tile, sectionTiles[UnityEngine.Random.Range(0, sectionTiles.GetLength(0))],false);
 		}
 	}
 

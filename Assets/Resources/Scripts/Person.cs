@@ -54,7 +54,7 @@ public class Person : MonoBehaviour {
 		}
 	}
 
-	public void wander(bool avoidLasers) {
+	public virtual void wander(bool avoidLasers) {
 		if (targetPositions.Count == 0) {
 			intDirection.Normalize();
 			Vector2 dir = intDirection;

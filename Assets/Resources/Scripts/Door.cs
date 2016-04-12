@@ -17,7 +17,6 @@ public class Door : Tile {
 		gameObject.layer = LayerMask.NameToLayer("Wall");
 		//True is door is closed, False is door is open
 		closed = false;
-
 		toggle();
 	}
 
@@ -28,7 +27,7 @@ public class Door : Tile {
 	public void toggle() {
 		closed = !closed;
 		if (closed) {
-			rend.color = Color.black;
+			rend.color = Color.cyan;
 			//kill fire and gas
 			fire = 0;
 			gas = 0;
@@ -38,7 +37,7 @@ public class Door : Tile {
 			gameObject.layer = LayerMask.NameToLayer("Wall");
 		}
 		else {
-			rend.color = new Color(0, 0, 0, 0.1f);
+			rend.color = new Color(0f, 0, 0f, 0.1f);
 			flammable = true;
 			gameObject.layer = LayerMask.NameToLayer("Default");
 		}

@@ -15,6 +15,8 @@ public class LaserSensor : MonoBehaviour {
 	Color red = new Color(1, 0, 0, 0.8f);
 	Color green = new Color(0, 1, 0, 0.8f);
 
+	const int layerMask = 1 << 8 | 1 << 9 | 1 << 10 | 1 << 11;
+
 	public class LaserEventArgs : EventArgs {
 		public Vector2 position { get; set; }
 	}
@@ -35,7 +37,7 @@ public class LaserSensor : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 2000);
+		RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 2000, layerMask);
 		Person p = hit.collider.gameObject.GetComponent<Person>();
 		Vector2 hitPos = transform.position;
 		if (p != null) {
@@ -80,7 +82,7 @@ public class LaserSensor : MonoBehaviour {
 		}
 		lastCoveredTiles.Clear();
 		Vector2 dir = endTile.transform.position - startTile.transform.position;
-		for (float i = 0; i <= 1; i+=1/dir.magnitude) {
+		for (float i = 0; i <= 1; i+=1.0f/dir.magnitude) {
 			Tile t = gm.getClosestTile(Vector2.Lerp(startTile.transform.position, endTile.transform.position, i));
 			t.containsLaser = true;
 			lastCoveredTiles.Add(t);
