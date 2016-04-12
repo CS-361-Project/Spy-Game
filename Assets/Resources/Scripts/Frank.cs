@@ -37,8 +37,6 @@ public class Frank : Person {
 		rend.color = Color.magenta;
 		rend.sortingOrder = 1;
 
-		onFire = false;
-
 		gameObject.layer = LayerMask.NameToLayer("Frank");
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
@@ -103,6 +101,14 @@ public class Frank : Person {
 					print("Frank sees " + c.gameObject.name);
 				}
 			}
+		}
+	}
+
+	public void checkForFire(){
+		if (gm.getClosestTile ((Vector2)transform.position).fire >= 2) {
+			onFire = true;
+			setOnFire ();
+			rend.color = Color.red;
 		}
 	}
 

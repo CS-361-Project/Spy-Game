@@ -21,7 +21,6 @@ public class Person : MonoBehaviour {
 
 	protected bool beingPushed = false;
 	protected bool onFire = false;
-	protected float timeOnFire = 0.0f;
 
 	// Use this for initialization
 	public virtual void init(Tile t, GameManager m) {
@@ -82,23 +81,9 @@ public class Person : MonoBehaviour {
 	
 	// called once per frame
 	public void move() {
-		if (onFire) {
-			timeOnFire += Time.deltaTime;
-			if (timeOnFire >= 5) {
-
-			}
-		}
 		if (!beingPushed && targetPositions.Count >= 1) {
 			Vector2 toObject = targetPositions[0] - (Vector2)transform.position;
 			RaycastHit2D hit;
-			if (!gm.getClosestTile(targetPositions[0]).isPassable()) {
-				if (targetPositions.Count > 1) {
-					targetPositions.RemoveAt(0);
-				}
-//				else {
-//					targetPositions[0] = (Vector2)transform.position + 2 * toObject;
-//				}
-			}
 			if ((hit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, 1 << 10)).collider !=  null) {
 				print("Raycast hit " + hit.collider.gameObject.name + " at " + hit.collider.transform.position);
 				List<Vector2> path = gm.getPath(tile, gm.getClosestTile(targetPositions[0]), false);
@@ -169,20 +154,9 @@ public class Person : MonoBehaviour {
 	public void applyFanForce(Vector2 force) {
 		beingPushed = true;
 		body.AddForce(force);
-		targetPositions.Clear();
-		int x = Mathf.RoundToInt(force.normalized.x);
-		int y = 1 - x;
-		intDirection.Set(x, y);
 	}
 
-	public void setOnFire(bool fire) {
-		if (onFire && !fire) {
-			timeOnFire = 0;
-		}
-		onFire = fire;
-	}
-
-	public void onFire(){
+	public void setOnFire(){
 
 	}
 }

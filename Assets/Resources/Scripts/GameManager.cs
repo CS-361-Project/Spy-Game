@@ -64,18 +64,12 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-<<<<<<< HEAD
 		count++;
 		/*if (count == 150) {
 			getTile(1, 1).setFire(1);
 		}*/
-=======
-//		count++;
-//		if (count == 150) {
-//			getTile(6, 6).setFire(1);
-//		}
->>>>>>> master
 	}
+
 	#region building levels
 	void buildLevel(int width, int height){
 		this.width = width;
