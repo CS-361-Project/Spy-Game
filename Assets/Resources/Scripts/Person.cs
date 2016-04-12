@@ -15,6 +15,8 @@ public class Person : MonoBehaviour {
 	protected float speed;
 	protected float viewDistance = 2.5f;
 
+	public float radius = 1f;
+
 	protected int viewLayerMask = 1 << 10;
 
 	protected bool beingPushed = false;
@@ -50,41 +52,52 @@ public class Person : MonoBehaviour {
 		}
 	}
 
-	public void wander() {
+	public void wander(bool avoidLasers) {
 		if (targetPositions.Count == 0) {
 			intDirection.Normalize();
 			Vector2 dir = intDirection;
-			print("IntDirection: " + intDirection);
-			print("Transform + direction = " + ((Vector2)transform.position + intDirection));
 
 			Tile nextTile = gm.getClosestTile((Vector2)transform.position + dir);
-			if (!nextTile.isPassable()) {
-				print("Next tile is blocked");
+			if (!nextTile.isPassable() || (avoidLasers && nextTile.containsLaser)) {
 				dir = MathHelper.rotate90(intDirection);
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
-			if (!nextTile.isPassable()) {
-				print("Right tile is blocked");
+			if (!nextTile.isPassable() || (avoidLasers && nextTile.containsLaser)) {
 				dir = -MathHelper.rotate90(intDirection);
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
-			if (!nextTile.isPassable()) {
-				print("Left tile is blocked");
+			if (!nextTile.isPassable() || (avoidLasers && nextTile.containsLaser)) {
 				dir = -intDirection;
 				nextTile = gm.getClosestTile((Vector2)transform.position + dir);
 			}
 			intDirection = dir.normalized;
 			targetPositions.Add(nextTile.transform.position);
-			print("Next tile: " + nextTile.transform.position);
 		}
+//		else {
+//			print("Not wandering..." + targetPositions.Count + " better things to do.");
+//		}
 	}
 	
 	// called once per frame
 	public void move() {
 		if (!beingPushed && targetPositions.Count >= 1) {
-			print("Moving normally.");
+			Vector2 toObject = targetPositions[0] - (Vector2)transform.position;
+			RaycastHit2D hit;
+			if ((hit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, 1 << 10)).collider !=  null) {
+				print("Raycast hit " + hit.collider.gameObject.name + " at " + hit.collider.transform.position);
+				List<Vector2> path = gm.getPath(tile, gm.getClosestTile(targetPositions[0]), false);
+				targetPositions.RemoveAt(0);
+				if (path.Count > 0) {
+					targetPositions.InsertRange(0, path);
+				}
+				else {
+					targetPositions.Clear();
+					int x = Mathf.RoundToInt(direction.normalized.x);
+					intDirection = new Vector2(x, 1 - x);
+					wander(true);
+				}
+			}
 			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .1) {
-				print("Removing point");
 				targetPositions.RemoveAt(0);
 				if (targetPositions.Count < 1) {
 					return;
@@ -106,12 +119,22 @@ public class Person : MonoBehaviour {
 
 		}
 		beingPushed = false;
+		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, radius)) {
+			if (c.gameObject.name == "Guard")
+				body.AddForce(-(c.transform.position-transform.position).normalized*
+					radius/Mathf.Max(Mathf.Min(Vector2.Distance((Vector2)c.transform.position,(Vector2)transform.position),radius),0.001f));
+		}
 	}
 
 	public bool canSee(Vector3 pos) {
-		bool view = canSee(pos, Mathf.Deg2Rad * 60, viewDistance);
-		bool peripheral = canSee(pos, Mathf.Deg2Rad * 180, viewDistance / 2);
-		return view || peripheral;
+		bool view = canSee(pos, Mathf.Deg2Rad * 30, viewDistance);
+		if (!view) {
+			bool peripheral = canSee(pos, Mathf.Deg2Rad * 90, viewDistance / 2);
+			return peripheral;
+		}
+		else {
+			return view;
+		}
 	}
 
 	// angle in radians
@@ -119,7 +142,7 @@ public class Person : MonoBehaviour {
 		Vector2 toObject = (pos - transform.position);
 		float angle = Vector2.Dot(direction, toObject);
 		if (angle <= 1 && angle >= Mathf.Cos(viewAngle)) { // cos 0 to cos 60
-			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, 1 << 10);
+			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, LayerMask.NameToLayer("Wall") | LayerMask.NameToLayer("Room Objects"));
 			if (rayHit.collider == null && toObject.magnitude <= maxDist) {
 				return true;
 			}

@@ -15,7 +15,11 @@ public class Tile : MonoBehaviour {
 	public int posY;
 	public Color col;
 
+	public bool containsLaser;
+
 	float TimeBeforeSpread = 1.5f;
+
+	public int section = -1;
 
 	//Used for path finding
 	public int dist = -1;
@@ -36,7 +40,8 @@ public class Tile : MonoBehaviour {
 		rend.color = Color.grey;
 
 		GameObject obj = new GameObject();
-		obj.transform.position = new Vector3(posX, posY, 0);
+		obj.transform.parent = transform;
+		obj.transform.localPosition = Vector3.zero;
 		gasRend = obj.AddComponent<SpriteRenderer>();
 		gasRend.sortingOrder = 1;
 		gasRend.sprite = Resources.Load<Sprite>("Sprites/Fan");
@@ -44,6 +49,7 @@ public class Tile : MonoBehaviour {
 		col.a = 0f;
 		gasRend.color = col;
 
+		containsLaser = false;
 	}
 	
 	// Update is called once per frame

@@ -7,17 +7,40 @@ public class GameManager : MonoBehaviour {
 	List<Guard> guardList;
 	List<Burner> burnerList;
 	List<Chemical> chemicalList;
+	List<LaserSensor> sensorList;
+
+	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder, sensorFolder;
 
 	Tile[,] board;
 	public int width;
 	public int height;
 	int count;
+
+	List<Tile[]> sections;
+
 	// Use this for initialization
 	void Start() {
 		fanList = new List<Fan>();
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
-		chemicalList = new List<Chemical> ();
+		chemicalList = new List<Chemical>();
+		sensorList = new List<LaserSensor>();
+		wallFolder = new GameObject();
+		wallFolder.name = "Walls";
+		tileFolder = new GameObject();
+		tileFolder.name = "Tiles";
+		doorFolder = new GameObject();
+		doorFolder.name = "Doors";
+		guardFolder = new GameObject();
+		guardFolder.name = "Guards";
+		burnerFolder = new GameObject();
+		burnerFolder.name = "Burners";
+		chemicalFolder = new GameObject();
+		chemicalFolder.name = "Chemicals";
+		fanFolder = new GameObject();
+		fanFolder.name = "Fans";
+		sensorFolder = new GameObject();
+		sensorFolder.name = "Sensors";
 		//buildBoard(10, 10);
 		buildLevel(10, 10);
 //		addGuard(2, 3);
@@ -29,9 +52,10 @@ public class GameManager : MonoBehaviour {
 		addFrank (5, 4);
 		addFan(new Vector2(2, 1), "E");
 		addFan(new Vector2(1, 6), "E");
+		addSensor(1, 2, new Vector2(1, 0));
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
-
+		constructSections();
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
 	}
@@ -59,8 +83,12 @@ public class GameManager : MonoBehaviour {
 					addFan(new Vector2 (x, y));
 =======
 					//addBurner(new Vector2 (x, y));
+<<<<<<< HEAD
 >>>>>>> origin/sam-dev
 				} else if((x==4 && y==3) || (x==3 && y==7) || (x==5 && y==7)){
+=======
+				} else if((x==4 && y==3) || (x==3 && y==7) || (x==6 && y==1)){
+>>>>>>> master
 					board[x, y] = addDoor(x, y);
 				} else if ((x==1 && y==3) || (x==2 && y==3) || (x==3 && y==3) || (x==5 && y==3) || (x==6 && y==3) || (x==6 && y==2) || (x==6 && y==1) ){
 					board[x, y] = addWall(x, y);
@@ -104,11 +132,44 @@ public class GameManager : MonoBehaviour {
 	}
 >>>>>>> origin/sam-dev
 
+	void constructSections(){
+		int numSections = 0;
+		sections = new List<Tile[]>();
+		foreach (Tile tile in board) {
+			if (tile.section == -1 && tile.isPassable()) {
+				numSections++;
+				sections.Add(fillSection(tile, numSections - 1));
+			}
+		}
+	}
+
+	Tile[] fillSection(Tile section,int sectionNum){
+		List<Tile> sectionQueue = new List<Tile>();
+		List<Tile> sectionMembers = new List<Tile>();
+		sectionQueue.Add(section);
+		while (sectionQueue.Count > 0) {
+			Tile tile = sectionQueue[0];
+			sectionQueue.RemoveAt(0);
+			tile.section = sectionNum;
+			sectionMembers.Add(tile);
+			foreach (Tile neighbor in tile.getNeighbors()) {
+				if (neighbor.section == -1 && neighbor.isPassable())
+					sectionQueue.Add(neighbor);
+			}
+		}
+		return sectionMembers.ToArray();
+	}
+
+	Tile[] getSection(int sectionNum){
+		return sections[sectionNum];
+	}
+
 	Tile addTile(int x, int y, float fire){
 		GameObject tileObj = new GameObject();
 		Tile tile = tileObj.AddComponent<Tile>();
 		tile.init(x,y,this, fire, 0, true);
 		tile.transform.localPosition = new Vector3(x, y, 0);
+		tile.transform.parent = tileFolder.transform;
 		return tile;
 	}
 
@@ -117,6 +178,7 @@ public class GameManager : MonoBehaviour {
 		Wall wall = wallObj.AddComponent<Wall>();
 		wall.init(x, y, this);
 		wall.transform.localPosition = new Vector3(x, y, 0);
+		wall.transform.parent = wallFolder.transform;
 		return wall;
 	}
 
@@ -125,6 +187,7 @@ public class GameManager : MonoBehaviour {
 		Door door = doorObj.AddComponent<Door>();
 		door.init(x, y, this);
 		door.transform.localPosition = new Vector3(x, y, 0);
+		door.transform.parent = doorFolder.transform;
 		return door;
 	}
 
@@ -157,13 +220,9 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	
-	public List<Vector2> getPath(Tile start, Tile end) {
-		return optimizePath(pathToPoints(getTilePath(start, end)));
-		/*List<Vector2> result = pathToPoints(getTilePath(start, end));
-		for (int i = 0; i < result.Count - 1; i++) {
-			Debug.DrawLine(result[i], result[i + 1], new Color(.25f, (float)i / (float)(result.Count-1), (float)i / (float)(result.Count-1)));
-		}
-		return result;*/
+	public List<Vector2> getPath(Tile start, Tile end, bool ignoreDoors) {
+//		return optimizePath(pathToPoints(getTilePath(start, end, ignoreDoors)));
+		return pathToPoints(getTilePath(start, end, ignoreDoors));
 	}
 
 	public List<Vector2> optimizePath(List<Vector2> path) {
@@ -219,7 +278,7 @@ public class GameManager : MonoBehaviour {
 		return points;
 	}
 
-	public List<Tile> getTilePath(Tile startTile,Tile endTile){
+	public List<Tile> getTilePath(Tile startTile,Tile endTile, bool ignoreDoors){
 		List<Tile> queue = new List<Tile>();
 		startTile.dist = 0;
 		bool foundPath = false;
@@ -229,7 +288,7 @@ public class GameManager : MonoBehaviour {
 			queue.RemoveAt(0);
 			bool end = false;
 			foreach (Tile neighbor in currTile.getNeighbors()) {
-				if (neighbor.dist < 0 && neighbor.isPassable()) {
+				if (neighbor.dist < 0 && (neighbor.isPassable() || (neighbor is Door && ignoreDoors))) {
 					neighbor.dist = currTile.dist + 1;
 					if (neighbor == endTile) {
 						end = true;
@@ -244,6 +303,8 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		if (!foundPath) {
+			print("No path from " + startTile.transform.position + " to " + endTile.transform.position);
+			resetPathTiles();
 			return new List<Tile>();
 		}
 		List<Tile> path = new List<Tile>();
@@ -258,6 +319,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
+		print("Found path of length " + path.Count + " from " + path[0].transform.position + " to " + path[path.Count - 1].transform.position);
 		path.Reverse();
 		resetPathTiles();
 		return path;
@@ -279,7 +341,11 @@ public class GameManager : MonoBehaviour {
 		
 =======
 		fan.init(direction);
+<<<<<<< HEAD
 >>>>>>> origin/sam-dev
+=======
+		fan.transform.parent = fanFolder.transform;
+>>>>>>> master
 		foreach (Guard g in guardList) {
 			fan.FanToggled += g.onFanToggled;
 		}
@@ -302,6 +368,18 @@ public class GameManager : MonoBehaviour {
 		frank.init(getTile(x, y), this);
 	}
 
+	void addSensor(int x, int y, Vector2 direction) {
+		GameObject sensorObj = new GameObject();
+		sensorObj.name = "Laser Sensor";
+		LaserSensor sensor = sensorObj.AddComponent<LaserSensor>();
+		foreach (Guard g in guardList) {
+			sensor.MotionDetected += g.onMotionDetected;
+		}
+		sensor.init(this, getTile(x, y).transform.position, direction);
+		sensor.transform.parent = sensorFolder.transform;
+		sensorList.Add(sensor);
+	}
+
 
 	// register each guard to be notified when a fan is toggled
 	void addGuard(int x, int y) {
@@ -317,7 +395,11 @@ public class GameManager : MonoBehaviour {
 		foreach (Chemical chem in chemicalList) {
 			chem.ChemicalToggled += guard.onChemicalToggled;
 		}
+		foreach (LaserSensor sensor in sensorList) {
+			sensor.MotionDetected += guard.onMotionDetected;
+		}
 		guard.init(getTile(x, y), this);
+		guard.transform.parent = guardFolder.transform;
 		guardList.Add(guard);
 	}
 
@@ -331,6 +413,7 @@ public class GameManager : MonoBehaviour {
 		foreach (Guard g in guardList) {
 			burner.BurnerToggled += g.onBurnerToggled;
 		}
+		burner.transform.parent = burnerFolder.transform;
 		burnerList.Add(burner);
 	}
 
@@ -342,6 +425,7 @@ public class GameManager : MonoBehaviour {
 		foreach (Guard g in guardList) {
 			chemical.ChemicalToggled += g.onChemicalToggled;
 		}
+		chemical.transform.parent = chemicalFolder.transform;
 		chemicalList.Add(chemical);
 	}
 }
