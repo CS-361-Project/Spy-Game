@@ -70,7 +70,8 @@ public class Guard : Person {
 		}
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
 			if (c != coll && c.gameObject.name != "Wall") {
-				if (Vector2.Distance(c.transform.position, transform.position) <= viewDistance / 2 || canSee(c.transform.position)) {
+//				if (Vector2.Distance(c.transform.position, transform.position) <= viewDistance / 2 || canSee(c.transform.position)) {
+				if (canSee(c.transform.position)) {
 					switch (c.gameObject.name) {
 						case "Frank":
 							print("Guard sees Frank");
