@@ -30,7 +30,7 @@ public class Guard : Person {
 		GameObject fovObj = new GameObject();
 		fovObj.name = "FOV";
 		fovObj.transform.parent = transform;
-		fovObj.transform.localScale = new Vector3(1 / .7f, 1 / .7f, 1);
+		fovObj.transform.localScale = new Vector3(1 / size, 1 / size, 1);
 		fovDisplay = fovObj.AddComponent<FOV>();
 		fovDisplay.init(viewDistance);
 
@@ -74,6 +74,7 @@ public class Guard : Person {
 					switch (c.gameObject.name) {
 						case "Frank":
 							print("Guard sees Frank");
+							shootAt(c.transform.position);
 							suspicion = 2f;
 							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position), false);
 							if (targetPositions.Count >= 2) {

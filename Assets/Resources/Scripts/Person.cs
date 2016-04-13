@@ -2,26 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Person : MonoBehaviour {
+public class Person : LevelObject {
 	protected Tile tile;
 	protected GameManager gm;
-	protected CircleCollider2D coll;
 	protected Rigidbody2D body;
+	protected GameObject bulletObj;
 
 	protected Vector2 direction;
 	protected Vector2 intDirection;
 	protected List<Vector2> targetPositions;
 
 	protected float speed;
-	protected float viewDistance = 2.5f;
+	protected float viewDistance = 7f;
 
 	public float radius = 1f;
+	public float size = .7f;
 
 	protected int viewLayerMask = 1 << 10;
 
 	protected bool beingPushed = false;
 	protected bool onFire = false;
 	protected float timeOnFire = 0.0f;
+	protected float shotTimer;
+	protected float shotFrequency = .2f;
 
 	// Use this for initialization
 	public virtual void init(Tile t, GameManager m) {
@@ -30,7 +33,7 @@ public class Person : MonoBehaviour {
 
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
-		transform.localScale = new Vector3(0.7f, 0.7f, 1);
+		transform.localScale = new Vector3(size, size, 1);
 
 		coll = gameObject.AddComponent<CircleCollider2D>();
 		body = gameObject.AddComponent<Rigidbody2D>();
@@ -39,9 +42,18 @@ public class Person : MonoBehaviour {
 		body.constraints = RigidbodyConstraints2D.FreezeRotation;
 
 		speed = 1f;
+		shotTimer = 0f;
 
 		direction = new Vector2(1, 0);
 		intDirection = new Vector2(1, 0);
+
+		bulletObj = new GameObject();
+		bulletObj.transform.parent = transform;
+		bulletObj.transform.localPosition = Vector3.zero;
+		SpriteRenderer rend = bulletObj.AddComponent<SpriteRenderer>();
+		rend.sprite = Resources.Load<Sprite>("Sprites/Beam");
+		rend.sortingLayerName = "Foreground";
+		bulletObj.SetActive(false);
 		//targetPositions = gm.getPath(tile, gm.getFinishTile());
 	}
 
@@ -82,6 +94,8 @@ public class Person : MonoBehaviour {
 	
 	// called once per frame
 	public void move() {
+		bulletObj.SetActive(false);
+		shotTimer += Time.deltaTime;
 		if (onFire) {
 			timeOnFire += Time.deltaTime;
 			if (timeOnFire >= 5) {
@@ -156,8 +170,8 @@ public class Person : MonoBehaviour {
 	// angle in radians
 	public bool canSee(Vector3 pos, float viewAngle, float maxDist) {
 		Vector2 toObject = (pos - transform.position);
-		float angle = Vector2.Dot(direction, toObject);
-		if (angle <= 1 && angle >= Mathf.Cos(viewAngle)) { // cos 0 to cos 60
+		float angle = Vector2.Angle(toObject, direction);
+		if (angle <= viewAngle) { // cos 0 to cos 60
 			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, LayerMask.NameToLayer("Wall") | LayerMask.NameToLayer("Room Objects"));
 			if (rayHit.collider == null && toObject.magnitude <= maxDist) {
 				return true;
@@ -180,6 +194,29 @@ public class Person : MonoBehaviour {
 			timeOnFire = 0;
 		}
 		onFire = fire;
+	}
+
+	public void shootAt(Vector2 pos) {
+		if (shotTimer >= shotFrequency) {
+			bulletObj.SetActive(true);
+			shotTimer = 0f;
+
+			Vector2 toPos = pos - (Vector2)transform.position;
+			Vector2 startPoint = (Vector2)transform.position + toPos.normalized * size;
+			Vector2 finalToPos = MathHelper.rotate(pos - startPoint, Random.Range(-3f, 3f));
+			RaycastHit2D hit = Physics2D.Raycast(startPoint, finalToPos, 2000, viewLayerMask);
+			Vector2 toHit = hit.point - startPoint;
+
+			bulletObj.transform.localScale = new Vector2(finalToPos.magnitude, 0.1f);
+			bulletObj.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(toHit.y, toHit.x));
+
+			if (hit.collider != null) {
+				LevelObject hitObj = hit.collider.gameObject.GetComponent<LevelObject>();
+				if (hitObj != null) {
+					hitObj.onObjectShot();
+				}
+			}
+		}
 	}
 }
 

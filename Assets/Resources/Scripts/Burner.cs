@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-public class Burner : MonoBehaviour {
+public class Burner : LevelObject {
 	bool state;
 	Vector2 position;
 	//Vector2 velocity;
@@ -21,7 +21,7 @@ public class Burner : MonoBehaviour {
 		this.location = loc;
 		state = false;
 		position = transform.position;
-		gameObject.AddComponent<BoxCollider2D>();
+		coll = gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 1;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");

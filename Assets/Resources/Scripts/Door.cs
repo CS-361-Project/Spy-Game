@@ -4,7 +4,6 @@ using System.Collections;
 public class Door : Tile {
 
 	bool closed;
-	BoxCollider2D coll;
 
 	// Use this for initialization
 	public void init(int x, int y, GameManager game) {

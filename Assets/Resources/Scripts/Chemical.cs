@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-public class Chemical : MonoBehaviour {
+public class Chemical : LevelObject {
 	public bool spilled;
 	Vector2 position;
 	SpriteRenderer rend;
@@ -10,7 +10,7 @@ public class Chemical : MonoBehaviour {
 	void Start () {
 		spilled = false;
 		position = transform.position;
-		gameObject.AddComponent<BoxCollider2D>();
+		coll = gameObject.AddComponent<BoxCollider2D>();
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
 		rend.sortingOrder = 1;

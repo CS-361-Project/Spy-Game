@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Tile : MonoBehaviour {
+public class Tile : LevelObject {
 	float fireTimer;
 	protected SpriteRenderer rend;
 	protected SpriteRenderer gasRend;

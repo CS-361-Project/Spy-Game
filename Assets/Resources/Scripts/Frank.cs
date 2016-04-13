@@ -6,7 +6,13 @@ using System.Collections.Generic;
 public class Frank : Person {
 	SpriteRenderer rend;
 
-	public enum behavior {drinking, smoking, talking, puking};
+	public enum behavior {
+drinking,
+		smoking,
+		talking,
+		puking}
+
+	;
 
 	Queue<int> toDoList;
 	float clock;
@@ -14,16 +20,16 @@ public class Frank : Person {
 	FrankIcon icon;
 
 	// Use this for initialization
-	public override void init (Tile t, GameManager man) {
+	public override void init(Tile t, GameManager man) {
 		base.init(t, man);
 		viewLayerMask = 1 << 8 | 1 << 10;
 
 		speed = 1F;
 		clock = 0; 
 
-		toDoList = new Queue<int> ();
-		for (int i = 0; i < Enum.GetNames (typeof(behavior)).Length - 1; i++) {
-			toDoList.Enqueue ((int)UnityEngine.Random.Range (0, Enum.GetNames (typeof(behavior)).Length));
+		toDoList = new Queue<int>();
+		for (int i = 0; i < Enum.GetNames(typeof(behavior)).Length - 1; i++) {
+			toDoList.Enqueue((int)UnityEngine.Random.Range(0, Enum.GetNames(typeof(behavior)).Length));
 		}
 
 		GameObject iconObj = new GameObject();
@@ -42,8 +48,8 @@ public class Frank : Person {
 		gameObject.layer = LayerMask.NameToLayer("Frank");
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
-		transform.localScale = new Vector3(0.7f, 0.7f, 1);
-		direction = new Vector2 (1f, 0f);
+		transform.localScale = new Vector3(size, size, 1);
+		direction = new Vector2(1f, 0f);
 
 		//targetPositions = gm.getPath(t, gm.getTile(7, 1));
 		print(gm.getTile(3, 1).isPassable());
@@ -53,23 +59,23 @@ public class Frank : Person {
 
 	}
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 		wander(false);
 		move();
 		clock += Time.deltaTime;
 		lookAround();
 		if (clock >= 1) {
 			clock = 0;
-			updateToDoList ();
+			updateToDoList();
 
 		}
 	}
 
-	void updateToDoList(){
+	void updateToDoList() {
 		int behaviorCount = Enum.GetNames(typeof(behavior)).Length;
-		int rand = (int)UnityEngine.Random.Range (0, behaviorCount);
+		int rand = (int)UnityEngine.Random.Range(0, behaviorCount);
 
-		int nextTask = toDoList.Dequeue ();
+		int nextTask = toDoList.Dequeue();
 
 		Destroy(icon.gameObject);
 
@@ -80,43 +86,46 @@ public class Frank : Person {
 		icon.transform.localPosition = Vector3.up;
 
 		if (nextTask == (int)behavior.drinking) {
-			drinking ();
+			drinking();
 		}
 		if (nextTask == (int)behavior.puking) {
-			puking ();
+			puking();
 		}
 		if (nextTask == (int)behavior.smoking) {
-			smoking ();
+			smoking();
 		}
 		if (nextTask == (int)behavior.talking) {
-			talking ();
+			talking();
 		}
 
-		toDoList.Enqueue (rand);
+		toDoList.Enqueue(rand);
 	}
 
-	void lookAround(){
+	void lookAround() {
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, 5)) {
-			//TODO: Make sure it's not something boring like a wall
 			if (c != coll && c.gameObject.name != "Wall") {
 				if (canSee(c.transform.position)) {
 					print("Frank sees " + c.gameObject.name);
+					shootAt(c.transform.position);
 				}
 			}
 		}
 	}
 
-	void smoking(){
-		icon.init ((int)behavior.smoking);
+	void smoking() {
+		icon.init((int)behavior.smoking);
 	}
-	void drinking(){
-		icon.init ((int)behavior.drinking);
+
+	void drinking() {
+		icon.init((int)behavior.drinking);
 	}
-	void talking(){
-		icon.init ((int)behavior.talking);
+
+	void talking() {
+		icon.init((int)behavior.talking);
 	}
-	void puking(){
-		icon.init ((int)behavior.puking);
+
+	void puking() {
+		icon.init((int)behavior.puking);
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {

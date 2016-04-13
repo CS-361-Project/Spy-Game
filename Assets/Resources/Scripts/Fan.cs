@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-public class Fan : MonoBehaviour {
+public class Fan : LevelObject {
 	
 	Vector2 position;
 	Vector2 velocity;
@@ -15,8 +15,6 @@ public class Fan : MonoBehaviour {
 
 	public float viewportHeight, viewportWidth;
 	Vector2 leftCorner, rightCorner;
-
-	BoxCollider2D coll;
 
 	public event EventHandler<FanEventArgs> FanToggled;
 

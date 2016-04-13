@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour {
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 		//buildLevel1();
-		buildLevel2();
+		buildLevel1();
 		//buildInflammableTestChamber();
 		//constructSections();
 //		addChemical (new Vector2 (2, 1));
