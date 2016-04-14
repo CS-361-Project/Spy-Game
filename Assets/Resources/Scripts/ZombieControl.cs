@@ -1,0 +1,46 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public class ZombieControl : MonoBehaviour {
+	ZombieSelection zombieSelector;
+	HashSet<Guard> selection;
+
+	// Use this for initialization
+	void Start() {
+		zombieSelector = new GameObject().AddComponent<ZombieSelection>();
+		zombieSelector.gameObject.name = "Zombie Selection";
+		selection = new HashSet<Guard>();
+		name = "Zombie Control";
+	}
+
+	// Update is called once per frame
+	void Update() {
+		Collider2D[] currSelection = zombieSelector.getSelectedObjects();
+		bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+		switch (zombieSelector.state) {
+			case ZombieSelection.SelectionState.BeginningSelection:
+				if (!shift) {
+					foreach (Guard g in selection) {
+						g.gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+					}
+					selection.Clear();
+				}
+				break;
+			case ZombieSelection.SelectionState.EndingSelection:
+				break;
+			case ZombieSelection.SelectionState.Selecting:
+				foreach (Collider2D coll in currSelection) {
+					if (coll.gameObject.name == "Guard") {
+						Guard g = coll.gameObject.GetComponent<Guard>();
+						selection.Add(g);
+						g.GetComponent<SpriteRenderer>().color = Color.green;
+					}
+				}
+				break;
+			case ZombieSelection.SelectionState.Idle:
+				break;
+		}
+	}
+}
+

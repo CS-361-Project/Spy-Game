@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
+		new GameObject().AddComponent<ZombieControl>();
 		fanList = new List<Fan>();
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
