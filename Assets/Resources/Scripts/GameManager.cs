@@ -61,7 +61,8 @@ public class GameManager : MonoBehaviour {
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 		//buildLevel();
-		buildLevel(22,22);
+		//buildLevel(22,22);
+		generateLevel(50, 50);
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
 	}
@@ -77,6 +78,71 @@ public class GameManager : MonoBehaviour {
 //			getTile(6, 6).setFire(1);
 //		}
 	}
+
+	void generateLevel(int width, int height){
+		this.width = width;
+		this.height = height;
+		board = new Tile[width, height];
+		float xSeed1 = Random.Range(-9999f, 9999f);
+		float xSeed2 = Random.Range(-9999f, 9999f);
+		float ySeed1 = Random.Range(-9999f, 9999f);
+		float ySeed2 = Random.Range(-9999f, 9999f);
+		branch(1, height / 2, 1, 0, xSeed1, ySeed1);
+		branch(width / 2, 1, 0, 1, xSeed2, ySeed2);
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (board[x, y] == null) {
+					board[x, y] = addWall(x, y);
+				}
+				else {
+					if (Random.value > 0.6 && guardList.Count < 200) {
+						addGuard(x, y);
+					}
+				}
+			}
+		}
+	}
+
+	void branch(int x, int y, int dx, int dy, float xSeed, float ySeed){
+//		print("Branching at " + x + ", " + y);
+		if (x>=width-1 || x<1 || y>=height-1 || y<1) {
+			return;
+		}
+		if (board[x, y] != null) {
+			return;
+		}
+		board[x, y] = addTile(x, y, 0, false);
+		int r = Random.Range(1, 16);
+		bool bit1 = (r & 1) == 1;
+		bool bit2 = (r & 2) == 2;
+//		float r2 = Random.Range(0f, 1f);
+		float r2 = Mathf.PerlinNoise(x * .5f + xSeed, y * .5f + ySeed);
+//		print("r2: " + r2);
+		if (r2 <= .28f) {
+			if (dx == 0) {
+				if (bit1) {
+					branch(x + 1, y, 1, 0, xSeed, ySeed);
+				}
+				if (bit2) {
+					branch(x - 1, y, -1, 0, xSeed, ySeed);
+				}
+			}
+			else if (dy == 0) {
+				if (bit1) {
+					branch(x, y + 1, 0, 1, xSeed, ySeed);
+				}
+				if (bit2) {
+					branch(x, y - 1, 0, -1, xSeed, ySeed);
+				}
+			}
+			else {
+				print("this shouldn't happen");
+				return;
+			}
+		}
+		branch(x + dx, y + dy, dx, dy, xSeed, ySeed);
+	}
+
 
 	public void moveTo(List<Guard> guards, Vector2 point){
 		setTargetTile(getClosestTile(point));

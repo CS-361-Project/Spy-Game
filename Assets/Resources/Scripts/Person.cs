@@ -15,7 +15,7 @@ public class Person : MonoBehaviour {
 	protected float speed;
 	protected float viewDistance = 2.5f;
 
-	public float radius = 1f;
+	public float radius = 0.5f;
 
 	protected int viewLayerMask = 1 << 10;
 
@@ -30,10 +30,10 @@ public class Person : MonoBehaviour {
 
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
-		transform.localScale = new Vector3(0.6f, 0.6f, 1);
+		transform.localScale = new Vector3(0.45f, 0.45f, 1);
 
 		coll = gameObject.AddComponent<CircleCollider2D>();
-		coll.radius = 0.15f;
+		coll.radius = 0.3f;
 
 		coll.sharedMaterial = Resources.Load<PhysicsMaterial2D>("WallMaterial");
 		body = gameObject.AddComponent<Rigidbody2D>();

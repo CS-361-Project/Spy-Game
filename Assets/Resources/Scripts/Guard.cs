@@ -23,9 +23,8 @@ public class Guard : Person {
 		viewLayerMask = 1 << 9 | 1 << 10;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
-//		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
-		rend.sprite = SpriteReferences.Guard;
-		rend.color = Color.blue;
+		rend.sprite = Resources.Load<Sprite>("Sprites/Box");
+		rend.color = Color.magenta;
 		rend.sortingOrder = 1;
 
 		gameObject.layer = LayerMask.NameToLayer("Guard");
@@ -126,15 +125,15 @@ public class Guard : Person {
 		foreach (Guard g in gm.getGuardList()) {
 			if (g != this) {
 				float dist = Vector2.Distance(g.transform.position, transform.position);
-				if (dist <= 1) {
-					sumForce += -7.5f * (g.transform.position - transform.position).normalized *
-						radius / (Mathf.Max(Mathf.Min(dist, radius), .001f) + 0.2f);
+				if (dist <= 0.45) {
+					sumForce += -12f * (g.transform.position - transform.position).normalized *
+						radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .001f)),3);
 					neighborCount++;
 				}
 			}
 		}
 		if (neighborCount > 0) {
-			body.AddForce(sumForce);
+			body.AddForce(sumForce / (float)neighborCount);
 		}
 	}
 

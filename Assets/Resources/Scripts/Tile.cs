@@ -44,7 +44,7 @@ public class Tile : MonoBehaviour {
 		gameObject.name = "Tile";
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 0;
-		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
+		rend.sprite = Resources.Load<Sprite>("Sprites/Box");
 
 		if (flammable) {
 			rend.color = Color.grey;
@@ -57,7 +57,7 @@ public class Tile : MonoBehaviour {
 		obj.transform.localPosition = Vector3.zero;
 		gasRend = obj.AddComponent<SpriteRenderer>();
 		gasRend.sortingOrder = 1;
-		gasRend.sprite = Resources.Load<Sprite>("Sprites/Fan");
+		gasRend.sprite = Resources.Load<Sprite>("Sprites/Box");
 		col = Color.green;
 		col.a = 0f;
 		gasRend.color = col;
