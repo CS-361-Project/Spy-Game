@@ -65,8 +65,8 @@ public class Frank : Person {
 		for (int i = sectionPath.GetLength(0) - 1; i >= 0; i--) {
 			print(sectionPath[i] + " m " + i);
 			if (currSection == sectionPath[i]) {
-				//wander(false);
-				frankWander();
+				wander(false);
+//				frankWander();
 				break;
 			}
 			List<Vector2> points = gm.getPath(tile, gm.getSection(sectionPath[i])[2], false);
@@ -88,10 +88,6 @@ public class Frank : Person {
 	}
 
 	public override void wander(bool something){
-		
-	}
-
-	void frankWander(){
 		if (tile.section == gm.getFinishTile().section)
 			targetPositions = gm.getPath(tile, gm.getFinishTile(),false);
 		else if (targetPositions.Count == 0) {

@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour {
 //		addGuard(2, 2);
 //		addGuard(1, 2);
 //		addFrank (5, 4);
-//		addFan(new Vector2(2, 1), "E");
+//		addFan(new Vector2(1, 1), "E");
 //		addFan(new Vector2(1, 6), "E");
 //		addSensor(1, 2, new Vector2(1, 0));
 		//addBurner(new Vector2(1, 1));
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else if (x == 1 && y == 1) {
-					board[x, y] = addTile(x, y, 0);
+					board[x, y] = addTile(x, y, 0,true);
 					//addBurner(new Vector2 (x, y));
 				} else if((x==4 && y==3) || (x==3 && y==7) || (x==6 && y==1)){
 					board[x, y] = addDoor(x, y);
@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else {
-					board[x, y] = addTile(x, y, 0);
+					board[x, y] = addTile(x, y, 0, true);
 				}
 			}
 		}
@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour {
 				}
 				else
 				if (x == 2 && y == 1) {
-					board[x, y] = addTile(x, y, 0);
+						board[x, y] = addTile(x, y, 0, true);
 					addBurner(new Vector2(x, y));
 				}
 				else
@@ -117,7 +117,88 @@ public class GameManager : MonoBehaviour {
 					board[x,y] = addDoor(x, y);
 				}
 				else {
-					board[x, y] = addTile(x, y, 0);
+							board[x, y] = addTile(x, y, 0, true);
+				}
+			}
+		}
+	}
+
+	void buildInflammableTestChamber(){
+		board = new Tile[15, 15];
+		width = 15;
+		height = 15;
+		for (int x = 0; x < 15; x++) {
+			for (int y = 0; y < 15; y++) {
+				if (x == 0 || x == 14 || y == 0 || y == 14) {
+					board[x, y] = addWall(x, y);
+				}
+				else if (x == 1 && y == 12) {
+					board[x, y] = addTile(x, y, 0f, true);
+					addFan(new Vector2(x, y), "E");
+				}
+				else if (x == 4 && y == 7) {
+					board[x, y] = addTile(x, y, 0f, true);
+					addFrank(x, y);
+				}
+				else if ((x == 5 && y == 13) || (x == 6 && y == 11)) {
+					board[x, y] = addTile(x, y, 0f, true);
+					addGuard(x, y);
+				}
+				else if ((y == 4 || y == 8) && x < 10) {
+					board[x, y] = addWall(x, y);
+				}
+				else if (x == 10) {
+					if (y == 2 || y == 6 || y == 11) {
+						board[x, y] = addDoor(x, y);
+					}
+					else {
+						board[x, y] = addWall(x, y);
+					}
+				}
+				else if (x == 12 && y == 1) {
+					board[x, y] = addTile(x, y, 0f, true);
+					addSensor(x, y, new Vector2(0, 1));
+				}
+				else if (x == 5 && y == 3) {
+					board[x, y] = addTile(x, y, 0f, true
+					);
+					addGuard(x, y);
+				}
+				else {
+					board[x, y] = addTile(x, y, 0f, true);
+				}
+			}
+		}
+	}
+
+
+	void buildLevel2(){
+		width = 15;
+		height = 15;
+		board = new Tile[width, height];
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (x == 0 || x == width-1 || y == 0 || y == height-1) {
+					board[x, y] = addWall(x, y);
+				}
+				else if (x == 1 && y == 12) {
+					board[x, y] = addTile(x, y, 0f, true);
+					//addFan(new Vector2(x, y), "E");
+					//addFrank(x,y);
+				}
+//				else if (x == 1 && y == 11) {
+//					board[x, y] = addTile(x, y, 0f, true);
+//					//addFrank(x, y);
+//				}
+//				else if ((x == 3 && y == 2) || (x == 9 && y == 2)) {
+//					board[x, y] = addTile(x, y, 0f, true);
+//					addGuard(x, y);
+//				}
+//				else if ((y == 13 || y == 11 || y == 10 || y == 9 || y == 8 || y == 7 || y == 5 || y == 4) && x ==6) {
+//					board[x, y] = addWall(x, y);
+//				}
+				else {
+					board[x, y] = addTile(x, y, 0f, true);
 				}
 			}
 		}
@@ -133,7 +214,7 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else if (x == 1 && y == 1) {
-					board[x, y] = addTile(x, y, 0);
+					board[x, y] = addTile(x, y, 0, true);
 					addBurner(new Vector2 (x, y));
 				} else if(x==4 && y==5){
 					board[x, y] = addDoor(x, y);
@@ -142,7 +223,7 @@ public class GameManager : MonoBehaviour {
 					if (UnityEngine.Random.value > 1f)
 						board[x, y] = addWall(x, y);
 					else
-						board[x, y] = addTile(x, y, 0);
+						board[x, y] = addTile(x, y, 0, true);
 				}
 			}
 		}
@@ -158,14 +239,14 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else if (x == 7 && y == 2) {
-					board[x, y] = addTile(x, y, 0f);
+					board[x, y] = addTile(x, y, 0f, true);
 					addFan(new Vector2(x, y), "E");
 				}
 				else if (x == 4 && y == 7) {
-					board[x, y] = addTile(x, y, 0f);
+					board[x, y] = addTile(x, y, 0f, true);
 				}
 				else if ((x == 5 && y == 13) || (x == 6 && y == 11)) {
-					board[x, y] = addTile(x, y, 0f);
+					board[x, y] = addTile(x, y, 0f, true);
 					addGuard(x, y);
 				}
 				else if ((y == 4 || y == 8) && x < 10) {
@@ -187,18 +268,23 @@ public class GameManager : MonoBehaviour {
 					}
 				}
 				else if (x == 12 && y == 1) {
-					board[x, y] = addTile(x, y, 0f);
+					board[x, y] = addTile(x, y, 0f, true);
 					addSensor(x, y, new Vector2(0, 1));
 				}
 				else if (x == 5 && y == 3) {
-					board[x, y] = addTile(x, y, 0f);
+					board[x, y] = addTile(x, y, 0f, true
+					);
 					addGuard(x, y);
 				}
 				else {
-					board[x, y] = addTile(x, y, 0f);
+					board[x, y] = addTile(x, y, 0f, true);
+				}
+				if (board[x, y].isPassable() && Random.value > 0.7) {
+					addGuard(x, y);
 				}
 			}
 		}
+
 		constructSections();
 		finishX = 1;
 		finishY = 12;
@@ -389,7 +475,7 @@ public class GameManager : MonoBehaviour {
 	#endregion
 	#region addObjects
 
-	Tile addTile(int x, int y, float fire){
+	Tile addTile(int x, int y, float fire, bool flammable){
 		GameObject tileObj = new GameObject();
 		Tile tile = tileObj.AddComponent<Tile>();
 		tile.init(x,y,this, fire, 0, true);

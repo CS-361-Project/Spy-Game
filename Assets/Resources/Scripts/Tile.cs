@@ -44,7 +44,11 @@ public class Tile : MonoBehaviour {
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 0;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
-		rend.color = Color.grey;
+		if (flammable) {
+			rend.color = Color.grey;
+		}else {
+			rend.color=Color.Lerp(Color.grey, Color.black, .5F);
+		}
 
 		GameObject obj = new GameObject();
 		obj.transform.parent = transform;

@@ -137,7 +137,7 @@ public class Person : MonoBehaviour {
 		beingPushed = false;
 		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, radius)) {
 			if (c.gameObject.name == "Guard")
-				body.AddForce(-(c.transform.position-transform.position).normalized*
+				body.AddForce(-5*(c.transform.position-transform.position).normalized*
 					radius/Mathf.Max(Mathf.Min(Vector2.Distance((Vector2)c.transform.position,(Vector2)transform.position),radius),0.001f));
 		}
 	}
