@@ -1,9 +1,10 @@
 fileFormatVersion: 2
 guid: 8f3fee3fcd753d344af97962ddf9bf59
-timeCreated: 1459810181
+timeCreated: 1460663559
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: Guard
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -49,9 +50,27 @@ TextureImporter:
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
-    sprites: []
+    sprites:
+    - name: Guard
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 63
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 17.5, y: 72}
+        - {x: -31.5, y: 72}
+        - {x: -31.5, y: -72}
+        - {x: 25.5, y: -72}
+        - {x: 31.5, y: -40}
+        - {x: 31.5, y: 41}
+        - {x: 20.5, y: 67}
     outline: []
-  spritePackingTag: 
+  spritePackingTag: Guard_Tag
   userData: 
   assetBundleName: 
   assetBundleVariant: 

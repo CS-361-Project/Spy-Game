@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ZombieControl : MonoBehaviour {
 	ZombieSelection zombieSelector;
+	GameManager gm;
 	HashSet<Guard> selection;
 
 	// Use this for initialization
-	void Start() {
+	public void init(GameManager g) {
+		gm = g;
 		zombieSelector = new GameObject().AddComponent<ZombieSelection>();
 		zombieSelector.gameObject.name = "Zombie Selection";
 		selection = new HashSet<Guard>();
@@ -40,6 +43,9 @@ public class ZombieControl : MonoBehaviour {
 				break;
 			case ZombieSelection.SelectionState.Idle:
 				break;
+		}
+		if (zombieSelector.getMouseClicked()) {
+			gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords());
 		}
 	}
 }

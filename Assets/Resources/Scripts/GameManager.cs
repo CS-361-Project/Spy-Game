@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		new GameObject().AddComponent<ZombieControl>();
+		new GameObject().AddComponent<ZombieControl>().init(this);
 		fanList = new List<Fan>();
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
@@ -61,27 +61,34 @@ public class GameManager : MonoBehaviour {
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 		//buildLevel();
-		buildLevel(42,42);
+		buildLevel(22,22);
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
 	}
 	
 	// Update is called once per frame
 	void Update() {
-		if (Input.GetMouseButtonDown(0)){
-			setTargetTile(getClosestTile((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition)));
-			foreach (Guard g in guardList) {
-				//print(findPathToTarget(g.tile).Count);
-				g.targetPositions = pathToPoints(findPathToTarget(g.tile));
-				if (g.targetPositions.Count > 0)
-					g.targetPositions.RemoveAt(0);
-			}
-		}
+		print(guardList.Count);
+		/*if (Input.GetMouseButtonDown(0)){
+			
+		}*/
 //		count++;
 //		if (count == 150) {
 //			getTile(6, 6).setFire(1);
 //		}
 	}
+
+	public void moveTo(List<Guard> guards, Vector2 point){
+		setTargetTile(getClosestTile(point));
+		foreach (Guard g in guards) {
+			//print(findPathToTarget(g.tile).Count);
+			g.targetPositions = optimizePath(pathToPoints(findPathToTarget(g.tile)));
+			/*if (g.targetPositions.Count > 0) {
+				g.targetPositions.RemoveAt(0);
+			}*/
+		}
+	}
+
 	#region building levels
 	void buildLevel(int width, int height){
 		this.width = width;
@@ -97,7 +104,7 @@ public class GameManager : MonoBehaviour {
 				}
 				else {
 					board[x, y] = addTile(x, y, 0, false);
-					if (Random.value > 0.6) {
+					if (Random.value > 0.6 && guardList.Count < 200) {
 						addGuard(x, y);
 					}
 				}
@@ -174,6 +181,10 @@ public class GameManager : MonoBehaviour {
 
 	public Tile getFinishTile() {
 		return getTile(finishX, finishY);
+	}
+
+	public List<Guard> getGuardList() {
+		return guardList;
 	}
 
 	public void resetPathTiles(){
@@ -277,7 +288,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 			curr = currMin;
-			currMin.crowdFactor += 0.3f;
+			currMin.crowdFactor += 0.5f;
 			path.Add(curr);
 		}
 		return path;
