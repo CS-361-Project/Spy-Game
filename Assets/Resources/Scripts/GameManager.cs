@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour {
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
 		//buildLevel1();
-		buildLevel2();
+		buildLevel1();
 		//buildInflammableTestChamber();
 		//constructSections();
 //		addChemical (new Vector2 (2, 1));
@@ -273,6 +273,9 @@ public class GameManager : MonoBehaviour {
 				}
 				else {
 					board[x, y] = addTile(x, y, 0f, true);
+					if (Random.value > 0.7) {
+						addGuard(x, y);
+					}
 				}
 			}
 		}

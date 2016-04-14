@@ -37,12 +37,12 @@ public class Guard : Person {
 		suspicion = 0.0f;
 
 		startTile = t;
-		endTile = m.getTile(4, 6);
+		//endTile = m.getTile(4, 6);
 		patrolDirection = 0;
 //		targetPositions = gm.getPath(tile, endTile);
 		targetPositions = new List<Vector2>();
-		Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
-		Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
+		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
+		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 1f;
 	}
 	
