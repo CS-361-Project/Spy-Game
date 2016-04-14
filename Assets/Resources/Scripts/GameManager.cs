@@ -60,13 +60,23 @@ public class GameManager : MonoBehaviour {
 //		addSensor(1, 2, new Vector2(1, 0));
 		//addBurner(new Vector2(1, 1));
 		//addChemical (new Vector2 (2, 1));
-		buildLevel1();
+		//buildLevel();
+		buildLevel(42,42);
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
 	}
 	
 	// Update is called once per frame
 	void Update() {
+		if (Input.GetMouseButtonDown(0)){
+			setTargetTile(getClosestTile((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+			foreach (Guard g in guardList) {
+				//print(findPathToTarget(g.tile).Count);
+				g.targetPositions = pathToPoints(findPathToTarget(g.tile));
+				if (g.targetPositions.Count > 0)
+					g.targetPositions.RemoveAt(0);
+			}
+		}
 //		count++;
 //		if (count == 150) {
 //			getTile(6, 6).setFire(1);
@@ -79,218 +89,22 @@ public class GameManager : MonoBehaviour {
 		board = new Tile[width, height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+				if (x == 0 || y == 0 || x == width - 1 || y == height - 1) {
 					board[x, y] = addWall(x, y);
 				}
-				else if (x == 1 && y == 1) {
-					board[x, y] = addTile(x, y, 0,true);
-					//addBurner(new Vector2 (x, y));
-				} else if((x==4 && y==3) || (x==3 && y==7) || (x==6 && y==1)){
-					board[x, y] = addDoor(x, y);
-				} else if ((x==1 && y==3) || (x==2 && y==3) || (x==3 && y==3) || (x==5 && y==3) || (x==6 && y==3) || (x==6 && y==2) || (x==6 && y==1) ){
-					board[x, y] = addWall(x, y);
-				} else if ((x==3 && y==3) || (x==5 && y==3) || (x==3 && y==4) || (x==5 && y==4) || (x==3 && y==5) || (x==5 && y==5) || (x==3 && y==6) || (x==5 && y==6) || (x==3 && y==8) || (x==5 && y==8) || (x==4 && y==8)){
+				else if (Random.value > 0.8) {
 					board[x, y] = addWall(x, y);
 				}
 				else {
-					board[x, y] = addTile(x, y, 0, true);
-				}
-			}
-		}
-	}
-
-	void buildTestChamber(int width, int height){
-		this.width = width;
-		this.height = height;
-		board = new Tile[width, height];
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (x == 0 || x == width - 1 || y == 0 || y == height - 1 || x == 1 && y == 2 || x == 2 && y == 2 || x == 3 && y == 2 || x == 4 && y == 2 || x == 5 && y == 2) {
-					board[x, y] = addWall(x, y);
-				}
-				else
-				if (x == 2 && y == 1) {
-						board[x, y] = addTile(x, y, 0, true);
-					addBurner(new Vector2(x, y));
-				}
-				else
-				if (x == 5 && y == 1) {
-					board[x,y] = addDoor(x, y);
-				}
-				else {
-							board[x, y] = addTile(x, y, 0, true);
-				}
-			}
-		}
-	}
-
-	void buildInflammableTestChamber(){
-		board = new Tile[15, 15];
-		width = 15;
-		height = 15;
-		for (int x = 0; x < 15; x++) {
-			for (int y = 0; y < 15; y++) {
-				if (x == 0 || x == 14 || y == 0 || y == 14) {
-					board[x, y] = addWall(x, y);
-				}
-				else if (x == 1 && y == 12) {
-					board[x, y] = addTile(x, y, 0f, true);
-					addFan(new Vector2(x, y), "E");
-				}
-				else if (x == 4 && y == 7) {
-					board[x, y] = addTile(x, y, 0f, true);
-					addFrank(x, y);
-				}
-				else if ((x == 5 && y == 13) || (x == 6 && y == 11)) {
-					board[x, y] = addTile(x, y, 0f, true);
-					addGuard(x, y);
-				}
-				else if ((y == 4 || y == 8) && x < 10) {
-					board[x, y] = addWall(x, y);
-				}
-				else if (x == 10) {
-					if (y == 2 || y == 6 || y == 11) {
-						board[x, y] = addDoor(x, y);
-					}
-					else {
-						board[x, y] = addWall(x, y);
+					board[x, y] = addTile(x, y, 0, false);
+					if (Random.value > 0.6) {
+						addGuard(x, y);
 					}
 				}
-				else if (x == 12 && y == 1) {
-					board[x, y] = addTile(x, y, 0f, true);
-					addSensor(x, y, new Vector2(0, 1));
-				}
-				else if (x == 5 && y == 3) {
-					board[x, y] = addTile(x, y, 0f, true
-					);
-					addGuard(x, y);
-				}
-				else {
-					board[x, y] = addTile(x, y, 0f, true);
-				}
 			}
 		}
 	}
 
-
-	void buildLevel2(){
-		width = 15;
-		height = 15;
-		board = new Tile[width, height];
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (x == 0 || x == width-1 || y == 0 || y == height-1) {
-					board[x, y] = addWall(x, y);
-				}
-				else if (x == 1 && y == 12) {
-					board[x, y] = addTile(x, y, 0f, true);
-					//addFan(new Vector2(x, y), "E");
-					//addFrank(x,y);
-				}
-//				else if (x == 1 && y == 11) {
-//					board[x, y] = addTile(x, y, 0f, true);
-//					//addFrank(x, y);
-//				}
-//				else if ((x == 3 && y == 2) || (x == 9 && y == 2)) {
-//					board[x, y] = addTile(x, y, 0f, true);
-//					addGuard(x, y);
-//				}
-//				else if ((y == 13 || y == 11 || y == 10 || y == 9 || y == 8 || y == 7 || y == 5 || y == 4) && x ==6) {
-//					board[x, y] = addWall(x, y);
-//				}
-				else {
-					board[x, y] = addTile(x, y, 0f, true);
-				}
-			}
-		}
-	}
-
-	void buildBoard(int width, int height){
-		this.width = width;
-		this.height = height;
-		board = new Tile[width, height];
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
-					board[x, y] = addWall(x, y);
-				}
-				else if (x == 1 && y == 1) {
-					board[x, y] = addTile(x, y, 0, true);
-					addBurner(new Vector2 (x, y));
-				} else if(x==4 && y==5){
-					board[x, y] = addDoor(x, y);
-				}
-				else {
-					if (UnityEngine.Random.value > 1f)
-						board[x, y] = addWall(x, y);
-					else
-						board[x, y] = addTile(x, y, 0, true);
-				}
-			}
-		}
-	}
-
-	void buildLevel1() {
-		board = new Tile[15, 15];
-		width = 15;
-		height = 15;
-		for (int x = 0; x < 15; x++) {
-			for (int y = 0; y < 15; y++) {
-				if (x == 0 || x == 14 || y == 0 || y == 14) {
-					board[x, y] = addWall(x, y);
-				}
-				else if (x == 7 && y == 2) {
-					board[x, y] = addTile(x, y, 0f, true);
-					addFan(new Vector2(x, y), "E");
-				}
-				else if (x == 4 && y == 7) {
-					board[x, y] = addTile(x, y, 0f, true);
-				}
-				else if ((x == 5 && y == 13) || (x == 6 && y == 11)) {
-					board[x, y] = addTile(x, y, 0f, true);
-					addGuard(x, y);
-				}
-				else if ((y == 4 || y == 8) && x < 10) {
-					board[x, y] = addWall(x, y);
-				}
-				else if (y == 5 && x > 10 && x < width) {
-					if (x == 12) {
-						board[x, y] = addDoor(x, y);
-					}
-					else
-						board[x, y] = addWall(x, y);
-				}
-				else if (x == 10) {
-					if (y == 2 || y == 6 || y == 11) {
-						board[x, y] = addDoor(x, y);
-					}
-					else {
-						board[x, y] = addWall(x, y);
-					}
-				}
-				else if (x == 12 && y == 1) {
-					board[x, y] = addTile(x, y, 0f, true);
-					addSensor(x, y, new Vector2(0, 1));
-				}
-				else if (x == 5 && y == 3) {
-					board[x, y] = addTile(x, y, 0f, true
-					);
-					addGuard(x, y);
-				}
-				else {
-					board[x, y] = addTile(x, y, 0f, true);
-				}
-				if (board[x, y].isPassable() && Random.value > 0.7) {
-					addGuard(x, y);
-				}
-			}
-		}
-
-		constructSections();
-		finishX = 1;
-		finishY = 12;
-		addFrank(4, 7);
-	}
 
 	public int[] planSectionPath(Tile startTile, Tile endTile){
 		List<int> integers = new List<int>();
@@ -334,7 +148,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public Tile[] getSection(int sectionNum){
-		print(sections.Count + ":" + sectionNum);
+		//print(sections.Count + ":" + sectionNum);
 		return sections[sectionNum];
 	}
 	#endregion
@@ -365,6 +179,7 @@ public class GameManager : MonoBehaviour {
 	public void resetPathTiles(){
 		foreach (Tile t in board) {
 			t.dist = -1;
+			t.crowdFactor = 0;
 		}
 	}
 
@@ -425,6 +240,47 @@ public class GameManager : MonoBehaviour {
 			points.Add(tile.transform.position);
 		}
 		return points;
+	}
+
+	public void setTargetTile(Tile targetTile){
+		List<Tile> queue = new List<Tile>();
+		resetPathTiles();
+		queue.Add(targetTile);
+		targetTile.dist = 0;
+		while (queue.Count > 0) {
+			Tile currTile = queue[0];
+			queue.RemoveAt(0);
+			foreach (Tile neighbor in currTile.getNeighbors()) {
+				if (neighbor.dist < 0 && neighbor.isPassable()) {
+					neighbor.dist = currTile.dist + 1;
+					queue.Add(neighbor);
+				}
+			}
+		}
+	}
+
+	public List<Tile> findPathToTarget(Tile startTile){
+		List<Tile> path = new List<Tile>();
+		if (startTile.dist < 0)
+			return new List<Tile>();
+		Tile curr = startTile;
+		path.Add(startTile);
+		while (curr.dist > 0) {
+			Tile currMin = curr;
+			foreach (Tile neighbor in curr.getNeighbors()) {
+				if (neighbor.dist < curr.dist && neighbor.dist >= 0) {
+					if (currMin.dist >= curr.dist)
+						currMin = neighbor;
+					else if (currMin.crowdFactor + currMin.dist > neighbor.crowdFactor + neighbor.dist) {
+						currMin = neighbor;
+					}
+				}
+			}
+			curr = currMin;
+			currMin.crowdFactor += 0.3f;
+			path.Add(curr);
+		}
+		return path;
 	}
 
 	public List<Tile> getTilePath(Tile startTile,Tile endTile, bool ignoreDoors){

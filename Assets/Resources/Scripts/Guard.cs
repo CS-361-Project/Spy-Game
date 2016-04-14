@@ -8,11 +8,13 @@ public class Guard : Person {
 	float suspicion;
 
 	AlertIcon alert;
-	FOV fovDisplay;
+//	FOV fovDisplay;
 
 	Tile startTile, endTile;
 	[SerializeField]
 	int patrolDirection;
+
+	public bool selected;
 
 
 	// Use this for initialization
@@ -26,19 +28,20 @@ public class Guard : Person {
 		rend.sortingOrder = 1;
 
 		gameObject.layer = LayerMask.NameToLayer("Guard");
+		gameObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
 
-		GameObject fovObj = new GameObject();
+		/*GameObject fovObj = new GameObject();
 		fovObj.name = "FOV";
 		fovObj.transform.parent = transform;
 		fovObj.transform.localScale = new Vector3(1 / .7f, 1 / .7f, 1);
 		fovDisplay = fovObj.AddComponent<FOV>();
-		fovDisplay.init(viewDistance);
+		fovDisplay.init(viewDistance);*/
 
 		suspicion = 0.0f;
 
 		startTile = t;
 		//endTile = m.getTile(4, 6);
-		patrolDirection = 0;
+		patrolDirection = 3;
 //		targetPositions = gm.getPath(tile, endTile);
 		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
@@ -48,7 +51,15 @@ public class Guard : Person {
 	
 	// Update is called once per frame
 	void Update() {
-		fovDisplay.setDirection(direction);
+
+		/*Vector2 lastPos = tile.transform.position;
+
+		foreach (Vector2 position in targetPositions) {
+			Debug.DrawLine(lastPos, position);
+			lastPos = position;
+		}*/
+
+		//fovDisplay.setDirection(direction);
 		if (suspicion >= 1f) {
 			if (alert == null) {
 				GameObject alertObj = new GameObject();

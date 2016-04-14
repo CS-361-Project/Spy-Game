@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Person : MonoBehaviour {
-	protected Tile tile;
+	public Tile tile;
 	protected GameManager gm;
 	protected CircleCollider2D coll;
 	protected Rigidbody2D body;
 
 	protected Vector2 direction;
 	protected Vector2 intDirection;
-	protected List<Vector2> targetPositions;
+	public List<Vector2> targetPositions;
 
 	protected float speed;
 	protected float viewDistance = 2.5f;
@@ -30,7 +30,7 @@ public class Person : MonoBehaviour {
 
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
-		transform.localScale = new Vector3(0.7f, 0.7f, 1);
+		transform.localScale = new Vector3(0.4f, 0.4f, 1);
 
 		coll = gameObject.AddComponent<CircleCollider2D>();
 		body = gameObject.AddComponent<Rigidbody2D>();
@@ -89,7 +89,7 @@ public class Person : MonoBehaviour {
 			}
 		}
 		if (!beingPushed && targetPositions.Count >= 1) {
-			Vector2 toObject = targetPositions[0] - (Vector2)transform.position;
+			/*Vector2 toObject = targetPositions[0] - (Vector2)transform.position;
 			RaycastHit2D hit;
 			if (!gm.getClosestTile(targetPositions[0]).isPassable()) {
 				if (targetPositions.Count > 1) {
@@ -100,7 +100,7 @@ public class Person : MonoBehaviour {
 //				}
 			}
 			if ((hit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, 1 << 10)).collider !=  null) {
-				print("Raycast hit " + hit.collider.gameObject.name + " at " + hit.collider.transform.position);
+				//print("Raycast hit " + hit.collider.gameObject.name + " at " + hit.collider.transform.position);
 				List<Vector2> path = gm.getPath(tile, gm.getClosestTile(targetPositions[0]), false);
 				targetPositions.RemoveAt(0);
 				if (path.Count > 0) {
@@ -118,14 +118,14 @@ public class Person : MonoBehaviour {
 				if (targetPositions.Count < 1) {
 					return;
 				}
-			}
+			}*/
 
-			Debug.DrawLine(transform.position, targetPositions[0]);
+			//Debug.DrawLine(transform.position, targetPositions[0]);
 
 			Vector2 targetDirection = (targetPositions[0] - (Vector2)transform.position).normalized;
 //			Debug.DrawLine(transform.position, targetPositions[0]);
 
-//			direction = Vector2.Lerp(direction, targetDirection, 0.3f).normalized;
+			//direction = Vector2.Lerp(direction, targetDirection, 0.3f).normalized;
 			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), .3f);
 			direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
 
@@ -135,11 +135,11 @@ public class Person : MonoBehaviour {
 
 		}
 		beingPushed = false;
-		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, radius)) {
+		/*foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, radius)) {
 			if (c.gameObject.name == "Guard")
 				body.AddForce(-5*(c.transform.position-transform.position).normalized*
 					radius/Mathf.Max(Mathf.Min(Vector2.Distance((Vector2)c.transform.position,(Vector2)transform.position),radius),0.001f));
-		}
+		}*/
 	}
 
 	public bool canSee(Vector3 pos) {

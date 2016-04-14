@@ -28,7 +28,8 @@ public class Tile : MonoBehaviour {
 	public int section = -1;
 
 	//Used for path finding
-	public int dist = -1;
+	public float dist = -1;
+	public float crowdFactor = 0;
 
 	// Use this for initialization
 	public void init (int x, int y, GameManager game, float fire, float gas, bool flammable) {
@@ -44,6 +45,7 @@ public class Tile : MonoBehaviour {
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 0;
 		rend.sprite = Resources.Load<Sprite>("Sprites/Fan");
+
 		if (flammable) {
 			rend.color = Color.grey;
 		}else {
