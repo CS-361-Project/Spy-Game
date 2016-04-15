@@ -127,7 +127,7 @@ public class Guard : Person {
 				float dist = Vector2.Distance(g.transform.position, transform.position);
 				if (dist <= 0.45) {
 					sumForce += -12f * (g.transform.position - transform.position).normalized *
-						radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .001f)),3);
+						radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)),3);
 					neighborCount++;
 				}
 			}

@@ -6,8 +6,7 @@ public class Survivor : Person {
 
 	SpriteRenderer rend;
 	GameObject bulletObj;
-	public float size = .7f;
-
+	public float size = .45f;
 	float shotTimer;
 	float shotFrequency;
 
@@ -17,9 +16,10 @@ public class Survivor : Person {
 	// Use this for initialization
 	public override void init(Tile t, GameManager m) {
 		base.init (t, m);
-		viewLayerMask = 1 << 9 | 1 << 10;
+		viewLayerMask = LayerMask.NameToLayer("Guard") | LayerMask.NameToLayer("Wall");
+		viewDistance = 6f;
 
-		gameObject.layer = LayerMask.NameToLayer ("Guard");
+		gameObject.layer = LayerMask.NameToLayer ("Survivor");
 
 		shotTimer = 0; 
 		shotFrequency = 0;
@@ -29,13 +29,14 @@ public class Survivor : Person {
 		rend.color = Color.blue;
 		rend.sortingOrder = 1;
 
+		transform.localScale = new Vector3(size, size, 1);
 
 		bulletObj = new GameObject ();
 		bulletObj.transform.parent = transform;
 		bulletObj.transform.localPosition = Vector3.zero;
-		SpriteRenderer rend = bulletObj.AddComponent<SpriteRenderer> ();
-		rend.sprite = Resources.Load<Sprite> ("Sprites/Beam");
-		rend.sortingLayerName = "Foreground";
+		SpriteRenderer bulletRend = bulletObj.AddComponent<SpriteRenderer> ();
+		bulletRend.sprite = Resources.Load<Sprite> ("Sprites/Beam");
+		bulletRend.sortingLayerName = "Foreground";
 		bulletObj.SetActive (false);
 
 		startTile = t;
@@ -53,24 +54,42 @@ public class Survivor : Person {
 		if (patrolDirection == 2) {
 			patrolDirection = 0;
 		}
-		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
-			if (c != coll && c.gameObject.name != "Wall") {
-				if (Vector2.Distance(c.transform.position, transform.position) <= viewDistance / 2 || canSee(c.transform.position)) {
-					switch (c.gameObject.name) {
-					case "Zombie":
-						targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position), false);
-						if (targetPositions.Count >= 2) {
-							targetPositions.RemoveAt(targetPositions.Count - 1);
-							targetPositions.RemoveAt(0);
-						}
-						targetPositions.Add(c.transform.position);
-						break;
-					case "Survivor":
-						break;
-					}
+		float closestDistance = float.MaxValue;
+		Guard closestGuard = null;
+		foreach (Guard z in gm.getGuardList()) {
+			float dist = Vector2.Distance(z.transform.position, this.transform.position);
+			if (dist < viewDistance && dist < closestDistance) {
+				if (base.canSee(z.transform.position)) {
+					closestDistance = dist;
+					closestGuard = z;
 				}
 			}
 		}
+		if (closestGuard == null) {
+			bulletObj.SetActive(false);
+		}
+		else {
+			shootAt(closestGuard.transform.position);
+		}
+
+//		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
+//			if (c != coll && c.gameObject.name != "Wall") {
+//				if (Vector2.Distance(c.transform.position, transform.position) <= viewDistance / 2 || canSee(c.transform.position)) {
+//					switch (c.gameObject.name) {
+//					case "Zombie":
+//						targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position), false);
+//						if (targetPositions.Count >= 2) {
+//							targetPositions.RemoveAt(targetPositions.Count - 1);
+//							targetPositions.RemoveAt(0);
+//						}
+//						targetPositions.Add(c.transform.position);
+//						break;
+//					case "Survivor":
+//						break;
+//					}
+//				}
+//			}
+//		}
 		if (patrolDirection == 1) {
 			if (targetPositions.Count <= 0) {
 				targetPositions = gm.getPath(endTile, startTile, false);
@@ -86,7 +105,6 @@ public class Survivor : Person {
 		else if (patrolDirection == 0) {
 			wander(true);
 		}
-		move();
 	}
 
 	void turnToZombie(){
@@ -101,21 +119,24 @@ public class Survivor : Person {
 			bulletObj.SetActive(true);
 			shotTimer = 0f;
 
+			print("Shooting at point: " + pos + " from " + transform.position);
+
 			Vector2 toPos = pos - (Vector2)transform.position;
 			Vector2 startPoint = (Vector2)transform.position + toPos.normalized * size;
-			Vector2 finalToPos = MathHelper.rotate(pos - startPoint, Random.Range(-3f, 3f));
+			Vector2 finalToPos = MathHelper.rotate(pos - startPoint, Random.Range(-6f, 6f));
 			RaycastHit2D hit = Physics2D.Raycast(startPoint, finalToPos, 2000, viewLayerMask);
 			Vector2 toHit = hit.point - startPoint;
 
-			bulletObj.transform.localScale = new Vector2(finalToPos.magnitude, 0.1f);
-			bulletObj.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(toHit.y, toHit.x));
+//			bulletObj.transform.position = startPoint;
+			bulletObj.transform.localScale = new Vector2(toPos.magnitude / size, 0.1f);
+			bulletObj.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(toPos.y, toPos.x));
 
-			if (hit.collider != null) {
-				/*LevelObject hitObj = hit.collider.gameObject.GetComponent<LevelObject>();
-				if (hitObj != null) {
-					hitObj.onObjectShot();
-				}*/
-			}
+//			if (hit.collider != null) {
+//				LevelObject hitObj = hit.collider.gameObject.GetComponent<LevelObject>();
+//				if (hitObj != null) {
+//					hitObj.onObjectShot();
+//				}
+//			}
 		}
 	}
 

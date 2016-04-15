@@ -146,27 +146,36 @@ public class Person : MonoBehaviour {
 		}*/
 	}
 
+//	public bool canSee(Vector3 pos) {
+//		bool view = canSee(pos, Mathf.Deg2Rad * 30, viewDistance);
+//		if (!view) {
+//			bool peripheral = canSee(pos, Mathf.Deg2Rad * 90, viewDistance / 2);
+//			return peripheral;
+//		}
+//		else {
+//			return view;
+//		}
+//	}
+
 	public bool canSee(Vector3 pos) {
-		bool view = canSee(pos, Mathf.Deg2Rad * 30, viewDistance);
-		if (!view) {
-			bool peripheral = canSee(pos, Mathf.Deg2Rad * 90, viewDistance / 2);
-			return peripheral;
+		Vector2 toObject = (pos - transform.position);
+		RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, LayerMask.NameToLayer("Wall"));
+		if (rayHit.collider == null && toObject.magnitude <= viewDistance) {
+			return true;
 		}
-		else {
-			return view;
-		}
+		return false;
 	}
 
 	// angle in radians
 	public bool canSee(Vector3 pos, float viewAngle, float maxDist) {
-		/*Vector2 toObject = (pos - transform.position);
-		float angle = Vector2.Dot(direction, toObject);
-		if (angle <= 1 && angle >= Mathf.Cos(viewAngle)) { // cos 0 to cos 60
+		Vector2 toObject = (pos - transform.position);
+//		float angle = Vector2.Dot(direction, toObject);
+//		if (angle <= 1 && angle >= Mathf.Cos(viewAngle)) { // cos 0 to cos 60
 			RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, LayerMask.NameToLayer("Wall") | LayerMask.NameToLayer("Room Objects"));
 			if (rayHit.collider == null && toObject.magnitude <= maxDist) {
 				return true;
 			}
-		}*/
+//		}
 		return false;
 	}
 

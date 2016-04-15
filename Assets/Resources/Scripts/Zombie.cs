@@ -22,7 +22,7 @@ public class Zombie : Person {
 
 		shotTimer = 0; 
 		shotFrequency = 0;
-
+		SpriteRenderer rend;
 		rend = gameObject.AddComponent<SpriteRenderer> ();
 		rend.sprite = Resources.Load<Sprite> ("Sprites/Guard");
 		rend.color = Color.green;
@@ -32,9 +32,9 @@ public class Zombie : Person {
 		bulletObj = new GameObject ();
 		bulletObj.transform.parent = transform;
 		bulletObj.transform.localPosition = Vector3.zero;
-		SpriteRenderer rend = bulletObj.AddComponent<SpriteRenderer> ();
-		rend.sprite = Resources.Load<Sprite> ("Sprites/Beam");
-		rend.sortingLayerName = "Foreground";
+		SpriteRenderer rendBull = bulletObj.AddComponent<SpriteRenderer> ();
+		rendBull.sprite = Resources.Load<Sprite> ("Sprites/Beam");
+		rendBull.sortingLayerName = "Foreground";
 		bulletObj.SetActive (false);
 
 		startTile = t;
@@ -101,7 +101,8 @@ public class Zombie : Person {
 			shotTimer = 0f;
 
 			Vector2 toPos = pos - (Vector2)transform.position;
-			Vector2 startPoint = (Vector2)transform.position + toPos.normalized * size;
+			//Vector2 startPoint = (Vector2)transform.position + toPos.normalized * size;
+			Vector2 startPoint = (Vector2)transform.position + toPos.normalized;
 			Vector2 finalToPos = MathHelper.rotate(pos - startPoint, Random.Range(-3f, 3f));
 			RaycastHit2D hit = Physics2D.Raycast(startPoint, finalToPos, 2000, viewLayerMask);
 			Vector2 toHit = hit.point - startPoint;

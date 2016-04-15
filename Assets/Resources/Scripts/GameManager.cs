@@ -73,13 +73,14 @@ public class GameManager : MonoBehaviour {
 		/*if (Input.GetMouseButtonDown(0)){
 			
 		}*/
-//		count++;
-//		if (count == 150) {
-//			getTile(6, 6).setFire(1);
-//		}
+		count++;
+		if (count == 150) {
+			getTile(6, 6).setFire(1);
+		}
 	}
 
 	void generateLevel(int width, int height){
+		int survivorCount = 0;
 		this.width = width;
 		this.height = height;
 		board = new Tile[width, height];
@@ -98,9 +99,15 @@ public class GameManager : MonoBehaviour {
 					if (Random.value > 0.6 && guardList.Count < 200) {
 						addGuard(x, y);
 					}
+					if (survivorCount < 3) {
+						addSurvivor(x, y);
+						survivorCount++;
+					}
 				}
 			}
 		}
+
+
 	}
 
 	void branch(int x, int y, int dx, int dy, float xSeed, float ySeed){
@@ -157,6 +164,7 @@ public class GameManager : MonoBehaviour {
 
 	#region building levels
 	void buildLevel(int width, int height){
+		
 		this.width = width;
 		this.height = height;
 		board = new Tile[width, height];
@@ -173,9 +181,11 @@ public class GameManager : MonoBehaviour {
 					if (Random.value > 0.6 && guardList.Count < 200) {
 						addGuard(x, y);
 					}
+
 				}
 			}
 		}
+
 	}
 
 
@@ -464,6 +474,14 @@ public class GameManager : MonoBehaviour {
 			chem.ChemicalToggled += frank.onChemicalToggled;
 		}
 		frank.init(getTile(x, y), this);
+	}
+
+	void addSurvivor(int x, int y){
+		GameObject survObj = new GameObject();
+		survObj.name = "Survivor";
+		Survivor surv = survObj.AddComponent<Survivor>();
+		surv.init(getTile(x, y), this);
+
 	}
 
 	void addSensor(int x, int y, Vector2 direction) {
