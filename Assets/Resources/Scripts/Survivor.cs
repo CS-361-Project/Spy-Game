@@ -9,67 +9,76 @@ public class Survivor : Person {
 	public float size = .45f;
 	float shotTimer;
 	float shotFrequency;
+	float shotDuration;
 
 	Tile startTile, endTile;
 	[SerializeField]
 	int patrolDirection;
 	// Use this for initialization
 	public override void init(Tile t, GameManager m) {
-		base.init (t, m);
-		viewLayerMask = LayerMask.NameToLayer("Guard") | LayerMask.NameToLayer("Wall");
+		base.init(t, m);
+		viewLayerMask = (1 << LayerMask.NameToLayer("Guard")) | (1 << LayerMask.NameToLayer("Wall"));
+		obstacleLayerMask = (1 << LayerMask.NameToLayer("Wall")) | (1 << LayerMask.NameToLayer("Survivor"));
 		viewDistance = 6f;
 
-		gameObject.layer = LayerMask.NameToLayer ("Survivor");
+		gameObject.layer = LayerMask.NameToLayer("Survivor");
 
 		shotTimer = 0; 
-		shotFrequency = 0;
+		shotFrequency = .25f;
+		shotDuration = .05f;
 
-		rend = gameObject.AddComponent<SpriteRenderer> ();
-		rend.sprite = Resources.Load<Sprite> ("Sprites/Guard");
+		rend = gameObject.AddComponent<SpriteRenderer>();
+		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
 		rend.color = Color.blue;
 		rend.sortingOrder = 1;
 
 		transform.localScale = new Vector3(size, size, 1);
 
-		bulletObj = new GameObject ();
+		bulletObj = new GameObject();
 		bulletObj.transform.parent = transform;
 		bulletObj.transform.localPosition = Vector3.zero;
-		SpriteRenderer bulletRend = bulletObj.AddComponent<SpriteRenderer> ();
-		bulletRend.sprite = Resources.Load<Sprite> ("Sprites/Beam");
+		SpriteRenderer bulletRend = bulletObj.AddComponent<SpriteRenderer>();
+		bulletRend.sprite = Resources.Load<Sprite>("Sprites/Beam");
 		bulletRend.sortingLayerName = "Foreground";
-		bulletObj.SetActive (false);
+		bulletObj.SetActive(false);
 
 		startTile = t;
 		//endTile = m.getTile(4, 6);
 		patrolDirection = 0;
 		//		targetPositions = gm.getPath(tile, endTile);
-		targetPositions = new List<Vector2> ();
+		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 1f;
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 		if (patrolDirection == 2) {
 			patrolDirection = 0;
 		}
-		float closestDistance = float.MaxValue;
-		Guard closestGuard = null;
-		foreach (Guard z in gm.getGuardList()) {
-			float dist = Vector2.Distance(z.transform.position, this.transform.position);
-			if (dist < viewDistance && dist < closestDistance) {
-				if (base.canSee(z.transform.position)) {
-					closestDistance = dist;
-					closestGuard = z;
+
+		if (shotTimer >= shotFrequency) {
+			float closestDistance = float.MaxValue;
+			Guard closestGuard = null;
+			foreach (Guard z in gm.getGuardList()) {
+				float dist = Vector2.Distance(z.transform.position, this.transform.position);
+				if (dist < viewDistance && dist < closestDistance) {
+					if (canSee(z.transform.position)) {
+						closestDistance = dist;
+						closestGuard = z;
+					}
 				}
 			}
+			if (closestGuard == null) {
+				bulletObj.SetActive(false);
+			}
+			else {
+				shootAt(closestGuard.transform.position);
+			}
 		}
-		if (closestGuard == null) {
+		else if (shotTimer >= shotDuration) {
 			bulletObj.SetActive(false);
-		}
-		else {
-			shootAt(closestGuard.transform.position);
 		}
 
 //		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
@@ -105,31 +114,29 @@ public class Survivor : Person {
 		else if (patrolDirection == 0) {
 			wander(true);
 		}
+		shotTimer += Time.deltaTime;
 	}
 
-	void turnToZombie(){
-		GameObject zombie = new GameObject ();
-		zombie.AddComponent<Zombie> ();
+	void turnToZombie() {
+		GameObject zombie = new GameObject();
+		zombie.AddComponent<Zombie>();
 		zombie.transform.position = transform.position;
-		Destroy (gameObject);
+		Destroy(gameObject);
 	}
 
 	public void shootAt(Vector2 pos) {
-		if (shotTimer >= shotFrequency) {
-			bulletObj.SetActive(true);
-			shotTimer = 0f;
+		bulletObj.SetActive(true);
+		shotTimer = 0f;
 
-			print("Shooting at point: " + pos + " from " + transform.position);
+		Vector2 toPos = pos - (Vector2)transform.position;
+		Vector2 startPoint = (Vector2)transform.position + toPos.normalized * size/4;
+		Vector2 finalToPos = MathHelper.rotate(pos - startPoint, Random.Range(-6f, 6f));
+		RaycastHit2D hit = Physics2D.Raycast(startPoint, finalToPos, 2000, viewLayerMask);
+		Vector2 toHit = hit.point - startPoint;
 
-			Vector2 toPos = pos - (Vector2)transform.position;
-			Vector2 startPoint = (Vector2)transform.position + toPos.normalized * size;
-			Vector2 finalToPos = MathHelper.rotate(pos - startPoint, Random.Range(-6f, 6f));
-			RaycastHit2D hit = Physics2D.Raycast(startPoint, finalToPos, 2000, viewLayerMask);
-			Vector2 toHit = hit.point - startPoint;
-
-//			bulletObj.transform.position = startPoint;
-			bulletObj.transform.localScale = new Vector2(toPos.magnitude / size, 0.1f);
-			bulletObj.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(toPos.y, toPos.x));
+		bulletObj.transform.position = startPoint;
+		bulletObj.transform.localScale = new Vector2(toHit.magnitude / size, 0.1f);
+		bulletObj.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(toHit.y, toHit.x));
 
 //			if (hit.collider != null) {
 //				LevelObject hitObj = hit.collider.gameObject.GetComponent<LevelObject>();
@@ -137,10 +144,9 @@ public class Survivor : Person {
 //					hitObj.onObjectShot();
 //				}
 //			}
-		}
 	}
 
-	void flock(){
+	void flock() {
 
 	}
 }

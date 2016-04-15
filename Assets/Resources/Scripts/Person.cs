@@ -18,6 +18,7 @@ public class Person : MonoBehaviour {
 	public float radius = 0.5f;
 
 	protected int viewLayerMask = 1 << 10;
+	protected int obstacleLayerMask = (1 << LayerMask.NameToLayer("Wall"));
 
 	protected bool beingPushed = false;
 	protected bool onFire = false;
@@ -157,9 +158,9 @@ public class Person : MonoBehaviour {
 //		}
 //	}
 
-	public bool canSee(Vector3 pos) {
-		Vector2 toObject = (pos - transform.position);
-		RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, LayerMask.NameToLayer("Wall"));
+	public bool canSee(Vector2 pos) {
+		Vector2 toObject = (pos - (Vector2)transform.position);
+		RaycastHit2D rayHit = Physics2D.Raycast(transform.position, toObject.normalized, toObject.magnitude, obstacleLayerMask);
 		if (rayHit.collider == null && toObject.magnitude <= viewDistance) {
 			return true;
 		}
