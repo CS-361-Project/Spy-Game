@@ -84,6 +84,15 @@ public class Person : MonoBehaviour {
 //			print("Not wandering..." + targetPositions.Count + " better things to do.");
 //		}
 	}
+
+	public Vector2 nextPoint(){
+		if (targetPositions.Count > 0) {
+			return targetPositions[0];
+		}
+		else {
+			return transform.position;
+		}
+	}
 	
 	// called once per frame
 	public void move() {

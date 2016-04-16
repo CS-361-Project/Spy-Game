@@ -58,10 +58,35 @@ public class Survivor : Person {
 			patrolDirection = 0;
 		}
 
+		//Find the closet guards
+		List<Survivor> closestSurvivorList = new List<Survivor>();
+		foreach (Survivor s in gm.getSurvivorList()) {
+			if (s != this) {
+				float dist = Vector2.Distance(s.transform.position, this.transform.position);
+				if (dist < viewDistance) {
+					Vector2 toObject = s.transform.position - transform.position;
+					RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
+					if (hit.collider == null) {
+						closestSurvivorList.Add(s);
+					}
+				}
+			}
+		}
+
+		//Find the average direction of the closest survivors
+		if (closestSurvivorList.Count > 0) {
+			Vector2 averageDir = nextPoint();
+			foreach (Survivor s in closestSurvivorList) {
+				averageDir += s.nextPoint();
+			}
+			averageDir = averageDir / (closestSurvivorList.Count + 1);
+			targetPositions = gm.getPath(tile, gm.getClosestTile(averageDir), false);
+		}
+
 		if (shotTimer >= shotFrequency) {
 			float closestDistance = float.MaxValue;
 			Guard closestGuard = null;
-			foreach (Guard z in gm.getGuardList()) {
+			foreach (Guard z in gm.getZombieList()) {
 				float dist = Vector2.Distance(z.transform.position, this.transform.position);
 				if (dist < viewDistance && dist < closestDistance) {
 					if (canSee(z.transform.position)) {
@@ -70,6 +95,7 @@ public class Survivor : Person {
 					}
 				}
 			}
+				
 			if (closestGuard == null) {
 				bulletObj.SetActive(false);
 			}
@@ -137,7 +163,7 @@ public class Survivor : Person {
 		shotTimer = 0f;
 
 		Vector2 toPos = pos - (Vector2)transform.position;
-		Vector2 startPoint = (Vector2)transform.position + toPos.normalized * size/4;
+		Vector2 startPoint = (Vector2)transform.position + toPos.normalized * size / 4;
 		Vector2 finalToPos = MathHelper.rotate(pos - startPoint, Random.Range(-6f, 6f));
 		RaycastHit2D hit = Physics2D.Raycast(startPoint, finalToPos, 2000, viewLayerMask);
 		Vector2 toHit = hit.point - startPoint;
