@@ -9,7 +9,7 @@ public class Guard : Person {
 	int health;
 
 	AlertIcon alert;
-//	FOV fovDisplay;
+	//	FOV fovDisplay;
 
 	Tile startTile, endTile;
 	[SerializeField]
@@ -124,15 +124,33 @@ public class Guard : Person {
 		else if (patrolDirection == 0 || patrolDirection == 3) {
 			wander(true);
 		}
+
+		Survivor closestSurvivor = null;
+		float minDist = float.MaxValue;
+		foreach (Survivor s in gm.getSurvivorList()) {
+			float dist = Vector2.Distance(s.transform.position, this.transform.position);
+			if (dist < viewDistance && dist < minDist) {
+				Vector2 toObject = s.transform.position - transform.position;
+				RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
+				if (hit.collider == null) {
+					closestSurvivor = s;
+					minDist = dist;
+				}
+			}
+		}
+		if (closestSurvivor != null) {
+			targetPositions.InsertRange(0, gm.getPath(tile, closestSurvivor.tile, false));
+		}
+
 		move();
 		Vector3 sumForce = Vector3.zero;
 		int neighborCount = 0;
-		foreach (Guard g in gm.getGuardList()) {
+		foreach (Guard g in gm.getZombieList()) {
 			if (g != this) {
 				float dist = Vector2.Distance(g.transform.position, transform.position);
 				if (dist <= 0.45) {
 					sumForce += -10f * (g.transform.position - transform.position).normalized *
-						radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)),2);
+					radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)), 2);
 					neighborCount++;
 				}
 			}

@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 	List<Fan> fanList;
-	List<Guard> guardList;
+	List<Guard> zombieList;
 	List<Burner> burnerList;
 	List<Chemical> chemicalList;
 	List<LaserSensor> sensorList;
 	List<Tile> tileList;
+	List<Survivor> survivorList;
 
 	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder, sensorFolder;
 
@@ -28,11 +29,12 @@ public class GameManager : MonoBehaviour {
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
 		zombieCtrl.init(this);
 		fanList = new List<Fan>();
-		guardList = new List<Guard>();
+		zombieList = new List<Guard>();
 		burnerList = new List<Burner>();
 		chemicalList = new List<Chemical>();
 		sensorList = new List<LaserSensor>();
 		tileList = new List<Tile>();
+		survivorList = new List<Survivor>();
 
 		wallFolder = new GameObject();
 		wallFolder.name = "Walls";
@@ -101,7 +103,7 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else {
-					if (Random.value > 0.6 && guardList.Count < 200) {
+					if (Random.value > 0.6 && zombieList.Count < 200) {
 						addGuard(x, y);
 					}
 					if (survivorCount < 3) {
@@ -183,7 +185,7 @@ public class GameManager : MonoBehaviour {
 				}
 				else {
 					board[x, y] = addTile(x, y, 0, false);
-					if (Random.value > 0.6 && guardList.Count < 200) {
+					if (Random.value > 0.6 && zombieList.Count < 200) {
 						addGuard(x, y);
 					}
 
@@ -268,13 +270,17 @@ public class GameManager : MonoBehaviour {
 		return tileList[Random.Range(0, tileList.Count)];
 	}
 
-	public List<Guard> getGuardList() {
-		return guardList;
+	public List<Guard> getZombieList() {
+		return zombieList;
+	}
+
+	public List<Survivor> getSurvivorList() {
+		return survivorList;
 	}
 
 	public void removeZombie(Guard g) {
 		zombieCtrl.removeZombie(g);
-		guardList.Remove(g);
+		zombieList.Remove(g);
 	}
 
 	public void resetPathTiles(){
@@ -469,7 +475,7 @@ public class GameManager : MonoBehaviour {
 		fanObj.transform.position = position;
 		Fan fan = fanObj.AddComponent<Fan>();
 		fan.init(position.x, position.y, direction, this);
-		foreach (Guard g in guardList) {
+		foreach (Guard g in zombieList) {
 			fan.FanToggled += g.onFanToggled;
 		}
 		fanList.Add(fan);
@@ -496,6 +502,7 @@ public class GameManager : MonoBehaviour {
 		survObj.name = "Survivor";
 		Survivor surv = survObj.AddComponent<Survivor>();
 		surv.init(getTile(x, y), this);
+		survivorList.Add(surv);
 
 	}
 
@@ -503,7 +510,7 @@ public class GameManager : MonoBehaviour {
 		GameObject sensorObj = new GameObject();
 		sensorObj.name = "Laser Sensor";
 		LaserSensor sensor = sensorObj.AddComponent<LaserSensor>();
-		foreach (Guard g in guardList) {
+		foreach (Guard g in zombieList) {
 			sensor.MotionDetected += g.onMotionDetected;
 		}
 		sensor.init(this, getTile(x, y).transform.position, direction);
@@ -530,7 +537,7 @@ public class GameManager : MonoBehaviour {
 		}
 		guard.init(getTile(x, y), this);
 		guard.transform.parent = guardFolder.transform;
-		guardList.Add(guard);
+		zombieList.Add(guard);
 	}
 
 
@@ -540,7 +547,7 @@ public class GameManager : MonoBehaviour {
 		burnerObj.transform.position = position;
 		Burner burner = burnerObj.AddComponent<Burner>();
 		burner.init(getTile((int)position.x, (int)position.y));
-		foreach (Guard g in guardList) {
+		foreach (Guard g in zombieList) {
 			burner.BurnerToggled += g.onBurnerToggled;
 		}
 		burner.transform.parent = burnerFolder.transform;
@@ -552,7 +559,7 @@ public class GameManager : MonoBehaviour {
 		chemObj.name = "Chemical";
 		chemObj.transform.position = position;
 		Chemical chemical = chemObj.AddComponent<Chemical>();
-		foreach (Guard g in guardList) {
+		foreach (Guard g in zombieList) {
 			chemical.ChemicalToggled += g.onChemicalToggled;
 		}
 		chemical.transform.parent = chemicalFolder.transform;
