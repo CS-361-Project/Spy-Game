@@ -17,6 +17,9 @@ public class Guard : Person {
 
 	public bool selected;
 
+	Color baseColor = Color.magenta;
+	Color selectionColor = new Color(.4f, .85f, 1f);
+
 
 	// Use this for initialization
 	public override void init(Tile t, GameManager m) {
@@ -25,7 +28,7 @@ public class Guard : Person {
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Box");
-		rend.color = Color.magenta;
+		rend.color = baseColor;
 		rend.sortingOrder = 1;
 
 		gameObject.layer = LayerMask.NameToLayer("Guard");
@@ -182,6 +185,15 @@ public class Guard : Person {
 		if (health <= 0) {
 			gm.removeZombie(this);
 			Destroy(gameObject);
+		}
+	}
+
+	public void setSelected(bool selected) {
+		if (selected) {
+			rend.color = selectionColor;
+		}
+		else {
+			rend.color = baseColor;
 		}
 	}
 }
