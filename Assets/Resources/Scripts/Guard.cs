@@ -133,8 +133,8 @@ public class Guard : Person {
 			}
 		}
 		if (neighborCount > 0) {
-			//body.AddForce(sumForce / (float)neighborCount);
-			body.velocity += (Vector2)sumForce / (float)neighborCount;
+			sumForce = sumForce.normalized * Mathf.Min(sumForce.magnitude / (float)neighborCount, 37);
+			body.AddForce(sumForce);
 		}
 		//body.velocity = body.velocity.normalized * speed;
 	}
