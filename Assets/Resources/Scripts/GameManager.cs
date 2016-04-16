@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 	List<Burner> burnerList;
 	List<Chemical> chemicalList;
 	List<LaserSensor> sensorList;
+	List<Tile> tileList;
 
 	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder, sensorFolder;
 
@@ -29,6 +30,8 @@ public class GameManager : MonoBehaviour {
 		burnerList = new List<Burner>();
 		chemicalList = new List<Chemical>();
 		sensorList = new List<LaserSensor>();
+		tileList = new List<Tile>();
+
 		wallFolder = new GameObject();
 		wallFolder.name = "Walls";
 		tileFolder = new GameObject();
@@ -259,6 +262,10 @@ public class GameManager : MonoBehaviour {
 		return getTile(finishX, finishY);
 	}
 
+	public Tile getRandomEmptyTile() {
+		return tileList[Random.Range(0, tileList.Count)];
+	}
+
 	public List<Guard> getGuardList() {
 		return guardList;
 	}
@@ -425,6 +432,7 @@ public class GameManager : MonoBehaviour {
 		tile.init(x,y,this, fire, 0, true);
 		tile.transform.localPosition = new Vector3(x, y, 0);
 		tile.transform.parent = tileFolder.transform;
+		tileList.Add(tile);
 		return tile;
 	}
 

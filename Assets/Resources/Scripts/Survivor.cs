@@ -112,9 +112,19 @@ public class Survivor : Person {
 			}
 		}
 		else if (patrolDirection == 0) {
-			wander(true);
+			wander();
 		}
+		move();
 		shotTimer += Time.deltaTime;
+	}
+
+	void wander() {
+		if (targetPositions.Count == 0) {
+			targetPositions = gm.getPath(tile, gm.getRandomEmptyTile(), true);
+		}
+		else {
+			print("Too busy to wander");
+		}
 	}
 
 	void turnToZombie() {

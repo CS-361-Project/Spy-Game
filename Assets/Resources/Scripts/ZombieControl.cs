@@ -25,7 +25,7 @@ public class ZombieControl : MonoBehaviour {
 			case ZombieSelection.SelectionState.BeginningSelection:
 				if (!shift) {
 					foreach (Guard g in selection) {
-						g.gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+						g.gameObject.GetComponent<SpriteRenderer>().color = Color.magenta;
 					}
 					selection.Clear();
 				}
@@ -33,6 +33,12 @@ public class ZombieControl : MonoBehaviour {
 			case ZombieSelection.SelectionState.EndingSelection:
 				break;
 			case ZombieSelection.SelectionState.Selecting:
+				if (!shift) {
+					foreach (Guard g in selection) {
+						g.gameObject.GetComponent<SpriteRenderer>().color = Color.magenta;
+					}
+					selection.Clear();
+				}
 				foreach (Collider2D coll in currSelection) {
 					if (coll.gameObject.name == "Guard") {
 						Guard g = coll.gameObject.GetComponent<Guard>();

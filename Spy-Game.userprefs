@@ -1,16 +1,16 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Resources/Scripts/Zombie.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Resources\Scripts\Survivor.cs">
     <Files>
-      <File FileName="Assets/Resources/Scripts/GameManager.cs" Line="341" Column="18" />
-      <File FileName="Assets/Resources/Scripts/Fan.cs" Line="98" Column="16" />
-      <File FileName="Assets/Resources/Scripts/Tile.cs" Line="31" Column="17" />
-      <File FileName="Assets/Resources/Scripts/Door.cs" Line="1" Column="1" />
-      <File FileName="Assets/Resources/Scripts/Wall.cs" Line="1" Column="1" />
-      <File FileName="Assets/Resources/Scripts/Person.cs" Line="1" Column="1" />
-      <File FileName="Assets/Resources/Scripts/Survivor.cs" Line="37" Column="26" />
-      <File FileName="Assets/Resources/Scripts/SpriteReferences.cs" Line="7" Column="1" />
-      <File FileName="Assets/Resources/Scripts/Zombie.cs" Line="105" Column="71" />
+      <File FileName="Assets\Resources\Scripts\Survivor.cs" Line="68" Column="30" />
+      <File FileName="Assets\Resources\Scripts\Person.cs" Line="163" Column="123" />
+      <File FileName="Assets\Resources\Scripts\GameManager.cs" Line="381" Column="21" />
+      <File FileName="Assets\Resources\Scripts\Fan.cs" Line="1" Column="1" />
+      <File FileName="Assets\Resources\Scripts\Tile.cs" Line="1" Column="1" />
+      <File FileName="Assets\Resources\Scripts\Door.cs" Line="1" Column="1" />
+      <File FileName="Assets\Resources\Scripts\Wall.cs" Line="1" Column="1" />
+      <File FileName="Assets\Resources\Scripts\SpriteReferences.cs" Line="1" Column="1" />
+      <File FileName="Assets\Resources\Scripts\Guard.cs" Line="40" Column="20" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

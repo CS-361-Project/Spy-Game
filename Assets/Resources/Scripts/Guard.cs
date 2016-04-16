@@ -133,8 +133,10 @@ public class Guard : Person {
 			}
 		}
 		if (neighborCount > 0) {
-			body.AddForce(sumForce / (float)neighborCount);
+			//body.AddForce(sumForce / (float)neighborCount);
+			body.velocity += (Vector2)sumForce / (float)neighborCount;
 		}
+		//body.velocity = body.velocity.normalized * speed;
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
