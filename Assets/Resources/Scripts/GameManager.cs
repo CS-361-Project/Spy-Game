@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		print(guardList.Count);
+//		print(guardList.Count);
 		/*if (Input.GetMouseButtonDown(0)){
 			
 		}*/

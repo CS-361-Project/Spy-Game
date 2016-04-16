@@ -118,7 +118,7 @@ public class Person : MonoBehaviour {
 //					wander(true);
 //				}
 //			}
-			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .1) {
+			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .15) {
 				targetPositions.RemoveAt(0);
 				if (targetPositions.Count < 1) {
 					return;
@@ -131,7 +131,7 @@ public class Person : MonoBehaviour {
 //			Debug.DrawLine(transform.position, targetPositions[0]);
 
 			//direction = Vector2.Lerp(direction, targetDirection, 0.3f).normalized;
-			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), .3f);
+			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), .5f);
 			direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
 
 			body.velocity = direction * speed;

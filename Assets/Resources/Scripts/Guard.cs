@@ -46,7 +46,7 @@ public class Guard : Person {
 		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
-		speed = 1f;
+		speed = 1.2f;
 	}
 	
 	// Update is called once per frame
@@ -126,8 +126,8 @@ public class Guard : Person {
 			if (g != this) {
 				float dist = Vector2.Distance(g.transform.position, transform.position);
 				if (dist <= 0.45) {
-					sumForce += -12f * (g.transform.position - transform.position).normalized *
-						radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)),3);
+					sumForce += -10f * (g.transform.position - transform.position).normalized *
+						radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)),2);
 					neighborCount++;
 				}
 			}

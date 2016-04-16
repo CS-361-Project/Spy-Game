@@ -122,9 +122,6 @@ public class Survivor : Person {
 		if (targetPositions.Count == 0) {
 			targetPositions = gm.getPath(tile, gm.getRandomEmptyTile(), true);
 		}
-		else {
-			print("Too busy to wander");
-		}
 	}
 
 	void turnToZombie() {
