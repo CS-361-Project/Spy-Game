@@ -64,6 +64,10 @@ public class Tile : MonoBehaviour {
 
 		containsLaser = false;
 	}
+
+	public void setColor(){
+		rend.color = Color.green;
+	}
 	
 	// Update is called once per frame
 	public void Update () {

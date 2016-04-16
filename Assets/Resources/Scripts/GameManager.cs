@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour {
 	List<Chemical> chemicalList;
 	List<LaserSensor> sensorList;
 	List<Tile> tileList;
+	List<Tile> survivorHubs;
+	bool quad1, quad2, quad3, quad4;
 
 	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder, sensorFolder;
 
@@ -25,6 +27,9 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
+		width = 50;
+		height = 50;
+
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
 		zombieCtrl.init(this);
 		fanList = new List<Fan>();
@@ -33,6 +38,8 @@ public class GameManager : MonoBehaviour {
 		chemicalList = new List<Chemical>();
 		sensorList = new List<LaserSensor>();
 		tileList = new List<Tile>();
+		survivorHubs = new List<Tile> ();
+		quad1 = false; quad2 = false; quad3 = false; quad4 = false;
 
 		wallFolder = new GameObject();
 		wallFolder.name = "Walls";
@@ -67,7 +74,7 @@ public class GameManager : MonoBehaviour {
 		//addChemical (new Vector2 (2, 1));
 		//buildLevel();
 		//buildLevel(22,22);
-		generateLevel(50, 50);
+		generateLevel(width, height);
 //		addChemical (new Vector2 (2, 1));
 		count = 0;
 	}
@@ -89,29 +96,86 @@ public class GameManager : MonoBehaviour {
 		this.width = width;
 		this.height = height;
 		board = new Tile[width, height];
-		float xSeed1 = Random.Range(-9999f, 9999f);
-		float xSeed2 = Random.Range(-9999f, 9999f);
-		float ySeed1 = Random.Range(-9999f, 9999f);
-		float ySeed2 = Random.Range(-9999f, 9999f);
-		branch(1, height / 2, 1, 0, xSeed1, ySeed1);
-		branch(width / 2, 1, 0, 1, xSeed2, ySeed2);
+		float xSeed1 = Random.Range (-9999f, 9999f);
+		float xSeed2 = Random.Range (-9999f, 9999f);
+		float ySeed1 = Random.Range (-9999f, 9999f);
+		float ySeed2 = Random.Range (-9999f, 9999f);
+		branch (1, height / 2, 1, 0, xSeed1, ySeed1);
+		branch (width / 2, 1, 0, 1, xSeed2, ySeed2);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				if (board[x, y] == null) {
-					board[x, y] = addWall(x, y);
-				}
-				else {
+				if (board [x, y] == null) {
+					board [x, y] = addWall (x, y);
+				} else {
 					if (Random.value > 0.6 && guardList.Count < 200) {
-						addGuard(x, y);
+						addGuard (x, y);
 					}
 					if (survivorCount < 3) {
-						addSurvivor(x, y);
+						addSurvivor (x, y);
 						survivorCount++;
 					}
 				}
 			}
 		}
+		while (survivorHubs.Count < 4) {
+			Tile hub = getRandomEmptyTile ();
+			switch (findQuadrant (hub)) {
+			case 0:
+				print ("invalid tile");
+				break;
+			case 1:
+				if (!quad1) {
+					survivorHubs.Add (hub);
+					quad1 = true;
+				}
+				break;
+			case 2:
+				if (!quad2) {
+					survivorHubs.Add (hub);
+					quad2 = true;
+				}
+				break;
+			case 3:
+				if (!quad3) {
+					survivorHubs.Add (hub);
+					quad3 = true;
+				}
+				break;
+			case 4:
+				if (!quad4) {
+					survivorHubs.Add (hub);
+					quad4 = true;
+				}
+				break;
+			}
+		}
+		print ("done!");
+		foreach (Tile hub in survivorHubs) {
+			hub.setColor ();
+		}
+	}
 
+
+	
+
+	int findQuadrant(Tile hub){
+		int x = hub.posX;
+		int y = hub.posY;
+
+		if (x < (float)width/2F) {
+			if (y < (float)height/2F) {
+				return 1;
+			} else if (y > (float)height/2F) {
+				return 2;
+			}
+		} else if (x > (float)width/2F) {
+			if (y < (float)height/2F) {
+				return 4;
+			} else if (y > (float)height/2F) {
+				return 3;
+			}
+		}
+		return 0;
 
 	}
 
