@@ -17,6 +17,9 @@ public class ZombieControl : MonoBehaviour {
 		name = "Zombie Control";
 	}
 
+	public void removeZombie(Guard g) {
+		selection.Remove(g);
+	}
 	// Update is called once per frame
 	void Update() {
 		Collider2D[] currSelection = zombieSelector.getSelectedObjects();

@@ -21,10 +21,12 @@ public class GameManager : MonoBehaviour {
 	int finishY = 0;
 
 	List<Tile[]> sections;
+	ZombieControl zombieCtrl;
 
 	// Use this for initialization
 	void Start() {
-		new GameObject().AddComponent<ZombieControl>().init(this);
+		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
+		zombieCtrl.init(this);
 		fanList = new List<Fan>();
 		guardList = new List<Guard>();
 		burnerList = new List<Burner>();
@@ -77,9 +79,9 @@ public class GameManager : MonoBehaviour {
 			
 		}*/
 		count++;
-		if (count == 150) {
-			getTile(6, 6).setFire(1);
-		}
+//		if (count == 150) {
+//			getTile(6, 6).setFire(1);
+//		}
 	}
 
 	void generateLevel(int width, int height){
@@ -268,6 +270,11 @@ public class GameManager : MonoBehaviour {
 
 	public List<Guard> getGuardList() {
 		return guardList;
+	}
+
+	public void removeZombie(Guard g) {
+		zombieCtrl.removeZombie(g);
+		guardList.Remove(g);
 	}
 
 	public void resetPathTiles(){

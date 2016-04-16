@@ -6,6 +6,7 @@ public class Guard : Person {
 	SpriteRenderer rend;
 
 	float suspicion;
+	int health;
 
 	AlertIcon alert;
 //	FOV fovDisplay;
@@ -47,6 +48,7 @@ public class Guard : Person {
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 1.2f;
+		health = 100;
 	}
 	
 	// Update is called once per frame
@@ -172,6 +174,14 @@ public class Guard : Person {
 			suspicion = 2f;
 //			print("Path from " + tile.transform.position + " to " + t.transform.position + " is " + path.Count + " tiles.");
 			targetPositions = path;
+		}
+	}
+
+	public void onObjectShot(int damage) {
+		health -= damage;
+		if (health <= 0) {
+			gm.removeZombie(this);
+			Destroy(gameObject);
 		}
 	}
 }

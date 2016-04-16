@@ -114,6 +114,7 @@ public class Survivor : Person {
 		else if (patrolDirection == 0) {
 			wander();
 		}
+
 		move();
 		shotTimer += Time.deltaTime;
 	}
@@ -145,15 +146,11 @@ public class Survivor : Person {
 		bulletObj.transform.localScale = new Vector2(toHit.magnitude / size, 0.1f);
 		bulletObj.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(toHit.y, toHit.x));
 
-//			if (hit.collider != null) {
-//				LevelObject hitObj = hit.collider.gameObject.GetComponent<LevelObject>();
-//				if (hitObj != null) {
-//					hitObj.onObjectShot();
-//				}
-//			}
-	}
-
-	void flock() {
-
+		if (hit.collider != null) {
+			Guard zomb = hit.collider.gameObject.GetComponent<Guard>();
+			if (zomb != null) {
+				zomb.onObjectShot(Random.Range(40, 61));
+			}
+		}
 	}
 }
