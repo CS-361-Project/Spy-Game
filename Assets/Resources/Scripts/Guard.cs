@@ -1,8 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
-//TODO: Give these bad boys a quick timer for their user commands that they will follow without question before running off after an enemy again. 
 
 public class Guard : Person {
 	public static int tileViewDistance = 4;
@@ -12,7 +10,6 @@ public class Guard : Person {
 	int health;
 
 	AlertIcon alert;
-	//	FOV fovDisplay;
 
 	Tile startTile, endTile;
 	[SerializeField]
@@ -22,6 +19,9 @@ public class Guard : Person {
 
 	Color baseColor = Color.magenta;
 	Color selectionColor = new Color(.4f, .85f, 1f);
+
+	float actionClock;
+	bool commandPressed;
 
 
 	// Use this for initialization
@@ -45,9 +45,9 @@ public class Guard : Person {
 		fovDisplay = fovObj.AddComponent<FOV>();
 		fovDisplay.init(viewDistance);*/
 
-		gameObject.tag = "Zombie";
-
 		suspicion = 0.0f;
+		actionClock = 0.0f;
+		commandPressed = false;
 
 		startTile = t;
 		//endTile = m.getTile(4, 6);
@@ -56,12 +56,15 @@ public class Guard : Person {
 		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
-		speed = 1.5f;
+
+		speed = 2f;
 		health = 100;
 	}
 	
 	// Update is called once per frame
 	void Update() {
+		actionClock += Time.deltaTime;
+
 
 		/*Vector2 lastPos = tile.transform.position;
 
@@ -133,14 +136,18 @@ public class Guard : Person {
 
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;
-		foreach (Survivor s in gm.getSurvivorList()) {
-			float dist = Vector2.Distance(s.transform.position, this.transform.position);
-			if (dist < viewDistance && dist < minDist) {
-				Vector2 toObject = s.transform.position - transform.position;
-				RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
-				if (hit.collider == null) {
-					closestSurvivor = s;
-					minDist = dist;
+
+		if (actionClock > 5F || (!commandPressed)) {
+			commandPressed = false;
+			foreach (Survivor s in gm.getSurvivorList()) {
+				float dist = Vector2.Distance (s.transform.position, this.transform.position);
+				if (dist < viewDistance && dist < minDist) {
+					Vector2 toObject = s.transform.position - transform.position;
+					RaycastHit2D hit = Physics2D.Raycast (transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer ("Wall"));
+					if (hit.collider == null) {
+						closestSurvivor = s;
+						minDist = dist;
+					}
 				}
 			}
 		}
@@ -182,6 +189,11 @@ public class Guard : Person {
 			body.AddForce(sumForce);
 		}
 		//body.velocity = body.velocity.normalized * speed;
+	}
+
+	public void startTimer(){
+		actionClock = 0f;
+		commandPressed = true;
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
