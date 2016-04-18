@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-//TODO: Give these bad boys a quick timer for their user commands that they will follow without question before running off after an enemy again. 
-
 public class Guard : Person {
 	SpriteRenderer rend;
 
@@ -22,7 +20,7 @@ public class Guard : Person {
 	Color selectionColor = new Color(.4f, .85f, 1f);
 
 	float actionClock;
-	bool clockRunning;
+	bool commandPressed;
 
 
 	// Use this for initialization
@@ -47,7 +45,7 @@ public class Guard : Person {
 
 		suspicion = 0.0f;
 		actionClock = 0.0f;
-		clockRunning = false;
+		commandPressed = false;
 
 		startTile = t;
 		//endTile = m.getTile(4, 6);
@@ -145,8 +143,8 @@ public class Guard : Person {
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;
 
-		if (actionClock > 5F) {
-
+		if (actionClock > 5F || (!commandPressed)) {
+			commandPressed = false;
 			foreach (Survivor s in gm.getSurvivorList()) {
 				float dist = Vector2.Distance (s.transform.position, this.transform.position);
 				if (dist < viewDistance && dist < minDist) {
@@ -188,6 +186,7 @@ public class Guard : Person {
 
 	public void startTimer(){
 		actionClock = 0f;
+		commandPressed = true;
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
