@@ -146,9 +146,9 @@ public class Person : MonoBehaviour {
 
 			body.velocity = direction * speed;
 			direction = body.velocity.normalized;
-			tile = gm.getClosestTile(transform.position);
 
 		}
+		tile = gm.getClosestTile(transform.position);
 		beingPushed = false;
 		/*foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, radius)) {
 			if (c.gameObject.name == "Guard")

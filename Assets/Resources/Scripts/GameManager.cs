@@ -114,15 +114,18 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else {
-					if (Random.value > 0.6 && zombieList.Count < 200) {
-						addGuard(x, y);
-					}
-					if (survivorCount < 4) {
-						addSurvivor (x, y, survivorCount);
+//					if (Random.value > 0.6 && zombieList.Count < 200) {
+//						addGuard(x, y);
+//					}
+					if (survivorCount < 3) {
+						addSurvivor (x, y);
 						survivorCount++;
 					}
 				}
 			}
+		}
+		for (int i = 0; i < 200; i++) {
+			addGuard(1, height / 2);
 		}
 		while (survivorHubs.Count < 4) {
 			Tile hub = getRandomEmptyTile ();
@@ -328,7 +331,31 @@ public class GameManager : MonoBehaviour {
 	public Tile getClosestTile(Vector2 check){
 		int i = (int)Mathf.RoundToInt(check.x);
 		int j = (int)Mathf.RoundToInt(check.y);
-		return getTile(i, j);
+		Tile checkTile = getTile(i, j);
+		if (checkTile != null && checkTile.isPassable()) {
+			return checkTile;
+		}
+		else {
+			for(int k=1; k<(width>height?width/2:height/2); k++) {
+				Tile left = getTile(i - k, j);
+				if (left != null && left.isPassable()) {
+					return left;
+				}
+				Tile right = getTile(i + k, j);
+				if (right != null && right.isPassable()) {
+					return right;
+				}
+				Tile up = getTile(i, j + k);
+				if (up != null && up.isPassable()) {
+					return up;
+				}
+				Tile down = getTile(i, j - k);
+				if (down != null && down.isPassable()) {
+					return down;
+				}
+			}
+		}
+		return checkTile;
 	}
 
 	public Tile getFinishTile() {
@@ -464,16 +491,22 @@ public class GameManager : MonoBehaviour {
 		return path;
 	}
 
-	public List<Tile> getTilePath(Tile startTile,Tile endTile, bool ignoreDoors){
+	public List<Tile> getTilePath(Tile startTile, Tile endTile, bool ignoreDoors){
 		List<Tile> queue = new List<Tile>();
 		startTile.dist = 0;
 		bool foundPath = false;
 		queue.Add(startTile);
+		Tile closestToEnd = startTile;
+		float closestDist = 0;
 		while (queue.Count > 0) {
 			Tile currTile = queue[0];
 			queue.RemoveAt(0);
 			bool end = false;
 			foreach (Tile neighbor in currTile.getNeighbors()) {
+				if (currTile.dist < closestDist) {
+					closestToEnd = currTile;
+					closestDist = currTile.dist;
+				}
 				if (neighbor.dist < 0 && (neighbor.isPassable() || (neighbor is Door && ignoreDoors))) {
 					neighbor.dist = currTile.dist + 1;
 					if (neighbor == endTile) {
@@ -490,8 +523,9 @@ public class GameManager : MonoBehaviour {
 		}
 		if (!foundPath) {
 //			print("No path from " + startTile.transform.position + " to " + endTile.transform.position);
-			resetPathTiles();
-			return new List<Tile>();
+//			resetPathTiles();
+//			return new List<Tile>();
+			endTile = closestToEnd;
 		}
 		List<Tile> path = new List<Tile>();
 		path.Add(endTile);

@@ -32,7 +32,7 @@ public class Door : Tile {
 			fire = 0;
 			gas = 0;
 			col.a = 0;
-			gasRend.color = col;
+//			gasRend.color = col;
 			flammable = false;
 			gameObject.layer = LayerMask.NameToLayer("Wall");
 		}
