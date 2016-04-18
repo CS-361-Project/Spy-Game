@@ -2,6 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
+//TODO: Get Survivors to head towards hubs
+//TODO: Give survivors health that goes down when their collider overlaps a zombie collider and then their speed will be proprotional to their health also set timer to begin for them to turn into zombies
+
+
 public class Survivor : Person {
 
 	SpriteRenderer rend;

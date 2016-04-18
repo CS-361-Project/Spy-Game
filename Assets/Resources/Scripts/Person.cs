@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
+//TODO: get all persons to move even if you send them into a wall
 public class Person : MonoBehaviour {
 	public Tile tile;
 	protected GameManager gm;
