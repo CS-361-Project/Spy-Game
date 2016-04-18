@@ -35,7 +35,7 @@ public class Survivor : Person {
 		shotFrequency = .25f;
 		shotDuration = .05f;
 		health = 100;
-		damageTaken = 15;
+		damageTaken = 5;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
@@ -86,7 +86,7 @@ public class Survivor : Person {
 				}
 			}
 		}
-		if (prioritySurvivor != null && prioritySurvivor.priority < priority) {
+		if (prioritySurvivor != null && prioritySurvivor.priority < priority && prioritySurvivor.nextPoint() != (Vector2) prioritySurvivor.transform.position) {
 			targetPositions = gm.getPath(tile, gm.getClosestTile(prioritySurvivor.nextPoint()), false);
 		}
 		//Find the average direction of the closest survivors
