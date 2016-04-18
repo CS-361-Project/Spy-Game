@@ -87,10 +87,10 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-//		print(guardList.Count);
-		/*if (Input.GetMouseButtonDown(0)){
-			
-		}*/
+		if (zombieList.Count <= 0) {
+			print("The Game has ended");
+			//TODO: Make an End Game screen
+		}
 		count++;
 //		if (count == 150) {
 //			getTile(6, 6).setFire(1);
@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour {
 					if (Random.value > 0.6 && zombieList.Count < 200) {
 						addGuard(x, y);
 					}
-					if (survivorCount < 9) {
+					if (survivorCount < 4) {
 						addSurvivor (x, y, survivorCount);
 						survivorCount++;
 					}
@@ -351,6 +351,11 @@ public class GameManager : MonoBehaviour {
 		zombieCtrl.removeZombie(g);
 		zombieList.Remove(g);
 	}
+
+	public void removeSurvivor(Survivor s){
+		survivorList.Remove(s);
+	}
+
 
 	public void resetPathTiles(){
 		foreach (Tile t in board) {

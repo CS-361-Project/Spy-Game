@@ -15,6 +15,8 @@ public class Survivor : Person {
 	float shotFrequency;
 	float shotDuration;
 	public int priority;
+	int health;
+	int damageTaken;
 
 	Tile startTile, endTile;
 	[SerializeField]
@@ -32,6 +34,8 @@ public class Survivor : Person {
 		shotTimer = 0; 
 		shotFrequency = .25f;
 		shotDuration = .05f;
+		health = 100;
+		damageTaken = 15;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
@@ -64,7 +68,7 @@ public class Survivor : Person {
 			patrolDirection = 0;
 		}
 
-		//Find the closet guards
+		//Find the closest guard
 		//List<Survivor> closestSurvivorList = new List<Survivor>();
 		int highestPrioritySurvivor = int.MaxValue;
 		Survivor prioritySurvivor = null;
@@ -168,6 +172,18 @@ public class Survivor : Person {
 		zombie.AddComponent<Zombie>();
 		zombie.transform.position = transform.position;
 		Destroy(gameObject);
+	}
+
+	void OnCollisionEnter2D(Collision2D coll) {
+		if (coll.gameObject.tag == "Zombie") {
+			health -= damageTaken;
+			print(health.ToString());
+			//begin infection timer
+		}
+		if (health <= 0) {
+			gm.removeSurvivor(this);
+			Destroy(gameObject);
+		}
 	}
 
 	public void shootAt(Vector2 pos) {

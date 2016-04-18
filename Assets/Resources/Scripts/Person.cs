@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
-//TODO: get all persons to move even if you send them into a wall
 public class Person : MonoBehaviour {
 	public Tile tile;
 	protected GameManager gm;
@@ -34,6 +32,7 @@ public class Person : MonoBehaviour {
 		transform.position = t.transform.position;
 		transform.eulerAngles = Vector3.zero;
 		transform.localScale = new Vector3(0.45f, 0.45f, 1);
+
 
 		coll = gameObject.AddComponent<CircleCollider2D>();
 		coll.radius = 0.3f;

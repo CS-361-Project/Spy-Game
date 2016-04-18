@@ -43,6 +43,8 @@ public class Guard : Person {
 		fovDisplay = fovObj.AddComponent<FOV>();
 		fovDisplay.init(viewDistance);*/
 
+		gameObject.tag = "Zombie";
+
 		suspicion = 0.0f;
 
 		startTile = t;
