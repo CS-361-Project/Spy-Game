@@ -118,14 +118,18 @@ public class GameManager : MonoBehaviour {
 //						addGuard(x, y);
 //					}
 					if (survivorCount < 3) {
-						addSurvivor (x, y);
+						addSurvivor (x, y, survivorCount);
 						survivorCount++;
 					}
 				}
 			}
 		}
-		for (int i = 0; i < 200; i++) {
-			addGuard(1, height / 2);
+
+		int zombiePriority = 0;
+
+		for (int i = 0; i < 250; i++) {
+			addGuard(1, height / 2, zombiePriority);
+			zombiePriority++;
 		}
 		while (survivorHubs.Count < 4) {
 			Tile hub = getRandomEmptyTile ();
@@ -204,7 +208,7 @@ public class GameManager : MonoBehaviour {
 //		float r2 = Random.Range(0f, 1f);
 		float r2 = Mathf.PerlinNoise(x * .5f + xSeed, y * .5f + ySeed);
 //		print("r2: " + r2);
-		if (r2 <= .28f) {
+		if (r2 <= .35f) {
 			if (dx == 0) {
 				if (bit1) {
 					branch(x + 1, y, 1, 0, xSeed, ySeed);
@@ -232,9 +236,17 @@ public class GameManager : MonoBehaviour {
 
 	public void moveTo(List<Guard> guards, Vector2 point){
 		setTargetTile(getClosestTile(point));
+		int split = 12;
 		foreach (Guard g in guards) {
 			//print(findPathToTarget(g.tile).Count);
-			g.targetPositions = optimizePath(pathToPoints(findPathToTarget(g.tile)));
+			List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
+			g.targetPositions = pathToPoints(findPathToTarget(g.tile));
+			/*for (int p =0;p<points.Count;p+=split){
+				List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
+				g.targetPositions.AddRange(optimizePath(optPoints));
+			}*/
+			if (g.targetPositions.Count > 0)
+				g.targetPositions.RemoveAt(0);
 			/*if (g.targetPositions.Count > 0) {
 				g.targetPositions.RemoveAt(0);
 			}*/
@@ -426,7 +438,7 @@ public class GameManager : MonoBehaviour {
 				allPaths[i].Add(v);
 			}
 		}
-		allPaths[0].RemoveAt(0);
+		//allPaths[0].RemoveAt(0);
 		return allPaths[0];
 	}
 

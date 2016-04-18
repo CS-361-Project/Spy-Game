@@ -35,7 +35,7 @@ public class Person : MonoBehaviour {
 
 
 		coll = gameObject.AddComponent<CircleCollider2D>();
-		coll.radius = 0.3f;
+		coll.radius = 0.45f;
 
 		coll.sharedMaterial = Resources.Load<PhysicsMaterial2D>("WallMaterial");
 		body = gameObject.AddComponent<Rigidbody2D>();

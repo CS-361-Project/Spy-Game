@@ -22,9 +22,10 @@ public class Guard : Person {
 	Color baseColor = Color.magenta;
 	Color selectionColor = new Color(.4f, .85f, 1f);
 
+	int priority = 0;
 
 	// Use this for initialization
-	public override void init(Tile t, GameManager m) {
+	public override void init(Tile t, GameManager m, int priority) {
 		base.init(t, m);
 		viewLayerMask = 1 << 9 | 1 << 10;
 
@@ -54,7 +55,7 @@ public class Guard : Person {
 		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
-		speed = 1.2f;
+		speed = 2f;
 		health = 100;
 	}
 	
