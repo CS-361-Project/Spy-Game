@@ -5,10 +5,12 @@ using System.Collections.Generic;
 public class Tile : MonoBehaviour {
 	float fireTimer;
 	protected SpriteRenderer rend;
-	protected SpriteRenderer gasRend;
+	//	protected SpriteRenderer gasRend;
+	protected SpriteRenderer fogRend;
 
 	GameManager game;
 	protected bool flammable;
+	public bool visited;
 	public float fire;
 	public float gas;
 
@@ -32,7 +34,7 @@ public class Tile : MonoBehaviour {
 	public float crowdFactor = 0;
 
 	// Use this for initialization
-	public void init (int x, int y, GameManager game, float fire, float gas, bool flammable) {
+	public void init(int x, int y, GameManager game, float fire, float gas, bool flammable) {
 		fireTimer = 0;
 		fanEffect = false;
 		this.flammable = flammable;
@@ -48,45 +50,57 @@ public class Tile : MonoBehaviour {
 
 		if (flammable) {
 			rend.color = Color.grey;
-		}else {
-			rend.color=Color.Lerp(Color.grey, Color.black, .5F);
+		}
+		else {
+			rend.color = Color.Lerp(Color.grey, Color.black, .5F);
 		}
 
-		GameObject obj = new GameObject();
-		obj.transform.parent = transform;
-		obj.transform.localPosition = Vector3.zero;
-		gasRend = obj.AddComponent<SpriteRenderer>();
-		gasRend.sortingOrder = 1;
-		gasRend.sprite = Resources.Load<Sprite>("Sprites/Box");
-		col = Color.green;
-		col.a = 0f;
-		gasRend.color = col;
+//		GameObject obj = new GameObject();
+//		obj.transform.parent = transform;
+//		obj.transform.localPosition = Vector3.zero;
+//		gasRend = obj.AddComponent<SpriteRenderer>();
+//		gasRend.sortingOrder = 1;
+//		gasRend.sprite = Resources.Load<Sprite>("Sprites/Box");
+//		col = Color.green;
+//		col.a = 0f;
+//		gasRend.color = col;
 
+		GameObject fogObj = new GameObject();
+		fogObj.transform.parent = transform;
+		fogObj.transform.localPosition = Vector3.zero;
+		fogObj.name = "Fog";
+		fogRend = fogObj.AddComponent<SpriteRenderer>();
+		fogRend.sprite = Resources.Load<Sprite>("Sprites/Box");
+		fogRend.color = Color.white;
+		fogRend.sortingLayerName = "Foreground";
+		fogRend.sortingOrder = 3;
+
+		visited = false;
 		containsLaser = false;
 	}
 
-	public void setColor(){
+	public void setColor() {
 		rend.color = Color.green;
 	}
 	
 	// Update is called once per frame
-	public void Update () {
+	public void Update() {
 		if (flammable) {
 			checkForFire();
 		}
 		if (isPassable()) {
-			checkForGas();
-			col = Color.green;
-			//TODO we are capping ALPHA VALUE not GAS PER TILE come back to this later and think more
-			col.a = Mathf.Min(gas, 0.25f);
-			gasRend.color = col;
+//			checkForGas();
+//			col = Color.green;
+//			//TODO we are capping ALPHA VALUE not GAS PER TILE come back to this later and think more
+//			col.a = Mathf.Min(gas, 0.25f);
+//			gasRend.color = col;
 			//TODO if a tile was previously inflammable and now has gas on it. That tile should become flammable. 
 		}
 		if (fire >= 1) {
 			fireTimer += Time.deltaTime;
 			rend.color = Color.red;
 			if (fireTimer > TimeBeforeSpread) {
-				fire = Mathf.Max(2,fire);
+				fire = Mathf.Max(2, fire);
 
 			}
 		}
@@ -96,7 +110,7 @@ public class Tile : MonoBehaviour {
 		return true;
 	}
 
-	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY){
+	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY) {
 		fanEffect = true;
 		fanDirec = direc;
 		flammable = false;
@@ -104,7 +118,7 @@ public class Tile : MonoBehaviour {
 		this.fanPosY = fanPosY;
 	}
 
-	public virtual void removeFanForce(){
+	public virtual void removeFanForce() {
 		fanEffect = false;
 		flammable = true;
 	}
@@ -153,15 +167,15 @@ public class Tile : MonoBehaviour {
 		return neighbors.ToArray();
 	}
 
-	void checkForFire(){
+	void checkForFire() {
 		//if one of the neighbors is burning then start burning
-		Tile [] Neighbors =getNeighbors();
+		Tile[] Neighbors = getNeighbors();
 		foreach (Tile neighbor in Neighbors) {
 			
-			if (neighbor.fire >= 2){
+			if (neighbor.fire >= 2) {
 				if (gas >= 0) {
 					fire = Mathf.Max(fire, 1);
-					fire = Mathf.Min(Mathf.Max(fire, (gas*10) * fire), 3);
+					fire = Mathf.Min(Mathf.Max(fire, (gas * 10) * fire), 3);
 					gas = 0;
 				}
 				else {
@@ -171,43 +185,44 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
-	void checkForGas(){
+	void checkForGas() {
 		if (fanEffect) {
-			if(gas>0){
-			Tile neighbor;
-			switch (fanDirec) {
-			case "E":
-				neighbor = game.getTile(posX + 1, posY);
-				if (neighbor.isPassable()) {
-						neighbor.gas = neighbor.gas + (gas/((posX-fanPosX)));
-						gas = gas-(gas / (posX - fanPosX));
+			if (gas > 0) {
+				Tile neighbor;
+				switch (fanDirec) {
+					case "E":
+						neighbor = game.getTile(posX + 1, posY);
+						if (neighbor.isPassable()) {
+							neighbor.gas = neighbor.gas + (gas / ((posX - fanPosX)));
+							gas = gas - (gas / (posX - fanPosX));
+						}
+						break;
+					case "S":
+						neighbor = game.getTile(posX + 1, posY);
+						if (neighbor.isPassable()) {
+							neighbor.gas = neighbor.gas + gas;
+							gas = 0;
+						}
+						break;
+					case "W":
+						neighbor = game.getTile(posX + 1, posY);
+						if (neighbor.isPassable()) {
+							neighbor.gas = neighbor.gas + gas;
+							gas = 0;
+						}
+						break;
+					case "N":
+						neighbor = game.getTile(posX + 1, posY);
+						if (neighbor.isPassable()) {
+							neighbor.gas = neighbor.gas + gas;
+							gas = 0;
+						}
+						break;
 				}
-				break;
-			case "S":
-				neighbor = game.getTile(posX + 1, posY);
-				if (neighbor.isPassable()) {
-					neighbor.gas = neighbor.gas + gas;
-					gas = 0;
-				}
-				break;
-			case "W":
-				neighbor = game.getTile(posX + 1, posY);
-				if (neighbor.isPassable()) {
-					neighbor.gas = neighbor.gas + gas;
-					gas = 0;
-				}
-				break;
-			case "N":
-				neighbor = game.getTile(posX + 1, posY);
-				if (neighbor.isPassable()) {
-					neighbor.gas = neighbor.gas + gas;
-					gas = 0;
-				}
-				break;
-			}
 
-				}
-		}else {
+			}
+		}
+		else {
 
 			foreach (Tile neighbor in getNeighbors()) {
 				if (neighbor.gas < gas && neighbor.isPassable()) {
@@ -219,14 +234,21 @@ public class Tile : MonoBehaviour {
 		}
 	}
 
-	public void setGas(float gas){
+	public void setGas(float gas) {
 		this.gas += gas;
 
 	}
 
-	public void setFire(float fire){
+	public void setFire(float fire) {
 		this.fire += fire;
 
+	}
+
+	public void visit() {
+		if (!visited) {
+			Destroy(fogRend.gameObject);
+			visited = true;
+		}
 	}
 
 }

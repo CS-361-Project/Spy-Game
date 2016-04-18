@@ -64,20 +64,29 @@ public class Guard : Person {
 			lastPos = position;
 		}*/
 
-		//fovDisplay.setDirection(direction);
-		if (suspicion >= 1f) {
-			if (alert == null) {
-				GameObject alertObj = new GameObject();
-				alertObj.name = "Alert";
-				alert = alertObj.AddComponent<AlertIcon>();
-				alert.transform.parent = transform;
-				alert.transform.localPosition = Vector3.up;
-			}
-			suspicion -= .01f;
-			if (suspicion < 1f) {
-				Destroy(alert.gameObject);
+		for (int x = tile.posX - 1; x <= tile.posX + 1; x++) {
+			for (int y = tile.posY - 1; y <= tile.posY + 1; y++) {
+				Tile t = gm.getTile(x, y);
+				if (t != null) {
+					t.visit();
+				}
 			}
 		}
+
+		//fovDisplay.setDirection(direction);
+//		if (suspicion >= 1f) {
+//			if (alert == null) {
+//				GameObject alertObj = new GameObject();
+//				alertObj.name = "Alert";
+//				alert = alertObj.AddComponent<AlertIcon>();
+//				alert.transform.parent = transform;
+//				alert.transform.localPosition = Vector3.up;
+//			}
+//			suspicion -= .01f;
+//			if (suspicion < 1f) {
+//				Destroy(alert.gameObject);
+//			}
+//		}
 //		if (targetPositions.Count > 0) {
 //			print("Count: " + targetPositions.Count);
 //		}
@@ -156,6 +165,9 @@ public class Guard : Person {
 			}
 		}
 		if (neighborCount > 0) {
+			if (sumForce == Vector3.zero) {
+				sumForce = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+			}
 			sumForce = sumForce.normalized * Mathf.Min(sumForce.magnitude / (float)neighborCount, 37);
 			body.AddForce(sumForce);
 		}
