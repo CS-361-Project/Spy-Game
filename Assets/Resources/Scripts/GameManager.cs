@@ -87,10 +87,10 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-//		print(guardList.Count);
-		/*if (Input.GetMouseButtonDown(0)){
-			
-		}*/
+		if (zombieList.Count <= 0) {
+			print("The Game has ended");
+			//TODO: Make an End Game screen
+		}
 		count++;
 //		if (count == 150) {
 //			getTile(6, 6).setFire(1);
@@ -379,6 +379,11 @@ public class GameManager : MonoBehaviour {
 		zombieList.Remove(g);
 	}
 
+	public void removeSurvivor(Survivor s){
+		survivorList.Remove(s);
+	}
+
+
 	public void resetPathTiles(){
 		foreach (Tile t in board) {
 			t.dist = -1;
@@ -600,11 +605,11 @@ public class GameManager : MonoBehaviour {
 		frank.init(getTile(x, y), this);
 	}
 
-	void addSurvivor(int x, int y){
+	void addSurvivor(int x, int y, int priority){
 		GameObject survObj = new GameObject();
 		survObj.name = "Survivor";
 		Survivor surv = survObj.AddComponent<Survivor>();
-		surv.init(getTile(x, y), this);
+		surv.init(getTile(x, y), this, priority);
 		survivorList.Add(surv);
 
 	}

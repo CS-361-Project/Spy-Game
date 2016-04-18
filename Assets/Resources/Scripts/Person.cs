@@ -33,6 +33,7 @@ public class Person : MonoBehaviour {
 		transform.eulerAngles = Vector3.zero;
 		transform.localScale = new Vector3(0.45f, 0.45f, 1);
 
+
 		coll = gameObject.AddComponent<CircleCollider2D>();
 		coll.radius = 0.3f;
 

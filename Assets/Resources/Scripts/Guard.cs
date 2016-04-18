@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+//TODO: Give these bad boys a quick timer for their user commands that they will follow without question before running off after an enemy again. 
+
 public class Guard : Person {
 	SpriteRenderer rend;
 
@@ -40,6 +42,8 @@ public class Guard : Person {
 		fovObj.transform.localScale = new Vector3(1 / .7f, 1 / .7f, 1);
 		fovDisplay = fovObj.AddComponent<FOV>();
 		fovDisplay.init(viewDistance);*/
+
+		gameObject.tag = "Zombie";
 
 		suspicion = 0.0f;
 
