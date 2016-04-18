@@ -55,6 +55,9 @@ public class ZombieControl : MonoBehaviour {
 		}
 		if (zombieSelector.getMouseClicked()) {
 			gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords());
+			foreach (Guard g in selection) {
+				g.startTimer ();
+			}
 		}
 	}
 }

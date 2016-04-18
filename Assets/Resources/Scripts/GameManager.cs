@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour {
 //						addGuard(x, y);
 //					}
 					if (survivorCount < 3) {
-						addSurvivor (x, y);
+						addSurvivor (x, y, survivorCount);
 						survivorCount++;
 					}
 				}
