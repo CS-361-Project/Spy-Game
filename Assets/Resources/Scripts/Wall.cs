@@ -26,12 +26,12 @@ public class Wall : Tile {
 		if (!visible) {
 			rend.sortingLayerName = "Foreground";
 			rend.sortingOrder = 3;
-			rend.color = new Color(.25f, .25f, .25f);
+			rend.color = Color.black;
 		}
 		else {
 			rend.sortingLayerName = "Default";
 			rend.sortingOrder = 0;
-			rend.color = Color.black;
+			rend.color = new Color(.25f, .25f, .25f);
 		}
 	}
 }

@@ -28,10 +28,16 @@ public class GameManager : MonoBehaviour {
 	List<Tile[]> sections;
 	ZombieControl zombieCtrl;
 
+	int maxZombiePriority;
+	int maxSurvivorPriority;
+
 	// Use this for initialization
 	void Start() {
 		width = 50;
 		height = 50;
+
+		maxZombiePriority = 0;
+		maxSurvivorPriority = 0;
 
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
 		zombieCtrl.init(this);
@@ -111,8 +117,8 @@ public class GameManager : MonoBehaviour {
 //					if (Random.value > 0.6 && zombieList.Count < 200) {
 //						addGuard(x, y);
 //					}
-					if (survivorCount < 3) {
-						addSurvivor (x, y, survivorCount);
+					if (survivorCount < 30) {
+						addSurvivor (x, y);
 						survivorCount++;
 					}
 				}
@@ -122,7 +128,7 @@ public class GameManager : MonoBehaviour {
 		int zombiePriority = 0;
 
 		for (int i = 0; i < 250; i++) {
-			addGuard(1, height / 2, zombiePriority);
+			addGuard(1, height / 2);
 			zombiePriority++;
 		}
 		while (survivorHubs.Count < 4) {
@@ -162,9 +168,10 @@ public class GameManager : MonoBehaviour {
 			GameObject pointObj = new GameObject();
 			ControlPoint point = pointObj.AddComponent<ControlPoint>();
 			point.init(hub.posX,hub.posY, this);
-			point.transform.localPosition = new Vector3(hub.posX, hub.posY, 0);
-			Destroy (hub);
-
+			point.transform.position = new Vector3(hub.posX, hub.posY, 0);
+			board[hub.posX, hub.posY] = point;
+			tileList.Add(point);
+			Destroy (hub.gameObject);
 		}
 	}
 
@@ -617,11 +624,11 @@ public class GameManager : MonoBehaviour {
 //		frank.init(getTile(x, y), this);
 //	}
 
-	void addSurvivor(int x, int y, int priority){
+	public void addSurvivor(int x, int y){
 		GameObject survObj = new GameObject();
 		survObj.name = "Survivor";
 		Survivor surv = survObj.AddComponent<Survivor>();
-		surv.init(getTile(x, y), this, priority);
+		surv.init(getTile(x, y), this, maxSurvivorPriority++);
 		survivorList.Add(surv);
 
 	}
@@ -639,7 +646,7 @@ public class GameManager : MonoBehaviour {
 //	}
 
 	// register each guard to be notified when a fan is toggled
-	void addGuard(int x, int y, int priority) {
+	public void addGuard(int x, int y) {
 		GameObject guardObj = new GameObject();
 		guardObj.name = "Guard";
 		Guard guard = guardObj.AddComponent<Guard>();
@@ -655,7 +662,7 @@ public class GameManager : MonoBehaviour {
 		foreach (LaserSensor sensor in sensorList) {
 			sensor.MotionDetected += guard.onMotionDetected;
 		}
-		guard.init(getTile(x, y), this, priority);
+		guard.init(getTile(x, y), this, maxZombiePriority++);
 		guard.transform.parent = guardFolder.transform;
 		zombieList.Add(guard);
 	}

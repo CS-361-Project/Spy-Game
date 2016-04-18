@@ -8,9 +8,9 @@ public class Tile : MonoBehaviour {
 	//	protected SpriteRenderer gasRend;
 	protected SpriteRenderer fogRend;
 
-	GameManager game;
+	protected GameManager gm;
 	protected bool flammable;
-	public bool visited;
+//	public bool visited;
 	public bool visible;
 	bool needToCheckVisibility;
 	public float fire;
@@ -45,7 +45,7 @@ public class Tile : MonoBehaviour {
 		this.flammable = flammable;
 		this.gas = gas;
 		this.fire = fire;
-		this.game = game;
+		this.gm = game;
 		this.posX = x;
 		this.posY = y;
 		gameObject.name = "Tile";
@@ -69,24 +69,24 @@ public class Tile : MonoBehaviour {
 //		col = Color.green;
 //		col.a = 0f;
 //		gasRend.color = col;
-
-		GameObject fogObj = new GameObject();
-		fogObj.transform.parent = transform;
-		fogObj.transform.localPosition = Vector3.zero;
-		fogObj.name = "Fog";
-		fogRend = fogObj.AddComponent<SpriteRenderer>();
-		fogRend.sprite = Resources.Load<Sprite>("Sprites/Box");
-		fogRend.color = Color.white;
-		fogRend.sortingLayerName = "Foreground";
-		fogRend.sortingOrder = 3;
+//
+//		GameObject fogObj = new GameObject();
+//		fogObj.transform.parent = transform;
+//		fogObj.transform.localPosition = Vector3.zero;
+//		fogObj.name = "Fog";
+//		fogRend = fogObj.AddComponent<SpriteRenderer>();
+//		fogRend.sprite = Resources.Load<Sprite>("Sprites/Box");
+//		fogRend.color = Color.white;
+//		fogRend.sortingLayerName = "Foreground";
+//		fogRend.sortingOrder = 3;
 
 		zombies = new List<Guard>();
 		survivors = new List<Survivor>();
 
-		visited = false;
+//		visited = false;
 		containsLaser = false;
 		visible = false;
-		needToCheckVisibility = false;
+		needToCheckVisibility = true;
 	}
 
 	public void setColor() {
@@ -103,10 +103,10 @@ public class Tile : MonoBehaviour {
 				}
 			}
 			setVisibility(foundZombie);
-			if (foundZombie && !visited) {
-				Destroy(fogRend.gameObject);
-				visited = true;
-			}
+//			if (foundZombie && !visited) {
+//				Destroy(fogRend.gameObject);
+//				visited = true;
+//			}
 			needToCheckVisibility = false;
 		}
 
@@ -154,7 +154,7 @@ public class Tile : MonoBehaviour {
 		for (int i = posX - 1; i <= posX + 1; i++) {
 			for (int j = posY - 1; j <= posY + 1; j++) {
 				if (i == posX ^ j == posY) {
-					Tile t = game.getTile(i, j);
+					Tile t = gm.getTile(i, j);
 					if (t != null) {
 						neighbors.Add(t);
 					}
@@ -198,7 +198,7 @@ public class Tile : MonoBehaviour {
 		int i = 0;
 		for (int x = posX - n/2; x <= posX + n/2; x++) {
 			for (int y = posY - n/2; y <= posY + n/2; y++) {
-				Tile t = game.getTile(x, y);
+				Tile t = gm.getTile(x, y);
 				if (t != null) {
 					result.Add(t);
 				}
@@ -231,28 +231,28 @@ public class Tile : MonoBehaviour {
 				Tile neighbor;
 				switch (fanDirec) {
 					case "E":
-						neighbor = game.getTile(posX + 1, posY);
+						neighbor = gm.getTile(posX + 1, posY);
 						if (neighbor.isPassable()) {
 							neighbor.gas = neighbor.gas + (gas / ((posX - fanPosX)));
 							gas = gas - (gas / (posX - fanPosX));
 						}
 						break;
 					case "S":
-						neighbor = game.getTile(posX + 1, posY);
+						neighbor = gm.getTile(posX + 1, posY);
 						if (neighbor.isPassable()) {
 							neighbor.gas = neighbor.gas + gas;
 							gas = 0;
 						}
 						break;
 					case "W":
-						neighbor = game.getTile(posX + 1, posY);
+						neighbor = gm.getTile(posX + 1, posY);
 						if (neighbor.isPassable()) {
 							neighbor.gas = neighbor.gas + gas;
 							gas = 0;
 						}
 						break;
 					case "N":
-						neighbor = game.getTile(posX + 1, posY);
+						neighbor = gm.getTile(posX + 1, posY);
 						if (neighbor.isPassable()) {
 							neighbor.gas = neighbor.gas + gas;
 							gas = 0;
@@ -326,12 +326,12 @@ public class Tile : MonoBehaviour {
 		if (!visible) {
 			rend.sortingLayerName = "Foreground";
 			rend.sortingOrder = 3;
-			rend.color = new Color(.75f, .75f, .75f);
+			rend.color = Color.gray;
 		}
 		else {
 			rend.sortingLayerName = "Default";
 			rend.sortingOrder = 0;
-			rend.color = Color.gray;
+			rend.color = new Color(.75f, .75f, .75f);
 		}
 	}
 }
