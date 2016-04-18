@@ -1,17 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-//TODO: Give these bad boys a quick timer for their user commands that they will follow without question before running off after an enemy again. 
-
 public class Guard : Person {
+	public static int tileViewDistance = 4;
 	SpriteRenderer rend;
 
 	float suspicion;
 	int health;
 
 	AlertIcon alert;
-	//	FOV fovDisplay;
 
 	Tile startTile, endTile;
 	[SerializeField]
@@ -23,10 +21,13 @@ public class Guard : Person {
 	Color selectionColor = new Color(.4f, .85f, 1f);
 
 	int priority = 0;
+	float actionClock;
+	bool commandPressed;
 
 	// Use this for initialization
 	public override void init(Tile t, GameManager m, int priority) {
 		base.init(t, m);
+		t.addZombie(this);
 		viewLayerMask = 1 << 9 | 1 << 10;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
@@ -44,9 +45,9 @@ public class Guard : Person {
 		fovDisplay = fovObj.AddComponent<FOV>();
 		fovDisplay.init(viewDistance);*/
 
-		gameObject.tag = "Zombie";
-
 		suspicion = 0.0f;
+		actionClock = 0.0f;
+		commandPressed = false;
 
 		startTile = t;
 		//endTile = m.getTile(4, 6);
@@ -61,6 +62,8 @@ public class Guard : Person {
 	
 	// Update is called once per frame
 	void Update() {
+		actionClock += Time.deltaTime;
+
 
 		/*Vector2 lastPos = tile.transform.position;
 
@@ -68,15 +71,6 @@ public class Guard : Person {
 			Debug.DrawLine(lastPos, position);
 			lastPos = position;
 		}*/
-
-		for (int x = tile.posX - 1; x <= tile.posX + 1; x++) {
-			for (int y = tile.posY - 1; y <= tile.posY + 1; y++) {
-				Tile t = gm.getTile(x, y);
-				if (t != null) {
-					t.visit();
-				}
-			}
-		}
 
 		//fovDisplay.setDirection(direction);
 //		if (suspicion >= 1f) {
@@ -141,14 +135,18 @@ public class Guard : Person {
 
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;
-		foreach (Survivor s in gm.getSurvivorList()) {
-			float dist = Vector2.Distance(s.transform.position, this.transform.position);
-			if (dist < viewDistance && dist < minDist) {
-				Vector2 toObject = s.transform.position - transform.position;
-				RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
-				if (hit.collider == null) {
-					closestSurvivor = s;
-					minDist = dist;
+
+		if (actionClock > 5F || (!commandPressed)) {
+			commandPressed = false;
+			foreach (Survivor s in gm.getSurvivorList()) {
+				float dist = Vector2.Distance (s.transform.position, this.transform.position);
+				if (dist < viewDistance && dist < minDist) {
+					Vector2 toObject = s.transform.position - transform.position;
+					RaycastHit2D hit = Physics2D.Raycast (transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer ("Wall"));
+					if (hit.collider == null) {
+						closestSurvivor = s;
+						minDist = dist;
+					}
 				}
 			}
 		}
@@ -156,16 +154,26 @@ public class Guard : Person {
 			targetPositions.InsertRange(0, gm.getPath(tile, closestSurvivor.tile, false));
 		}
 
-		move();
+		Tile oldTile = tile;
+		bool changedTile = move();
+		if (changedTile) {
+			oldTile.removeZombie(this);
+			tile.addZombie(this);
+		}
+
 		Vector3 sumForce = Vector3.zero;
 		int neighborCount = 0;
-		foreach (Guard g in gm.getZombieList()) {
-			if (g != this) {
-				float dist = Vector2.Distance(g.transform.position, transform.position);
-				if (dist <= 0.45) {
-					sumForce += -10f * (g.transform.position - transform.position).normalized *
-					radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)), 2);
-					neighborCount++;
+		foreach (Tile t in tile.getNxNArea(3)) {
+			if (t != null) {
+				foreach (Guard g in t.getZombieList()) {
+					if (g != this) {
+						float dist = Vector2.Distance(g.transform.position, transform.position);
+						if (dist <= 0.45) {
+							sumForce += -10f * (g.transform.position - transform.position).normalized *
+							radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)), 2);
+							neighborCount++;
+						}
+					}
 				}
 			}
 		}
@@ -177,6 +185,11 @@ public class Guard : Person {
 			body.AddForce(sumForce);
 		}
 		//body.velocity = body.velocity.normalized * speed;
+	}
+
+	public void startTimer(){
+		actionClock = 0f;
+		commandPressed = true;
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {

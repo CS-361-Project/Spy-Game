@@ -11,6 +11,8 @@ public class Tile : MonoBehaviour {
 	GameManager game;
 	protected bool flammable;
 	public bool visited;
+	public bool visible;
+	bool needToCheckVisibility;
 	public float fire;
 	public float gas;
 
@@ -32,6 +34,8 @@ public class Tile : MonoBehaviour {
 	//Used for path finding
 	public float dist = -1;
 	public float crowdFactor = 0;
+
+	List<Guard> zombies;
 
 	// Use this for initialization
 	public void init(int x, int y, GameManager game, float fire, float gas, bool flammable) {
@@ -75,8 +79,12 @@ public class Tile : MonoBehaviour {
 		fogRend.sortingLayerName = "Foreground";
 		fogRend.sortingOrder = 3;
 
+		zombies = new List<Guard>();
+
 		visited = false;
 		containsLaser = false;
+		visible = false;
+		needToCheckVisibility = false;
 	}
 
 	public void setColor() {
@@ -85,25 +93,41 @@ public class Tile : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void Update() {
-		if (flammable) {
-			checkForFire();
-		}
-		if (isPassable()) {
-//			checkForGas();
-//			col = Color.green;
-//			//TODO we are capping ALPHA VALUE not GAS PER TILE come back to this later and think more
-//			col.a = Mathf.Min(gas, 0.25f);
-//			gasRend.color = col;
-			//TODO if a tile was previously inflammable and now has gas on it. That tile should become flammable. 
-		}
-		if (fire >= 1) {
-			fireTimer += Time.deltaTime;
-			rend.color = Color.red;
-			if (fireTimer > TimeBeforeSpread) {
-				fire = Mathf.Max(2, fire);
-
+		if (needToCheckVisibility) {
+			bool foundZombie = false;
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
+				if (t.getZombieList().Count > 0) {
+					foundZombie = true;
+				}
 			}
+			setVisibility(foundZombie);
+			if (foundZombie && !visited) {
+				Destroy(fogRend.gameObject);
+				visited = true;
+			}
+			needToCheckVisibility = false;
 		}
+
+
+//		if (flammable) {
+//			checkForFire();
+//		}
+//		if (isPassable()) {
+////			checkForGas();
+////			col = Color.green;
+////			//TODO we are capping ALPHA VALUE not GAS PER TILE come back to this later and think more
+////			col.a = Mathf.Min(gas, 0.25f);
+////			gasRend.color = col;
+//			//TODO if a tile was previously inflammable and now has gas on it. That tile should become flammable. 
+//		}
+//		if (fire >= 1) {
+//			fireTimer += Time.deltaTime;
+//			rend.color = Color.red;
+//			if (fireTimer > TimeBeforeSpread) {
+//				fire = Mathf.Max(2, fire);
+//
+//			}
+//		}
 	}
 
 	public virtual bool isPassable() {
@@ -165,6 +189,20 @@ public class Tile : MonoBehaviour {
 
 
 		return neighbors.ToArray();
+	}
+
+	public Tile[] getNxNArea(int n) {
+		List<Tile> result = new List<Tile>();;
+		int i = 0;
+		for (int x = posX - n/2; x <= posX + n/2; x++) {
+			for (int y = posY - n/2; y <= posY + n/2; y++) {
+				Tile t = game.getTile(x, y);
+				if (t != null) {
+					result.Add(t);
+				}
+			}
+		}
+		return result.ToArray();
 	}
 
 	void checkForFire() {
@@ -244,11 +282,42 @@ public class Tile : MonoBehaviour {
 
 	}
 
-	public void visit() {
-		if (!visited) {
-			Destroy(fogRend.gameObject);
-			visited = true;
+	public void addZombie(Guard z) {
+		if (zombies.Count == 0) {
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
+				t.checkVisibility();
+			}
+		}
+		zombies.Add(z);
+	}
+
+	public void removeZombie(Guard z) {
+		zombies.Remove(z);
+		if (zombies.Count == 0) {
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
+				t.checkVisibility();
+			}
 		}
 	}
 
+	public List<Guard> getZombieList() {
+		return zombies;
+	}
+
+	public void checkVisibility() {
+		needToCheckVisibility = true;
+	}
+
+	public virtual void setVisibility(bool visible) {
+		if (!visible) {
+			rend.sortingLayerName = "Foreground";
+			rend.sortingOrder = 3;
+			rend.color = new Color(.75f, .75f, .75f);
+		}
+		else {
+			rend.sortingLayerName = "Default";
+			rend.sortingOrder = 0;
+			rend.color = Color.gray;
+		}
+	}
 }
