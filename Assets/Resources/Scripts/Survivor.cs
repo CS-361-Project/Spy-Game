@@ -10,13 +10,15 @@ public class Survivor : Person {
 	float shotTimer;
 	float shotFrequency;
 	float shotDuration;
+	public int priority;
 
 	Tile startTile, endTile;
 	[SerializeField]
 	int patrolDirection;
 	// Use this for initialization
-	public override void init(Tile t, GameManager m) {
+	public void init(Tile t, GameManager m, int priority) {
 		base.init(t, m);
+		this.priority = priority;
 		viewLayerMask = (1 << LayerMask.NameToLayer("Guard")) | (1 << LayerMask.NameToLayer("Wall"));
 		obstacleLayerMask = (1 << LayerMask.NameToLayer("Wall")) | (1 << LayerMask.NameToLayer("Survivor"));
 		viewDistance = 6f;
@@ -59,29 +61,35 @@ public class Survivor : Person {
 		}
 
 		//Find the closet guards
-		List<Survivor> closestSurvivorList = new List<Survivor>();
+		//List<Survivor> closestSurvivorList = new List<Survivor>();
+		int highestPrioritySurvivor = int.MaxValue;
+		Survivor prioritySurvivor = null;
 		foreach (Survivor s in gm.getSurvivorList()) {
 			if (s != this) {
 				float dist = Vector2.Distance(s.transform.position, this.transform.position);
 				if (dist < viewDistance) {
 					Vector2 toObject = s.transform.position - transform.position;
 					RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
-					if (hit.collider == null) {
-						closestSurvivorList.Add(s);
+					if (hit.collider == null && s.priority < highestPrioritySurvivor) {
+						//closestSurvivorList.Add(s);
+						highestPrioritySurvivor = s.priority;
+						prioritySurvivor = s;
 					}
 				}
 			}
 		}
-
-		//Find the average direction of the closest survivors
-		if (closestSurvivorList.Count > 0) {
-			Vector2 averageDir = nextPoint();
-			foreach (Survivor s in closestSurvivorList) {
-				averageDir += s.nextPoint();
-			}
-			averageDir = averageDir / (closestSurvivorList.Count + 1);
-			targetPositions = gm.getPath(tile, gm.getClosestTile(averageDir), false);
+		if (prioritySurvivor != null && prioritySurvivor.priority < priority) {
+			targetPositions = gm.getPath(tile, gm.getClosestTile(prioritySurvivor.nextPoint()), false);
 		}
+		//Find the average direction of the closest survivors
+//		if (closestSurvivorList.Count > 0) {
+//			Vector2 averageDir = nextPoint();
+//			foreach (Survivor s in closestSurvivorList) {
+//				averageDir += s.nextPoint();
+//			}
+//			averageDir = averageDir / (closestSurvivorList.Count + 1);
+//			targetPositions = gm.getPath(tile, gm.getClosestTile(averageDir), false);
+//		}
 
 		if (shotTimer >= shotFrequency) {
 			float closestDistance = float.MaxValue;

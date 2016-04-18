@@ -117,8 +117,8 @@ public class GameManager : MonoBehaviour {
 					if (Random.value > 0.6 && zombieList.Count < 200) {
 						addGuard(x, y);
 					}
-					if (survivorCount < 3) {
-						addSurvivor (x, y);
+					if (survivorCount < 9) {
+						addSurvivor (x, y, survivorCount);
 						survivorCount++;
 					}
 				}
@@ -566,11 +566,11 @@ public class GameManager : MonoBehaviour {
 		frank.init(getTile(x, y), this);
 	}
 
-	void addSurvivor(int x, int y){
+	void addSurvivor(int x, int y, int priority){
 		GameObject survObj = new GameObject();
 		survObj.name = "Survivor";
 		Survivor surv = survObj.AddComponent<Survivor>();
-		surv.init(getTile(x, y), this);
+		surv.init(getTile(x, y), this, priority);
 		survivorList.Add(surv);
 
 	}
