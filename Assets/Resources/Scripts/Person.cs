@@ -50,6 +50,10 @@ public class Person : MonoBehaviour {
 		//targetPositions = gm.getPath(tile, gm.getFinishTile());
 	}
 
+	public Vector2 getPosition() {
+		return transform.position;
+	}
+
 	Vector2 nextPosition() {
 		if (targetPositions.Count == 0) {
 			return transform.position;
@@ -96,7 +100,8 @@ public class Person : MonoBehaviour {
 	}
 	
 	// called once per frame
-	public void move() {
+	public bool move() {
+		bool switchedTile = false;
 		if (onFire) {
 			timeOnFire += Time.deltaTime;
 			if (timeOnFire >= 5) {
@@ -131,7 +136,7 @@ public class Person : MonoBehaviour {
 			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .15) {
 				targetPositions.RemoveAt(0);
 				if (targetPositions.Count < 1) {
-					return;
+					return false;
 				}
 			}
 
@@ -148,13 +153,18 @@ public class Person : MonoBehaviour {
 			direction = body.velocity.normalized;
 
 		}
-		tile = gm.getClosestTile(transform.position);
+		Tile newTile = gm.getClosestTile(transform.position);
+		if (newTile != tile) {
+			tile = newTile;
+			switchedTile = true;
+		}
 		beingPushed = false;
 		/*foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, radius)) {
 			if (c.gameObject.name == "Guard")
 				body.AddForce(-5*(c.transform.position-transform.position).normalized*
 					radius/Mathf.Max(Mathf.Min(Vector2.Distance((Vector2)c.transform.position,(Vector2)transform.position),radius),0.001f));
 		}*/
+		return switchedTile;
 	}
 
 //	public bool canSee(Vector3 pos) {
@@ -204,6 +214,10 @@ public class Person : MonoBehaviour {
 			timeOnFire = 0;
 		}
 		onFire = fire;
+	}
+
+	public float getViewDistance() {
+		return viewDistance;
 	}
 }
 

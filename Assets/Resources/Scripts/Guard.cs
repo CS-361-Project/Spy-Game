@@ -5,6 +5,7 @@ using System.Collections.Generic;
 //TODO: Give these bad boys a quick timer for their user commands that they will follow without question before running off after an enemy again. 
 
 public class Guard : Person {
+	public static int tileViewDistance = 4;
 	SpriteRenderer rend;
 
 	float suspicion;
@@ -26,6 +27,7 @@ public class Guard : Person {
 	// Use this for initialization
 	public override void init(Tile t, GameManager m) {
 		base.init(t, m);
+		t.addZombie(this);
 		viewLayerMask = 1 << 9 | 1 << 10;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
@@ -54,7 +56,7 @@ public class Guard : Person {
 		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
-		speed = 1.2f;
+		speed = 1.5f;
 		health = 100;
 	}
 	
@@ -67,15 +69,6 @@ public class Guard : Person {
 			Debug.DrawLine(lastPos, position);
 			lastPos = position;
 		}*/
-
-		for (int x = tile.posX - 1; x <= tile.posX + 1; x++) {
-			for (int y = tile.posY - 1; y <= tile.posY + 1; y++) {
-				Tile t = gm.getTile(x, y);
-				if (t != null) {
-					t.visit();
-				}
-			}
-		}
 
 		//fovDisplay.setDirection(direction);
 //		if (suspicion >= 1f) {
@@ -155,16 +148,29 @@ public class Guard : Person {
 			targetPositions.InsertRange(0, gm.getPath(tile, closestSurvivor.tile, false));
 		}
 
-		move();
+		Tile oldTile = tile;
+		bool changedTile = move();
+		if (changedTile) {
+			oldTile.removeZombie(this);
+			tile.addZombie(this);
+		}
+
 		Vector3 sumForce = Vector3.zero;
 		int neighborCount = 0;
-		foreach (Guard g in gm.getZombieList()) {
-			if (g != this) {
-				float dist = Vector2.Distance(g.transform.position, transform.position);
-				if (dist <= 0.45) {
-					sumForce += -10f * (g.transform.position - transform.position).normalized *
-					radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)), 2);
-					neighborCount++;
+		for (int x = tile.posX - 1; x <= tile.posX + 1; x++) {
+			for (int y = tile.posY - 1; y <= tile.posY + 1; y++) {
+				Tile t = gm.getTile(x, y);
+				if (t != null) {
+					foreach (Guard g in t.getZombieList()) {
+						if (g != this) {
+							float dist = Vector2.Distance(g.transform.position, transform.position);
+							if (dist <= 0.45) {
+								sumForce += -10f * (g.transform.position - transform.position).normalized *
+								radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)), 2);
+								neighborCount++;
+							}
+						}
+					}
 				}
 			}
 		}

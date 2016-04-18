@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour {
 //						addGuard(x, y);
 //					}
 					if (survivorCount < 3) {
-						addSurvivor (x, y);
+						addSurvivor (x, y, survivorCount);
 						survivorCount++;
 					}
 				}
@@ -377,6 +377,7 @@ public class GameManager : MonoBehaviour {
 	public void removeZombie(Guard g) {
 		zombieCtrl.removeZombie(g);
 		zombieList.Remove(g);
+		g.tile.removeZombie(g);
 	}
 
 	public void removeSurvivor(Survivor s){
@@ -577,33 +578,33 @@ public class GameManager : MonoBehaviour {
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
 
 	// register each guard to be notified when new fan is toggled
-	void addFan(Vector2 position, string direction) {
-		GameObject fanObj = new GameObject();
-		fanObj.name = "Fan";
-		fanObj.transform.position = position;
-		Fan fan = fanObj.AddComponent<Fan>();
-		fan.init(position.x, position.y, direction, this);
-		foreach (Guard g in zombieList) {
-			fan.FanToggled += g.onFanToggled;
-		}
-		fanList.Add(fan);
-	}
+//	void addFan(Vector2 position, string direction) {
+//		GameObject fanObj = new GameObject();
+//		fanObj.name = "Fan";
+//		fanObj.transform.position = position;
+//		Fan fan = fanObj.AddComponent<Fan>();
+//		fan.init(position.x, position.y, direction, this);
+//		foreach (Guard g in zombieList) {
+//			fan.FanToggled += g.onFanToggled;
+//		}
+//		fanList.Add(fan);
+//	}
 
-	void addFrank(int x, int y) {
-		GameObject frankObj = new GameObject();
-		frankObj.name = "Frank";
-		Frank frank = frankObj.AddComponent<Frank>();
-		foreach (Fan fan in fanList) {
-			fan.FanToggled += frank.onFanToggled;
-		}
-		foreach (Burner bb in burnerList) {
-			bb.BurnerToggled += frank.onBurnerToggled;
-		}
-		foreach (Chemical chem in chemicalList) {
-			chem.ChemicalToggled += frank.onChemicalToggled;
-		}
-		frank.init(getTile(x, y), this);
-	}
+//	void addFrank(int x, int y) {
+//		GameObject frankObj = new GameObject();
+//		frankObj.name = "Frank";
+//		Frank frank = frankObj.AddComponent<Frank>();
+//		foreach (Fan fan in fanList) {
+//			fan.FanToggled += frank.onFanToggled;
+//		}
+//		foreach (Burner bb in burnerList) {
+//			bb.BurnerToggled += frank.onBurnerToggled;
+//		}
+//		foreach (Chemical chem in chemicalList) {
+//			chem.ChemicalToggled += frank.onChemicalToggled;
+//		}
+//		frank.init(getTile(x, y), this);
+//	}
 
 	void addSurvivor(int x, int y, int priority){
 		GameObject survObj = new GameObject();
@@ -614,17 +615,17 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	void addSensor(int x, int y, Vector2 direction) {
-		GameObject sensorObj = new GameObject();
-		sensorObj.name = "Laser Sensor";
-		LaserSensor sensor = sensorObj.AddComponent<LaserSensor>();
-		foreach (Guard g in zombieList) {
-			sensor.MotionDetected += g.onMotionDetected;
-		}
-		sensor.init(this, getTile(x, y).transform.position, direction);
-		sensor.transform.parent = sensorFolder.transform;
-		sensorList.Add(sensor);
-	}
+//	void addSensor(int x, int y, Vector2 direction) {
+//		GameObject sensorObj = new GameObject();
+//		sensorObj.name = "Laser Sensor";
+//		LaserSensor sensor = sensorObj.AddComponent<LaserSensor>();
+//		foreach (Guard g in zombieList) {
+//			sensor.MotionDetected += g.onMotionDetected;
+//		}
+//		sensor.init(this, getTile(x, y).transform.position, direction);
+//		sensor.transform.parent = sensorFolder.transform;
+//		sensorList.Add(sensor);
+//	}
 
 	// register each guard to be notified when a fan is toggled
 	void addGuard(int x, int y) {
@@ -649,30 +650,30 @@ public class GameManager : MonoBehaviour {
 	}
 
 
-	void addBurner(Vector2 position) {
-		GameObject burnerObj = new GameObject();
-		burnerObj.name = "Burner";
-		burnerObj.transform.position = position;
-		Burner burner = burnerObj.AddComponent<Burner>();
-		burner.init(getTile((int)position.x, (int)position.y));
-		foreach (Guard g in zombieList) {
-			burner.BurnerToggled += g.onBurnerToggled;
-		}
-		burner.transform.parent = burnerFolder.transform;
-		burnerList.Add(burner);
-	}
+//	void addBurner(Vector2 position) {
+//		GameObject burnerObj = new GameObject();
+//		burnerObj.name = "Burner";
+//		burnerObj.transform.position = position;
+//		Burner burner = burnerObj.AddComponent<Burner>();
+//		burner.init(getTile((int)position.x, (int)position.y));
+//		foreach (Guard g in zombieList) {
+//			burner.BurnerToggled += g.onBurnerToggled;
+//		}
+//		burner.transform.parent = burnerFolder.transform;
+//		burnerList.Add(burner);
+//	}
 
-	void addChemical(Vector2 position) {
-		GameObject chemObj = new GameObject();
-		chemObj.name = "Chemical";
-		chemObj.transform.position = position;
-		Chemical chemical = chemObj.AddComponent<Chemical>();
-		foreach (Guard g in zombieList) {
-			chemical.ChemicalToggled += g.onChemicalToggled;
-		}
-		chemical.transform.parent = chemicalFolder.transform;
-		chemicalList.Add(chemical);
-	}
+//	void addChemical(Vector2 position) {
+//		GameObject chemObj = new GameObject();
+//		chemObj.name = "Chemical";
+//		chemObj.transform.position = position;
+//		Chemical chemical = chemObj.AddComponent<Chemical>();
+//		foreach (Guard g in zombieList) {
+//			chemical.ChemicalToggled += g.onChemicalToggled;
+//		}
+//		chemical.transform.parent = chemicalFolder.transform;
+//		chemicalList.Add(chemical);
+//	}
 	#endregion
 }
 

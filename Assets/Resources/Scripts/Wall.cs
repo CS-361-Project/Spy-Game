@@ -21,5 +21,18 @@ public class Wall : Tile {
 
 	public override void removeFanForce() {
 	}
+
+	public override void setVisibility(bool visible) {
+		if (!visible) {
+			rend.sortingLayerName = "Foreground";
+			rend.sortingOrder = 3;
+			rend.color = new Color(.25f, .25f, .25f);
+		}
+		else {
+			rend.sortingLayerName = "Default";
+			rend.sortingOrder = 0;
+			rend.color = Color.black;
+		}
+	}
 }
 
