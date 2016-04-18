@@ -17,8 +17,7 @@ public class ZombieSelection : MonoBehaviour {
 	void Awake() {
 		selectionBox = new GameObject();
 		SpriteRenderer rend = selectionBox.AddComponent<SpriteRenderer>();
-		rend.sortingLayerName = "Foreground";
-		rend.sortingOrder = 2;
+		rend.sortingLayerName = "UI";
 		rend.sprite = Resources.Load<Sprite>("Sprites/Box");
 		rend.color = new Color(1, 0, 0, .2f);
 		selectionBox.SetActive(false);

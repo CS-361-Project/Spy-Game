@@ -36,6 +36,7 @@ public class Guard : Person {
 		rend.sortingOrder = 1;
 
 		gameObject.layer = LayerMask.NameToLayer("Guard");
+		gameObject.tag = "Zombie";
 		//gameObject.transform.localScale = new Vector3(.4f, .4f, 1);
 
 		/*GameObject fovObj = new GameObject();
