@@ -94,7 +94,7 @@ public class Tile : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	public void Update() {
+	public virtual void Update() {
 		if (needToCheckVisibility) {
 			bool foundZombie = false;
 			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
