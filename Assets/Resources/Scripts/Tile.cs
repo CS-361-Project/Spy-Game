@@ -95,7 +95,7 @@ public class Tile : MonoBehaviour {
 	public void Update() {
 		if (needToCheckVisibility) {
 			bool foundZombie = false;
-			foreach (Tile t in getnxnArea(Guard.tileViewDistance)) {
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
 				if (t.getZombieList().Count > 0) {
 					foundZombie = true;
 				}
@@ -191,11 +191,11 @@ public class Tile : MonoBehaviour {
 		return neighbors.ToArray();
 	}
 
-	public Tile[] getnxnArea(int n) {
+	public Tile[] getNxNArea(int n) {
 		List<Tile> result = new List<Tile>();;
 		int i = 0;
-		for (int x = posX - n; x <= posX + n; x++) {
-			for (int y = posY - n; y <= posY + n; y++) {
+		for (int x = posX - n/2; x <= posX + n/2; x++) {
+			for (int y = posY - n/2; y <= posY + n/2; y++) {
 				Tile t = game.getTile(x, y);
 				if (t != null) {
 					result.Add(t);
@@ -284,7 +284,7 @@ public class Tile : MonoBehaviour {
 
 	public void addZombie(Guard z) {
 		if (zombies.Count == 0) {
-			foreach (Tile t in getnxnArea(Guard.tileViewDistance)) {
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
 				t.checkVisibility();
 			}
 		}
@@ -294,7 +294,7 @@ public class Tile : MonoBehaviour {
 	public void removeZombie(Guard z) {
 		zombies.Remove(z);
 		if (zombies.Count == 0) {
-			foreach (Tile t in getnxnArea(Guard.tileViewDistance)) {
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
 				t.checkVisibility();
 			}
 		}

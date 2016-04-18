@@ -164,18 +164,15 @@ public class Guard : Person {
 
 		Vector3 sumForce = Vector3.zero;
 		int neighborCount = 0;
-		for (int x = tile.posX - 1; x <= tile.posX + 1; x++) {
-			for (int y = tile.posY - 1; y <= tile.posY + 1; y++) {
-				Tile t = gm.getTile(x, y);
-				if (t != null) {
-					foreach (Guard g in t.getZombieList()) {
-						if (g != this) {
-							float dist = Vector2.Distance(g.transform.position, transform.position);
-							if (dist <= 0.45) {
-								sumForce += -10f * (g.transform.position - transform.position).normalized *
-								radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)), 2);
-								neighborCount++;
-							}
+		foreach (Tile t in tile.getNxNArea(3)) {
+			if (t != null) {
+				foreach (Guard g in t.getZombieList()) {
+					if (g != this) {
+						float dist = Vector2.Distance(g.transform.position, transform.position);
+						if (dist <= 0.45) {
+							sumForce += -10f * (g.transform.position - transform.position).normalized *
+							radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)), 2);
+							neighborCount++;
 						}
 					}
 				}
