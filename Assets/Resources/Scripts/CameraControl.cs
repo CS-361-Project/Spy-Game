@@ -19,9 +19,16 @@ public class CameraControl : MonoBehaviour {
 				dragging = false;
 			}
 		}
-		float scroll = Input.GetAxis("Mouse ScrollWheel");
-		if (scroll != 0 && Camera.main.orthographicSize >= 1 && Camera.main.orthographicSize <= 50) {
-			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + 3 * scroll, 1, 50);
+//		float scroll = Input.GetAxis("Mouse ScrollWheel");
+//		if (scroll != 0 && Camera.main.orthographicSize >= 1 && Camera.main.orthographicSize <= 50) {
+//			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + 3 * scroll, 1, 50);
+//		}
+	}
+
+	void OnGUI() {
+		if (Event.current.type == EventType.ScrollWheel) {
+			float scroll = Event.current.delta.y;
+			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + 1.5f * scroll, 1, 50);
 		}
 	}
 }

@@ -25,6 +25,7 @@ public class Survivor : Person {
 	public void init(Tile t, GameManager m, int priority) {
 		base.init(t, m);
 		this.priority = priority;
+		t.addSurvivor(this);
 		viewLayerMask = (1 << LayerMask.NameToLayer("Guard")) | (1 << LayerMask.NameToLayer("Wall"));
 		obstacleLayerMask = (1 << LayerMask.NameToLayer("Wall")) | (1 << LayerMask.NameToLayer("Survivor"));
 		viewDistance = 6f;
@@ -156,9 +157,14 @@ public class Survivor : Person {
 		else if (patrolDirection == 0) {
 			wander();
 		}
-
-		move();
+		Tile oldTile = tile;
+		bool changedTile = move();
+		if (changedTile) {
+			oldTile.removeSurvivor(this);
+			tile.addSurvivor(this);
+		}
 		shotTimer += Time.deltaTime;
+
 	}
 
 	void wander() {

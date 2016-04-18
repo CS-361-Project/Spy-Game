@@ -25,7 +25,7 @@ public class Guard : Person {
 	bool commandPressed;
 
 	// Use this for initialization
-	public override void init(Tile t, GameManager m, int priority) {
+	public void init(Tile t, GameManager m, int priority) {
 		base.init(t, m);
 		t.addZombie(this);
 		viewLayerMask = 1 << 9 | 1 << 10;

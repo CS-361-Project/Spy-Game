@@ -66,12 +66,6 @@ public class GameManager : MonoBehaviour {
 		//buildBoard(10, 10);
 //		buildLevel(10, 10);
 //		buildTestChamber(10, 10);
-//		addGuard(2, 3);
-//		addGuard(2, 4);
-//		addGuard(4, 2);
-//		addGuard(3, 2);
-//		addGuard(2, 2);
-//		addGuard(1, 2);
 //		addFrank (5, 4);
 //		addFan(new Vector2(1, 1), "E");
 //		addFan(new Vector2(1, 6), "E");
@@ -132,7 +126,7 @@ public class GameManager : MonoBehaviour {
 			zombiePriority++;
 		}
 		while (survivorHubs.Count < 4) {
-			Tile hub = getRandomEmptyTile ();
+			Tile hub = getRandomEmptyTile();
 			switch (findQuadrant (hub)) {
 			case 0:
 				print ("invalid tile");
@@ -165,7 +159,12 @@ public class GameManager : MonoBehaviour {
 		}
 		print ("done!");
 		foreach (Tile hub in survivorHubs) {
-			hub.setColor ();
+			GameObject pointObj = new GameObject();
+			ControlPoint point = pointObj.AddComponent<ControlPoint>();
+			point.init(hub.posX,hub.posY, this);
+			point.transform.localPosition = new Vector3(hub.posX, hub.posY, 0);
+			Destroy (hub);
+
 		}
 	}
 
@@ -270,7 +269,7 @@ public class GameManager : MonoBehaviour {
 				else {
 					board[x, y] = addTile(x, y, 0, false);
 					if (Random.value > 0.6 && zombieList.Count < 200) {
-						addGuard(x, y);
+						//addGuard(x, y);
 					}
 
 				}
@@ -640,7 +639,7 @@ public class GameManager : MonoBehaviour {
 //	}
 
 	// register each guard to be notified when a fan is toggled
-	void addGuard(int x, int y) {
+	void addGuard(int x, int y, int priority) {
 		GameObject guardObj = new GameObject();
 		guardObj.name = "Guard";
 		Guard guard = guardObj.AddComponent<Guard>();
@@ -656,7 +655,7 @@ public class GameManager : MonoBehaviour {
 		foreach (LaserSensor sensor in sensorList) {
 			sensor.MotionDetected += guard.onMotionDetected;
 		}
-		guard.init(getTile(x, y), this);
+		guard.init(getTile(x, y), this, priority);
 		guard.transform.parent = guardFolder.transform;
 		zombieList.Add(guard);
 	}

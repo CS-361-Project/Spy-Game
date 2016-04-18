@@ -36,6 +36,7 @@ public class Tile : MonoBehaviour {
 	public float crowdFactor = 0;
 
 	List<Guard> zombies;
+	List<Survivor> survivors;
 
 	// Use this for initialization
 	public void init(int x, int y, GameManager game, float fire, float gas, bool flammable) {
@@ -80,6 +81,7 @@ public class Tile : MonoBehaviour {
 		fogRend.sortingOrder = 3;
 
 		zombies = new List<Guard>();
+		survivors = new List<Survivor>();
 
 		visited = false;
 		containsLaser = false;
@@ -302,6 +304,18 @@ public class Tile : MonoBehaviour {
 
 	public List<Guard> getZombieList() {
 		return zombies;
+	}
+
+	public void addSurvivor(Survivor s) {
+		survivors.Add(s);
+	}
+
+	public void removeSurvivor(Survivor s) {
+		survivors.Remove(s);
+	}
+
+	public List<Survivor> getSurvivorList() {
+		return survivors;
 	}
 
 	public void checkVisibility() {
