@@ -6,12 +6,13 @@ public class ControlPoint : Tile {
 	int zombieCount;
 	float controlState;
 	float spawnClock;
-	Owner currentOwner;
+	public Owner currentOwner;
 
 	public enum Owner {
 		Zombie,
 		Unclaimed,
 		Survivor}
+	;
 	SurvivorControl sc;
 
 	public const float troopSpawnTime = 15f;
@@ -115,15 +116,15 @@ public class ControlPoint : Tile {
 	}
 
 	public virtual void setVisibility(bool visible) {
-//		if (!visible) {
-//			rend.sortingLayerName = "Foreground";
-//			rend.sortingOrder = 3;
+		if (!visible) {
+			rend.sortingLayerName = "Foreground";
+			rend.sortingOrder = 3;
 //			rend.color = Color.white;
-//		}
-//		else {
-//			rend.sortingLayerName = "Default";
-//			rend.sortingOrder = 0;
-//		}
+		}
+		else {
+			rend.sortingLayerName = "Default";
+			rend.sortingOrder = 0;
+		}
 	}
 
 	public void spawnUnit(Owner currentOwner) {

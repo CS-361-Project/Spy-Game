@@ -98,6 +98,15 @@ public class Person : MonoBehaviour {
 			return transform.position;
 		}
 	}
+
+	public Vector2 lastPoint() {
+		if (targetPositions.Count > 0) {
+			return targetPositions[targetPositions.Count - 1];
+		}
+		else {
+			return transform.position;
+		}
+	}
 	
 	// called once per frame
 	public bool move() {

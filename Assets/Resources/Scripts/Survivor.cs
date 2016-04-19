@@ -70,25 +70,7 @@ public class Survivor : Person {
 
 		//Find the closest guard
 		//List<Survivor> closestSurvivorList = new List<Survivor>();
-		int highestPrioritySurvivor = int.MaxValue;
-		Survivor prioritySurvivor = null;
-		foreach (Survivor s in gm.getSurvivorList()) {
-			if (s != this) {
-				float dist = Vector2.Distance(s.transform.position, this.transform.position);
-				if (dist < viewDistance) {
-					Vector2 toObject = s.transform.position - transform.position;
-					RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
-					if (hit.collider == null && s.priority < highestPrioritySurvivor) {
-						//closestSurvivorList.Add(s);
-						highestPrioritySurvivor = s.priority;
-						prioritySurvivor = s;
-					}
-				}
-			}
-		}
-		if (prioritySurvivor != null && prioritySurvivor.priority < priority/* && prioritySurvivor.nextPoint() != (Vector2) prioritySurvivor.transform.position*/) {
-			targetPositions = gm.getPath(tile, gm.getClosestTile(prioritySurvivor.nextPoint()), false);
-		}
+
 		//Find the average direction of the closest survivors
 //		if (closestSurvivorList.Count > 0) {
 //			Vector2 averageDir = nextPoint();
@@ -155,6 +137,26 @@ public class Survivor : Person {
 		}
 		else if (patrolDirection == 0) {
 			wander();
+		}
+
+		int highestPrioritySurvivor = int.MaxValue;
+		Survivor prioritySurvivor = null;
+		foreach (Survivor s in gm.getSurvivorList()) {
+			if (s != this) {
+				float dist = Vector2.Distance(s.transform.position, this.transform.position);
+				if (dist < viewDistance) {
+					Vector2 toObject = s.transform.position - transform.position;
+					RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
+					if (hit.collider == null && s.priority < highestPrioritySurvivor) {
+						//closestSurvivorList.Add(s);
+						highestPrioritySurvivor = s.priority;
+						prioritySurvivor = s;
+					}
+				}
+			}
+		}
+		if (prioritySurvivor != null && prioritySurvivor.priority < priority/* && prioritySurvivor.nextPoint() != (Vector2) prioritySurvivor.transform.position*/) {
+			targetPositions = gm.getPath(tile, gm.getClosestTile(prioritySurvivor.lastPoint()), false);
 		}
 
 	    Tile oldTile = tile;
