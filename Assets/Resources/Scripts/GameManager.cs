@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GameManager : MonoBehaviour {
 	List<Fan> fanList;
@@ -10,12 +11,13 @@ public class GameManager : MonoBehaviour {
 	List<LaserSensor> sensorList;
 	List<Tile> tileList;
 
-	List<Tile> survivorHubs;
+	ControlPoint[] controlpointList;
 	bool quad1, quad2, quad3, quad4;
 
 	List<Survivor> survivorList;
 
 	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder, sensorFolder;
+	GameObject winScreen, loseScreen;
 
 	Tile[,] board;
 	public int width;
@@ -42,6 +44,11 @@ public class GameManager : MonoBehaviour {
 		maxZombiePriority = 0;
 		maxSurvivorPriority = 0;
 
+		winScreen = GameObject.Find("WinPanel");
+		loseScreen = GameObject.Find("LosePanel");
+		winScreen.SetActive(false);
+		loseScreen.SetActive(false);
+
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
 		zombieCtrl.init(this);
 		fanList = new List<Fan>();
@@ -51,8 +58,11 @@ public class GameManager : MonoBehaviour {
 		sensorList = new List<LaserSensor>();
 		tileList = new List<Tile>();
 
-		survivorHubs = new List<Tile> ();
-		quad1 = false; quad2 = false; quad3 = false; quad4 = false;
+		controlpointList = new ControlPoint[4];
+		quad1 = false;
+		quad2 = false;
+		quad3 = false;
+		quad4 = false;
 
 		survivorList = new List<Survivor>();
 
@@ -90,9 +100,35 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		if (zombieList.Count <= 0) {
+		if (zombieList.Count == 0) {
 			print("The Game has ended");
+			loseScreen.SetActive(true);
 			//TODO: Make an End Game screen
+		}
+		else if (survivorList.Count == 0) {
+			winScreen.SetActive(true);
+		}
+		else {
+			ControlPoint.Owner owner = controlpointList[0].currentOwner;
+			if (owner != ControlPoint.Owner.Unclaimed) {
+				bool allPointsCaptured = true;
+				for (int i = 1; i < 4; i++) {
+					if (controlpointList[i].currentOwner != owner) {
+						allPointsCaptured = false;
+						break;
+					}
+				}
+				if (allPointsCaptured) {
+					if (owner == ControlPoint.Owner.Survivor) {
+						loseScreen.SetActive(true);
+					}
+					else {
+						winScreen.SetActive(true);
+					}
+				}
+			}
+			// check if all control points captured
+
 		}
 		count++;
 //		if (count == 150) {
@@ -100,17 +136,17 @@ public class GameManager : MonoBehaviour {
 //		}
 	}
 
-	void generateLevel(int width, int height){
+	void generateLevel(int width, int height) {
 		int survivorCount = 0;
 		this.width = width;
 		this.height = height;
 		board = new Tile[width, height];
-		float xSeed1 = Random.Range (-9999f, 9999f);
-		float xSeed2 = Random.Range (-9999f, 9999f);
-		float ySeed1 = Random.Range (-9999f, 9999f);
-		float ySeed2 = Random.Range (-9999f, 9999f);
-		branch (1, height / 2, 1, 0, xSeed1, ySeed1);
-		branch (width / 2, 1, 0, 1, xSeed2, ySeed2);
+		float xSeed1 = Random.Range(-9999f, 9999f);
+		float xSeed2 = Random.Range(-9999f, 9999f);
+		float ySeed1 = Random.Range(-9999f, 9999f);
+		float ySeed2 = Random.Range(-9999f, 9999f);
+		branch(1, height / 2, 1, 0, xSeed1, ySeed1);
+		branch(width / 2, 1, 0, 1, xSeed2, ySeed2);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				if (board[x, y] == null) {
@@ -121,7 +157,7 @@ public class GameManager : MonoBehaviour {
 //						addGuard(x, y);
 //					}
 					if (survivorCount < 30) {
-						addSurvivor (x, y);
+						addSurvivor(x, y);
 						survivorCount++;
 					}
 				}
@@ -134,67 +170,73 @@ public class GameManager : MonoBehaviour {
 			addGuard(1, height / 2);
 			zombiePriority++;
 		}
-		while (survivorHubs.Count < 4) {
+		int numCtrlPointsFound = 0;
+		Tile[] hubs = new Tile[4];
+		while (!(quad1 && quad2 && quad3 && quad4)) {
 			Tile hub = getRandomEmptyTile();
-			switch (findQuadrant (hub)) {
-			case 0:
-				print ("invalid tile");
-				break;
-			case 1:
-				if (!quad1) {
-					survivorHubs.Add (hub);
-					quad1 = true;
-				}
-				break;
-			case 2:
-				if (!quad2) {
-					survivorHubs.Add (hub);
-					quad2 = true;
-				}
-				break;
-			case 3:
-				if (!quad3) {
-					survivorHubs.Add (hub);
-					quad3 = true;
-				}
-				break;
-			case 4:
-				if (!quad4) {
-					survivorHubs.Add (hub);
-					quad4 = true;
-				}
-				break;
+			switch (findQuadrant(hub)) {
+				case 0:
+					print("invalid tile");
+					break;
+				case 1:
+					if (!quad1) {
+						hubs[0] = hub;
+						quad1 = true;
+					}
+					break;
+				case 2:
+					if (!quad2) {
+						hubs[1] = hub;
+						quad2 = true;
+					}
+					break;
+				case 3:
+					if (!quad3) {
+						hubs[2] = hub;
+						quad3 = true;
+					}
+					break;
+				case 4:
+					if (!quad4) {
+						hubs[3] = hub;
+						quad4 = true;
+					}
+					break;
 			}
 		}
-		print ("done!");
-		foreach (Tile hub in survivorHubs) {
+		int k = 0;
+		foreach (Tile hub in hubs) {
 			GameObject pointObj = new GameObject();
 			ControlPoint point = pointObj.AddComponent<ControlPoint>();
-			point.init(hub.posX,hub.posY, this);
+			point.init(hub.posX, hub.posY, this);
 			point.transform.position = new Vector3(hub.posX, hub.posY, 0);
 			board[hub.posX, hub.posY] = point;
+			controlpointList[k++] = point;
 			tileList.Add(point);
-			Destroy (hub.gameObject);
+			Destroy(hub.gameObject);
 		}
 	}
 
 
 	
 
-	int findQuadrant(Tile hub){
+	int findQuadrant(Tile hub) {
 		int x = hub.posX;
 		int y = hub.posY;
 
-		if (x < (float)width/2F) {
-			if (y < (float)height/2F) {
+		if (x < (float)width / 2F) {
+			if (y < (float)height / 2F) {
 				return 1;
-			} else if (y > (float)height/2F) {
+			}
+			else if (y > (float)height / 2F) {
 				return 2;
 			}
-		} else if (x > (float)width/2F) {
-			if (y < (float)height/2F) {
+		}
+		else if (x > (float)width / 2F) {
+			if (y < (float)height / 2F) {
 				return 4;
-			} else if (y > (float)height/2F) {
+			}
+			else if (y > (float)height / 2F) {
 				return 3;
 			}
 		}
@@ -202,9 +244,9 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	void branch(int x, int y, int dx, int dy, float xSeed, float ySeed){
+	void branch(int x, int y, int dx, int dy, float xSeed, float ySeed) {
 //		print("Branching at " + x + ", " + y);
-		if (x>=width-1 || x<1 || y>=height-1 || y<1) {
+		if (x >= width - 1 || x < 1 || y >= height - 1 || y < 1) {
 			return;
 		}
 		if (board[x, y] != null) {
@@ -243,7 +285,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 
-	public void moveTo(List<Guard> guards, Vector2 point){
+	public void moveTo(List<Guard> guards, Vector2 point) {
 		setTargetTile(getClosestTile(point));
 		int split = 12;
 		foreach (Guard g in guards) {
@@ -263,7 +305,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	#region building levels
-	void buildLevel(int width, int height){
+
+	void buildLevel(int width, int height) {
 		
 		this.width = width;
 		this.height = height;
@@ -289,7 +332,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 
-	public int[] planSectionPath(Tile startTile, Tile endTile){
+	public int[] planSectionPath(Tile startTile, Tile endTile) {
 		List<int> integers = new List<int>();
 		List<Tile> pathTiles = getTilePath(startTile, endTile, true);
 		int currentSection = -1;
@@ -302,7 +345,7 @@ public class GameManager : MonoBehaviour {
 		return integers.ToArray();
 	}
 
-	void constructSections(){
+	void constructSections() {
 		int numSections = 0;
 		sections = new List<Tile[]>();
 		foreach (Tile tile in board) {
@@ -313,7 +356,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	Tile[] fillSection(Tile section,int sectionNum){
+	Tile[] fillSection(Tile section, int sectionNum) {
 		List<Tile> sectionQueue = new List<Tile>();
 		List<Tile> sectionMembers = new List<Tile>();
 		sectionQueue.Add(section);
@@ -330,13 +373,14 @@ public class GameManager : MonoBehaviour {
 		return sectionMembers.ToArray();
 	}
 
-	public Tile[] getSection(int sectionNum){
+	public Tile[] getSection(int sectionNum) {
 		//print(sections.Count + ":" + sectionNum);
 		return sections[sectionNum];
 	}
+
 	#endregion
 
-	public Tile getTile(int x,int y){
+	public Tile getTile(int x, int y) {
 		if (onBoard(x, y)) {
 			return board[x, y];
 		}
@@ -349,7 +393,7 @@ public class GameManager : MonoBehaviour {
 		return x >= 0 && x < width && y >= 0 && y < height;
 	}
 
-	public Tile getClosestTile(Vector2 check){
+	public Tile getClosestTile(Vector2 check) {
 		int i = (int)Mathf.RoundToInt(check.x);
 		int j = (int)Mathf.RoundToInt(check.y);
 		Tile checkTile = getTile(i, j);
@@ -357,7 +401,7 @@ public class GameManager : MonoBehaviour {
 			return checkTile;
 		}
 		else {
-			for(int k=1; k<(width>height?width/2:height/2); k++) {
+			for (int k = 1; k < (width > height ? width / 2 : height / 2); k++) {
 				Tile left = getTile(i - k, j);
 				if (left != null && left.isPassable()) {
 					return left;
@@ -401,12 +445,12 @@ public class GameManager : MonoBehaviour {
 		g.tile.removeZombie(g);
 	}
 
-	public void removeSurvivor(Survivor s){
+	public void removeSurvivor(Survivor s) {
 		survivorList.Remove(s);
 	}
 
 
-	public void resetPathTiles(){
+	public void resetPathTiles() {
 		foreach (Tile t in board) {
 			t.dist = -1;
 			t.crowdFactor = 0;
@@ -414,13 +458,14 @@ public class GameManager : MonoBehaviour {
 	}
 
 	#region pathfinding
+
 	public List<Vector2> getPath(Tile start, Tile end, bool ignoreDoors) {
 		return optimizePath(pathToPoints(getTilePath(start, end, ignoreDoors)));
 //		return pathToPoints(getTilePath(start, end, ignoreDoors));
 	}
 
 	public List<Vector2> optimizePath(List<Vector2> path) {
-		if (path.Count  < 3) {
+		if (path.Count < 3) {
 			return path;
 		}
 		float[] S = new float[path.Count];
@@ -464,7 +509,7 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	public List<Vector2> pathToPoints(List<Tile> path){
+	public List<Vector2> pathToPoints(List<Tile> path) {
 		List<Vector2> points = new List<Vector2>();
 		foreach (Tile tile in path) {
 			points.Add(tile.transform.position);
@@ -472,7 +517,7 @@ public class GameManager : MonoBehaviour {
 		return points;
 	}
 
-	public void setTargetTile(Tile targetTile){
+	public void setTargetTile(Tile targetTile) {
 		List<Tile> queue = new List<Tile>();
 		resetPathTiles();
 		queue.Add(targetTile);
@@ -489,7 +534,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public List<Tile> findPathToTarget(Tile startTile){
+	public List<Tile> findPathToTarget(Tile startTile) {
 		List<Tile> path = new List<Tile>();
 		if (startTile.dist < 0)
 			return new List<Tile>();
@@ -513,7 +558,7 @@ public class GameManager : MonoBehaviour {
 		return path;
 	}
 
-	public List<Tile> getTilePath(Tile startTile, Tile endTile, bool ignoreDoors){
+	public List<Tile> getTilePath(Tile startTile, Tile endTile, bool ignoreDoors) {
 		List<Tile> queue = new List<Tile>();
 		startTile.dist = 0;
 		bool foundPath = false;
@@ -566,13 +611,15 @@ public class GameManager : MonoBehaviour {
 		resetPathTiles();
 		return path;
 	}
+
 	#endregion
+
 	#region addObjects
 
-	Tile addTile(int x, int y, float fire, bool flammable){
+	Tile addTile(int x, int y, float fire, bool flammable) {
 		GameObject tileObj = new GameObject();
 		Tile tile = tileObj.AddComponent<Tile>();
-		tile.init(x,y,this, fire, 0, true);
+		tile.init(x, y, this, fire, 0, true);
 		tile.transform.localPosition = new Vector3(x, y, 0);
 		tile.transform.parent = tileFolder.transform;
 		tileList.Add(tile);
@@ -599,35 +646,35 @@ public class GameManager : MonoBehaviour {
 	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
 
 	// register each guard to be notified when new fan is toggled
-//	void addFan(Vector2 position, string direction) {
-//		GameObject fanObj = new GameObject();
-//		fanObj.name = "Fan";
-//		fanObj.transform.position = position;
-//		Fan fan = fanObj.AddComponent<Fan>();
-//		fan.init(position.x, position.y, direction, this);
-//		foreach (Guard g in zombieList) {
-//			fan.FanToggled += g.onFanToggled;
-//		}
-//		fanList.Add(fan);
-//	}
+	//	void addFan(Vector2 position, string direction) {
+	//		GameObject fanObj = new GameObject();
+	//		fanObj.name = "Fan";
+	//		fanObj.transform.position = position;
+	//		Fan fan = fanObj.AddComponent<Fan>();
+	//		fan.init(position.x, position.y, direction, this);
+	//		foreach (Guard g in zombieList) {
+	//			fan.FanToggled += g.onFanToggled;
+	//		}
+	//		fanList.Add(fan);
+	//	}
 
-//	void addFrank(int x, int y) {
-//		GameObject frankObj = new GameObject();
-//		frankObj.name = "Frank";
-//		Frank frank = frankObj.AddComponent<Frank>();
-//		foreach (Fan fan in fanList) {
-//			fan.FanToggled += frank.onFanToggled;
-//		}
-//		foreach (Burner bb in burnerList) {
-//			bb.BurnerToggled += frank.onBurnerToggled;
-//		}
-//		foreach (Chemical chem in chemicalList) {
-//			chem.ChemicalToggled += frank.onChemicalToggled;
-//		}
-//		frank.init(getTile(x, y), this);
-//	}
+	//	void addFrank(int x, int y) {
+	//		GameObject frankObj = new GameObject();
+	//		frankObj.name = "Frank";
+	//		Frank frank = frankObj.AddComponent<Frank>();
+	//		foreach (Fan fan in fanList) {
+	//			fan.FanToggled += frank.onFanToggled;
+	//		}
+	//		foreach (Burner bb in burnerList) {
+	//			bb.BurnerToggled += frank.onBurnerToggled;
+	//		}
+	//		foreach (Chemical chem in chemicalList) {
+	//			chem.ChemicalToggled += frank.onChemicalToggled;
+	//		}
+	//		frank.init(getTile(x, y), this);
+	//	}
 
-	public void addSurvivor(int x, int y){
+	public void addSurvivor(int x, int y) {
 		GameObject survObj = new GameObject();
 		survObj.name = "Survivor";
 		Survivor surv = survObj.AddComponent<Survivor>();
@@ -636,17 +683,17 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-//	void addSensor(int x, int y, Vector2 direction) {
-//		GameObject sensorObj = new GameObject();
-//		sensorObj.name = "Laser Sensor";
-//		LaserSensor sensor = sensorObj.AddComponent<LaserSensor>();
-//		foreach (Guard g in zombieList) {
-//			sensor.MotionDetected += g.onMotionDetected;
-//		}
-//		sensor.init(this, getTile(x, y).transform.position, direction);
-//		sensor.transform.parent = sensorFolder.transform;
-//		sensorList.Add(sensor);
-//	}
+	//	void addSensor(int x, int y, Vector2 direction) {
+	//		GameObject sensorObj = new GameObject();
+	//		sensorObj.name = "Laser Sensor";
+	//		LaserSensor sensor = sensorObj.AddComponent<LaserSensor>();
+	//		foreach (Guard g in zombieList) {
+	//			sensor.MotionDetected += g.onMotionDetected;
+	//		}
+	//		sensor.init(this, getTile(x, y).transform.position, direction);
+	//		sensor.transform.parent = sensorFolder.transform;
+	//		sensorList.Add(sensor);
+	//	}
 
 	// register each guard to be notified when a fan is toggled
 	public void addGuard(int x, int y) {
@@ -671,30 +718,31 @@ public class GameManager : MonoBehaviour {
 	}
 
 
-//	void addBurner(Vector2 position) {
-//		GameObject burnerObj = new GameObject();
-//		burnerObj.name = "Burner";
-//		burnerObj.transform.position = position;
-//		Burner burner = burnerObj.AddComponent<Burner>();
-//		burner.init(getTile((int)position.x, (int)position.y));
-//		foreach (Guard g in zombieList) {
-//			burner.BurnerToggled += g.onBurnerToggled;
-//		}
-//		burner.transform.parent = burnerFolder.transform;
-//		burnerList.Add(burner);
-//	}
+	//	void addBurner(Vector2 position) {
+	//		GameObject burnerObj = new GameObject();
+	//		burnerObj.name = "Burner";
+	//		burnerObj.transform.position = position;
+	//		Burner burner = burnerObj.AddComponent<Burner>();
+	//		burner.init(getTile((int)position.x, (int)position.y));
+	//		foreach (Guard g in zombieList) {
+	//			burner.BurnerToggled += g.onBurnerToggled;
+	//		}
+	//		burner.transform.parent = burnerFolder.transform;
+	//		burnerList.Add(burner);
+	//	}
 
-//	void addChemical(Vector2 position) {
-//		GameObject chemObj = new GameObject();
-//		chemObj.name = "Chemical";
-//		chemObj.transform.position = position;
-//		Chemical chemical = chemObj.AddComponent<Chemical>();
-//		foreach (Guard g in zombieList) {
-//			chemical.ChemicalToggled += g.onChemicalToggled;
-//		}
-//		chemical.transform.parent = chemicalFolder.transform;
-//		chemicalList.Add(chemical);
-//	}
+	//	void addChemical(Vector2 position) {
+	//		GameObject chemObj = new GameObject();
+	//		chemObj.name = "Chemical";
+	//		chemObj.transform.position = position;
+	//		Chemical chemical = chemObj.AddComponent<Chemical>();
+	//		foreach (Guard g in zombieList) {
+	//			chemical.ChemicalToggled += g.onChemicalToggled;
+	//		}
+	//		chemical.transform.parent = chemicalFolder.transform;
+	//		chemicalList.Add(chemical);
+	//	}
+
 	#endregion
 }
 

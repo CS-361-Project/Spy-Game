@@ -6,13 +6,12 @@ public class ControlPoint : Tile {
 	int zombieCount;
 	float controlState;
 	float spawnClock;
-	Owner currentOwner;
+	public Owner currentOwner;
 
 	public enum Owner {
 		Zombie,
 		Unclaimed,
 		Survivor}
-
 	;
 
 	public const float troopSpawnTime = 15f;
