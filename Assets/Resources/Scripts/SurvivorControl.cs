@@ -113,7 +113,8 @@ public class SurvivorControl : MonoBehaviour {
 		List<Survivor> survivors = source.getIncomingSurvivors();
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;
-		foreach (Survivor s in survivors) {
+		for (int i = survivors.Count - 1; i >= 0; i--) {
+			Survivor s = survivors[i];
 			if (s == null) {
 				source.removeIncomingSurvivor(s);
 				survivorList.Remove(s);

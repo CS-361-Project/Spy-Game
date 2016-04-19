@@ -38,6 +38,9 @@ public class Tile : MonoBehaviour {
 	List<Guard> zombies;
 	List<Survivor> survivors;
 
+	//ACCCK
+	public List<Vector2> pathToTarget = new List<Vector2>();
+
 	// Use this for initialization
 	public void init(int x, int y, GameManager game, float fire, float gas, bool flammable) {
 		fireTimer = 0;

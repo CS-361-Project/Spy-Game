@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour {
 					if (Random.value > 0.6 && zombieList.Count < 200) {
 						addGuard(x, y);
 					}
-					if (survivorCount < 12 && x > width/2) {
+					if (survivorCount < 5) {
 						addSurvivor (x, y);
 						survivorCount++;
 					}
@@ -256,19 +256,51 @@ public class GameManager : MonoBehaviour {
 	}
 
 
+	public List<Vector2> splitOptPath(List<Vector2> points, int split){
+		List<Vector2> results = new List<Vector2>();
+		for (int p =0;p<points.Count;p+=split){
+			List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
+			results.Add(optPoints[0]);
+			results.AddRange(optimizePath(optPoints));
+		}
+		if (results.Count > 0) {
+			results.RemoveAt(0);
+		}
+		return results;
+	}
+
 	public void moveTo(List<Guard> guards, Vector2 point) {
 		setTargetTile(getClosestTile(point));
 		int split = 12;
+
 		foreach (Guard g in guards) {
 			//print(findPathToTarget(g.tile).Count);
-			List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
-			g.targetPositions = optimizePath(pathToPoints(findPathToTarget(g.tile)));
+			bool foundCut = false;
+			foreach (Tile t in g.tile.getNxNArea(3)) {
+				if (t != null){
+					if (t.pathToTarget.Count > 0) {
+						if (!pathObstructed(g.transform.position, t.transform.position)) {
+							g.targetPositions = new List<Vector2>();
+							//g.targetPositions.Add(t.transform.position);
+							g.targetPositions.AddRange(t.pathToTarget);
+							foundCut = true;
+							break;
+						}
+					}
+				}
+			}
+			if (!foundCut) {
+				//print("Doing this");
+				//List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
+				g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(g.tile)),10);
+				g.tile.pathToTarget = g.targetPositions;
+			}
 			/*for (int p =0;p<points.Count;p+=split){
 				List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
 				g.targetPositions.AddRange(optimizePath(optPoints));
 			}*/
-			if (g.targetPositions.Count > 0)
-				g.targetPositions.RemoveAt(0);
+			/*if (g.targetPositions.Count > 0)
+				g.targetPositions.RemoveAt(0);*/
 			/*if (g.targetPositions.Count > 0) {
 				g.targetPositions.RemoveAt(0);
 			}*/
@@ -455,6 +487,8 @@ public class GameManager : MonoBehaviour {
 		targetTile.dist = 0;
 		while (queue.Count > 0) {
 			Tile currTile = queue[0];
+			//don't question it...
+			currTile.pathToTarget = new List<Vector2>();
 			queue.RemoveAt(0);
 			foreach (Tile neighbor in currTile.getNeighbors()) {
 				if (neighbor.dist < 0 && neighbor.isPassable()) {
