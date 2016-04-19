@@ -116,15 +116,15 @@ public class ControlPoint : Tile {
 	}
 
 	public virtual void setVisibility(bool visible) {
-//		if (!visible) {
-//			rend.sortingLayerName = "Foreground";
-//			rend.sortingOrder = 3;
+		if (!visible) {
+			rend.sortingLayerName = "Foreground";
+			rend.sortingOrder = 3;
 //			rend.color = Color.white;
-//		}
-//		else {
-//			rend.sortingLayerName = "Default";
-//			rend.sortingOrder = 0;
-//		}
+		}
+		else {
+			rend.sortingLayerName = "Default";
+			rend.sortingOrder = 0;
+		}
 	}
 
 	public void spawnUnit(Owner currentOwner) {
