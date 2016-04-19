@@ -106,7 +106,6 @@ public class GameManager : MonoBehaviour {
 		if (zombieList.Count == 0) {
 			print("The Game has ended");
 			loseScreen.SetActive(true);
-			//TODO: Make an End Game screen
 		}
 		else if (survivorList.Count == 0) {
 			winScreen.SetActive(true);
@@ -159,17 +158,14 @@ public class GameManager : MonoBehaviour {
 //					if (Random.value > 0.6 && zombieList.Count < 200) {
 //						addGuard(x, y);
 //					}
-
-					if (survivorCount < 5) {
+					if (survivorCount < 3) {
 						addSurvivor (x, y);
 						survivorCount++;
 					}
 				}
 			}
 		}
-
-
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 150; i++) {
 			addGuard(1, height / 2);
 		}
 		int numCtrlPointsFound = 0;
