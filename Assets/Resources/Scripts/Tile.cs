@@ -101,11 +101,13 @@ public class Tile : MonoBehaviour {
 		if (needToCheckVisibility) {
 			bool foundZombie = false;
 			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
-				if (t.getZombieList().Count > 0) {
+				ControlPoint cp = t as ControlPoint;
+				if (t.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie)) {
 					foundZombie = true;
 				}
 			}
 			setVisibility(foundZombie);
+//			setVisibility(true);
 //			if (foundZombie && !visited) {
 //				Destroy(fogRend.gameObject);
 //				visited = true;

@@ -16,6 +16,7 @@ public class Guard : Person {
 	int patrolDirection;
 
 	public bool selected;
+	public bool chasingSurvivor;
 
 	Color baseColor = Color.magenta;
 	Color selectionColor = new Color(.4f, .85f, 1f);
@@ -59,6 +60,7 @@ public class Guard : Person {
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 2f;
 		health = 100;
+		chasingSurvivor = false;
 	}
 	
 	// Update is called once per frame
@@ -152,7 +154,16 @@ public class Guard : Person {
 			}
 		}
 		if (closestSurvivor != null) {
-			targetPositions.InsertRange(0, gm.getPath(tile, closestSurvivor.tile, false));
+			if (chasingSurvivor) {
+				targetPositions[0] = closestSurvivor.transform.position;
+			}
+			else {
+				targetPositions.Insert(0, closestSurvivor.transform.position);
+				chasingSurvivor = true;
+			}
+		}
+		else {
+			chasingSurvivor = false;
 		}
 
 		Tile oldTile = tile;

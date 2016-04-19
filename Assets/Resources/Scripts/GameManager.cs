@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 	List<Guard> zombieList;
 	List<Tile> tileList;
 	List<Survivor> survivorList;
+	Tile[] zombieSpawn, survivorSpawn;
 
 	ControlPoint[] controlPointList;
 	bool quad1, quad2, quad3, quad4;
@@ -108,70 +109,92 @@ public class GameManager : MonoBehaviour {
 		count++;
 	}
 
-	void generateLevel(int width, int height) {
+	void generateLevel(int w, int h) {
 		int survivorCount = 0;
-		this.width = width;
-		this.height = height;
+		survivorSpawn = new Tile[10];
+		zombieSpawn = new Tile[10];
+
+		this.width = width + 2;
+		this.height = height + 2;
 		board = new Tile[width, height];
 		float xSeed1 = Random.Range(-9999f, 9999f);
-		float xSeed2 = Random.Range(-9999f, 9999f);
+//		float xSeed2 = Random.Range(-9999f, 9999f);
 		float ySeed1 = Random.Range(-9999f, 9999f);
-		float ySeed2 = Random.Range(-9999f, 9999f);
+//		float ySeed2 = Random.Range(-9999f, 9999f);
 		branch(1, height / 2, 1, 0, xSeed1, ySeed1);
-		branch(width / 2, 1, 0, 1, xSeed2, ySeed2);
+//		branch(width / 2, 1, 0, 1, xSeed2, ySeed2);
+
+		int spawnTiles = 0;
+		foreach (int x in Enumerable.Range(1, 2)) {
+			foreach (int y in Enumerable.Range(width/2 - 2, 5)) {
+				board[x, y] = addTile(x, y, 0, false);
+				zombieSpawn[spawnTiles] = board[x, y];
+				board[width - x - 1, y] = addTile(width - x - 1, y, 0, false);
+				survivorSpawn[spawnTiles] = board[width - x - 1, y];
+				spawnTiles++;
+			}
+		}
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				if (board[x, y] == null) {
 					board[x, y] = addWall(x, y);
 				}
-				else {
-					if (Random.value > 0.6 && zombieList.Count < 400) {
-						addGuard(x, y);
-					}
-					if (survivorCount < 15) {
-						addSurvivor (x, y);
-						survivorCount++;
-					}
-				}
+//				else {
+//					if (Random.value > 0.6 && zombieList.Count < 400) {
+//						addGuard(x, y);
+//					}
+//					if (survivorCount < 15) {
+//						addSurvivor (x, y);
+//						survivorCount++;
+//					}
+//				}
 			}
 		}
-//		for (int i = 0; i < 150; i++) {
-//			addGuard(1, height / 2);
-//		}
+		for (int i = 0; i < 150; i++) {
+			Tile t = zombieSpawn[Random.Range(0, zombieSpawn.Count())];
+			addGuard(t.posX, t.posY);
+		}
+		for (int i = 0; i < 10; i++) {
+			Tile t = survivorSpawn[Random.Range(0, survivorSpawn.Count())];
+			addSurvivor(t.posX, t.posY);
+		}
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
-		while (!(quad1 && quad2 && quad3 && quad4)) {
-			Tile hub = getRandomEmptyTile();
-			switch (findQuadrant(hub)) {
-				case 0:
-					print("invalid tile");
-					break;
-				case 1:
-					if (!quad1) {
-						hubs[0] = hub;
-						quad1 = true;
-					}
-					break;
-				case 2:
-					if (!quad2) {
-						hubs[1] = hub;
-						quad2 = true;
-					}
-					break;
-				case 3:
-					if (!quad3) {
-						hubs[2] = hub;
-						quad3 = true;
-					}
-					break;
-				case 4:
-					if (!quad4) {
-						hubs[3] = hub;
-						quad4 = true;
-					}
-					break;
-			}
+		for (int i = 0; i < 4; i++) {
+			hubs[i] = getRandomEmptyTile();
 		}
+//		while (!(quad1 && quad2 && quad3 && quad4)) {
+//			Tile hub = getRandomEmptyTile();
+//			switch (findQuadrant(hub)) {
+//				case 0:
+//					print("invalid tile");
+//					break;
+//				case 1:
+//					if (!quad1) {
+//						hubs[0] = hub;
+//						quad1 = true;
+//					}
+//					break;
+//				case 2:
+//					if (!quad2) {
+//						hubs[1] = hub;
+//						quad2 = true;
+//					}
+//					break;
+//				case 3:
+//					if (!quad3) {
+//						hubs[2] = hub;
+//						quad3 = true;
+//					}
+//					break;
+//				case 4:
+//					if (!quad4) {
+//						hubs[3] = hub;
+//						quad4 = true;
+//					}
+//					break;
+//			}
+//		}
 		int k = 0;
 		foreach (Tile hub in hubs) {
 			GameObject pointObj = new GameObject();

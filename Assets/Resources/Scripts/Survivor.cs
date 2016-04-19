@@ -10,6 +10,7 @@ public class Survivor : Person {
 
 	SpriteRenderer rend;
 	GameObject bulletObj;
+	Vector2 aimDirection;
 	public float size = .45f;
 	float shotTimer;
 	float shotFrequency;
@@ -63,6 +64,7 @@ public class Survivor : Person {
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 1f;
+		aimDirection = direction;
 	}
 
 	// Update is called once per frame
@@ -84,10 +86,11 @@ public class Survivor : Person {
 //			targetPositions = gm.getPath(tile, gm.getClosestTile(averageDir), false);
 //		}
 
-		if (shotTimer >= shotFrequency) {
-			float closestDistance = float.MaxValue;
-			Guard closestGuard = null;
-			foreach (Guard z in gm.getZombieList()) {
+//		if (shotTimer >= shotFrequency) {
+		float closestDistance = float.MaxValue;
+		Guard closestGuard = null;
+		foreach (Tile t in tile.getNxNArea((int)viewDistance)) {
+			foreach (Guard z in t.getZombieList()) {
 				float dist = Vector2.Distance(z.transform.position, this.transform.position);
 				if (dist < viewDistance && dist < closestDistance) {
 					if (canSee(z.transform.position)) {
@@ -96,15 +99,21 @@ public class Survivor : Person {
 					}
 				}
 			}
+		}
 				
-			if (closestGuard == null) {
-				bulletObj.SetActive(false);
-			}
-			else {
-				shootAt(closestGuard.transform.position);
+		if (closestGuard == null) {
+			bulletObj.SetActive(false);
+		}
+		else {
+			Vector2 targetDirection = (closestGuard.transform.position - transform.position).normalized;
+			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(aimDirection.y, aimDirection.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), .1f);
+			aimDirection = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
+			if (shotTimer >= shotFrequency) {
+				shootAt((Vector2)transform.position + aimDirection);
 			}
 		}
-		else if (shotTimer >= shotDuration) {
+//		}
+		if (shotTimer >= shotDuration) {
 			bulletObj.SetActive(false);
 		}
 
@@ -147,6 +156,10 @@ public class Survivor : Person {
 		if (changedTile) {
 			oldTile.removeSurvivor (this);
 			tile.addSurvivor (this);
+			if (oldTile.transform.position == destination.transform.position) {
+				targetPositions.Clear();
+				targetPositions.Add(oldTile.transform.position);
+			}
 		}
 		shotTimer += Time.deltaTime;
 	}

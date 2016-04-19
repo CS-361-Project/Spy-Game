@@ -57,6 +57,7 @@ public class ZombieControl : MonoBehaviour {
 			gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords());
 			foreach (Guard g in selection) {
 				g.startTimer ();
+				g.chasingSurvivor = false;
 			}
 		}
 	}
