@@ -125,10 +125,10 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else {
-					if (Random.value > 0.6 && zombieList.Count < 200) {
+					if (Random.value > 0.6 && zombieList.Count < 400) {
 						addGuard(x, y);
 					}
-					if (survivorCount < 5) {
+					if (survivorCount < 15) {
 						addSurvivor (x, y);
 						survivorCount++;
 					}
@@ -381,8 +381,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void removeSurvivor(Survivor s) {
-		survivorList.Remove(s);
-		s.getDestination().removeSurvivor(s);
+			survivorList.Remove(s);
+		if (s.getDestination() != null) {
+			s.getDestination().removeSurvivor(s);
+		}
 	}
 
 	// return number of zombies in nxn area centered on (x, y)
@@ -614,8 +616,10 @@ public class GameManager : MonoBehaviour {
 		survObj.name = "Survivor";
 		Survivor surv = survObj.AddComponent<Survivor>();
 		surv.init(getTile(x, y), this, maxSurvivorPriority++);
+		if (controlPointList[0] != null) {
+			surv.setDestination(controlPointList[findQuadrant(getTile(x, y)) - 1]);
+		}
 		survivorList.Add(surv);
-
 	}
 		
 	// register each guard to be notified when a fan is toggled

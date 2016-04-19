@@ -41,7 +41,7 @@ public class Survivor : Person {
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
 		rend.color = Color.blue;
-		rend.sortingLayerName = "UI";
+//		rend.sortingLayerName = "UI";
 		rend.sortingOrder = 1;
 
 		transform.localScale = new Vector3(size, size, 1);
