@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour {
 	List<LaserSensor> sensorList;
 	List<Tile> tileList;
 
-	ControlPoint[] controlpointList;
+	ControlPoint[] controlPointList;
 	bool quad1, quad2, quad3, quad4;
 
 	List<Survivor> survivorList;
@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour {
 
 	List<Tile[]> sections;
 	ZombieControl zombieCtrl;
+	SurvivorControl survivorCtrl;
 
 	int maxZombiePriority;
 	int maxSurvivorPriority;
@@ -51,6 +52,8 @@ public class GameManager : MonoBehaviour {
 
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
 		zombieCtrl.init(this);
+		survivorCtrl = new GameObject ().AddComponent<SurvivorControl> ();
+		survivorCtrl.init (this);
 		fanList = new List<Fan>();
 		zombieList = new List<Guard>();
 		burnerList = new List<Burner>();
@@ -58,7 +61,7 @@ public class GameManager : MonoBehaviour {
 		sensorList = new List<LaserSensor>();
 		tileList = new List<Tile>();
 
-		controlpointList = new ControlPoint[4];
+		controlPointList = new ControlPoint[4];
 		quad1 = false;
 		quad2 = false;
 		quad3 = false;
@@ -109,11 +112,11 @@ public class GameManager : MonoBehaviour {
 			winScreen.SetActive(true);
 		}
 		else {
-			ControlPoint.Owner owner = controlpointList[0].currentOwner;
+			ControlPoint.Owner owner = controlPointList[0].currentOwner;
 			if (owner != ControlPoint.Owner.Unclaimed) {
 				bool allPointsCaptured = true;
 				for (int i = 1; i < 4; i++) {
-					if (controlpointList[i].currentOwner != owner) {
+					if (controlPointList[i].currentOwner != owner) {
 						allPointsCaptured = false;
 						break;
 					}
@@ -156,19 +159,18 @@ public class GameManager : MonoBehaviour {
 //					if (Random.value > 0.6 && zombieList.Count < 200) {
 //						addGuard(x, y);
 //					}
-					if (survivorCount < 30) {
-						addSurvivor(x, y);
+
+					if (survivorCount < 5) {
+						addSurvivor (x, y);
 						survivorCount++;
 					}
 				}
 			}
 		}
 
-		int zombiePriority = 0;
 
-		for (int i = 0; i < 250; i++) {
+		for (int i = 0; i < 200; i++) {
 			addGuard(1, height / 2);
-			zombiePriority++;
 		}
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
@@ -208,10 +210,10 @@ public class GameManager : MonoBehaviour {
 		foreach (Tile hub in hubs) {
 			GameObject pointObj = new GameObject();
 			ControlPoint point = pointObj.AddComponent<ControlPoint>();
-			point.init(hub.posX, hub.posY, this);
+			point.init(hub.posX, hub.posY, this, survivorCtrl);
 			point.transform.position = new Vector3(hub.posX, hub.posY, 0);
 			board[hub.posX, hub.posY] = point;
-			controlpointList[k++] = point;
+			controlPointList[k++] = point;
 			tileList.Add(point);
 			Destroy(hub.gameObject);
 		}
@@ -431,6 +433,10 @@ public class GameManager : MonoBehaviour {
 		return tileList[Random.Range(0, tileList.Count)];
 	}
 
+	public Tile getRandomSurvivorHub() {
+		return controlPointList[Random.Range(0, controlPointList.Count())];
+	}
+
 	public List<Guard> getZombieList() {
 		return zombieList;
 	}
@@ -493,7 +499,7 @@ public class GameManager : MonoBehaviour {
 				allPaths[i].Add(v);
 			}
 		}
-		//allPaths[0].RemoveAt(0);
+		allPaths[0].RemoveAt(0);
 		return allPaths[0];
 	}
 

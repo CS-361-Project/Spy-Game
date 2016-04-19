@@ -62,6 +62,7 @@
      <Compile Include="Assets\Resources\Scripts\Person.cs" />
      <Compile Include="Assets\Resources\Scripts\SpriteReferences.cs" />
      <Compile Include="Assets\Resources\Scripts\Survivor.cs" />
+     <Compile Include="Assets\Resources\Scripts\SurvivorControl.cs" />
      <Compile Include="Assets\Resources\Scripts\Tile.cs" />
      <Compile Include="Assets\Resources\Scripts\Wall.cs" />
      <Compile Include="Assets\Resources\Scripts\Zombie.cs" />
