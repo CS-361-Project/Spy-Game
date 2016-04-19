@@ -18,6 +18,7 @@ public class ControlPoint : Tile {
 	public const float troopSpawnTime = 15f;
 	public const float zombieClaimPerSecond = 1f / 30f;
 	public const float survivorClaimPerSecond = 1f / 10f;
+	public const float revertClaimPerSecond = 1f/20f;
 
 	public void init(int x, int y, GameManager gm) {
 		survivorCount = 0;
@@ -32,10 +33,44 @@ public class ControlPoint : Tile {
 		base.Update();
 		survivorCount = getSurvivorList().Count;
 		zombieCount = getZombieList().Count;
-		if (survivorCount == 0) {
+		if (survivorCount == 0 && zombieCount == 0) {
+			switch (currentOwner) {
+				case Owner.Zombie:
+					if (controlState > -1) {
+						controlState -= revertClaimPerSecond * gm.gameSpeed * Time.deltaTime;
+						if (controlState < -1) {
+							controlState = -1;
+						}
+					}
+					break;
+				case Owner.Survivor:
+					if (controlState < 1) {
+						controlState += revertClaimPerSecond * gm.gameSpeed * Time.deltaTime;
+						if (controlState > 1) {
+							controlState = 1;
+						}
+					}
+					break;
+				case Owner.Unclaimed:
+					if (controlState > 0) {
+						controlState -= revertClaimPerSecond * gm.gameSpeed * Time.deltaTime;
+						if (controlState < 0) {
+							controlState = 0;
+						}
+					}
+					else if (controlState < 0) {
+						controlState += revertClaimPerSecond * gm.gameSpeed * Time.deltaTime;
+						if (controlState > 0) {
+							controlState = 0;
+						}
+					}
+					break;
+			}
+		}
+		else if (survivorCount == 0) {
 			if (zombieCount > 0) {
 				if (currentOwner != Owner.Zombie) {
-					controlState -= zombieCount * zombieClaimPerSecond * Time.deltaTime;
+					controlState -= zombieCount * zombieClaimPerSecond * gm.gameSpeed * Time.deltaTime;
 					if (controlState <= -1) {
 						controlState = -1;
 						currentOwner = Owner.Zombie;
@@ -50,7 +85,7 @@ public class ControlPoint : Tile {
 		else if (zombieCount == 0) {
 			if (survivorCount > 0) {
 				if (currentOwner != Owner.Survivor) {
-					controlState += survivorCount * survivorClaimPerSecond * Time.deltaTime;
+					controlState += survivorCount * survivorClaimPerSecond * gm.gameSpeed * Time.deltaTime;
 					if (controlState >= 1) {
 						controlState = 1;
 						currentOwner = Owner.Survivor;

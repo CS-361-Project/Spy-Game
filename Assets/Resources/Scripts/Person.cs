@@ -149,7 +149,7 @@ public class Person : MonoBehaviour {
 			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), .5f);
 			direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
 
-			body.velocity = direction * speed;
+			body.velocity = direction * speed * gm.gameSpeed;
 			direction = body.velocity.normalized;
 
 		}

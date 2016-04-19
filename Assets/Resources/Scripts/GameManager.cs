@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
 	public int width;
 	public int height;
 	int count;
+	public float gameSpeed;
 
 	int finishX = 0;
 	int finishY = 0;
@@ -35,6 +36,8 @@ public class GameManager : MonoBehaviour {
 	void Start() {
 		width = 50;
 		height = 50;
+
+		gameSpeed = 1f;
 
 		maxZombiePriority = 0;
 		maxSurvivorPriority = 0;
