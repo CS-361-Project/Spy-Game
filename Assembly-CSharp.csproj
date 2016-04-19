@@ -50,6 +50,7 @@
      <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
      <Compile Include="Assets\Resources\Scripts\Guard.cs" />
      <Compile Include="Assets\Resources\Scripts\MathHelper.cs" />
+     <Compile Include="Assets\Resources\Scripts\Minimap.cs" />
      <Compile Include="Assets\Resources\Scripts\OLDIES\AlertIcon.cs" />
      <Compile Include="Assets\Resources\Scripts\OLDIES\Burner.cs" />
      <Compile Include="Assets\Resources\Scripts\OLDIES\Chemical.cs" />

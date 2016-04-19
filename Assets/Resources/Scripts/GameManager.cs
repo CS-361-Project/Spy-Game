@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour {
 		width = 50;
 		height = 50;
 
+		GameObject.Find("Minimap Camera").GetComponent<Minimap>().init(this);
+
 		gameSpeed = 1f;
 
 		maxZombiePriority = 0;
@@ -43,6 +45,7 @@ public class GameManager : MonoBehaviour {
 
 		winScreen = GameObject.Find("WinPanel");
 		loseScreen = GameObject.Find("LosePanel");
+
 		winScreen.SetActive(false);
 		loseScreen.SetActive(false);
 
