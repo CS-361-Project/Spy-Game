@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ControlPoint : Tile {
 	int survivorCount;
+	List<Survivor> incomingSurvivorList;
 	int zombieCount;
 	float controlState;
 	float spawnClock;
@@ -21,6 +23,7 @@ public class ControlPoint : Tile {
 	public const float revertClaimPerSecond = 1f/20f;
 
 	public void init (int x, int y, GameManager gm, SurvivorControl control) {
+		incomingSurvivorList = new List<Survivor>();
 		survivorCount = 0;
 		zombieCount = 0;
 		base.init(x, y, gm, 0, 0, true);
@@ -110,9 +113,6 @@ public class ControlPoint : Tile {
 		if (spawnClock >= troopSpawnTime) {
 			spawnUnit(currentOwner);
 		}
-		if (currentOwner == Owner.Survivor && controlState < 1) {
-			sc.underAttack (this);
-		}
 	}
 
 	public virtual void setVisibility(bool visible) {
@@ -139,5 +139,21 @@ public class ControlPoint : Tile {
 			gm.addSurvivor(posX, posY);
 		}
 		spawnClock = 0;
+	}
+
+	public void addIncomingSurvivor(Survivor s) {
+		incomingSurvivorList.Add(s);
+	}
+
+	public void removeIncomingSurvivor(Survivor s) {
+		incomingSurvivorList.Remove(s);
+	}
+
+	public int getIncomingSurvivorCount() {
+		return incomingSurvivorList.Count;
+	}
+
+	public List<Survivor> getIncomingSurvivors() {
+		return incomingSurvivorList;
 	}
 }

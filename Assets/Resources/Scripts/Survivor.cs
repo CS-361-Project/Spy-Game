@@ -17,6 +17,7 @@ public class Survivor : Person {
 	public int priority;
 	int health;
 	int damageTaken;
+	ControlPoint destination;
 
 	Tile startTile, endTile;
 	[SerializeField]
@@ -40,6 +41,7 @@ public class Survivor : Person {
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
 		rend.color = Color.blue;
+		rend.sortingLayerName = "UI";
 		rend.sortingOrder = 1;
 
 		transform.localScale = new Vector3(size, size, 1);
@@ -54,9 +56,10 @@ public class Survivor : Person {
 
 		startTile = t;
 		//endTile = m.getTile(4, 6);
-		patrolDirection = 0;
+//		patrolDirection = 0;
 		//		targetPositions = gm.getPath(tile, endTile);
-		targetPositions = new List<Vector2>();
+//		setDestination(gm.getControlPoints()[gm.findQuadrant(t) - 1]);
+//		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 1f;
@@ -64,9 +67,9 @@ public class Survivor : Person {
 
 	// Update is called once per frame
 	void Update() {
-		if (patrolDirection == 2) {
-			patrolDirection = 0;
-		}
+//		if (patrolDirection == 2) {
+//			patrolDirection = 0;
+//		}
 
 		//Find the closest guard
 		//List<Survivor> closestSurvivorList = new List<Survivor>();
@@ -105,59 +108,39 @@ public class Survivor : Person {
 			bulletObj.SetActive(false);
 		}
 
-//		foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
-//			if (c != coll && c.gameObject.name != "Wall") {
-//				if (Vector2.Distance(c.transform.position, transform.position) <= viewDistance / 2 || canSee(c.transform.position)) {
-//					switch (c.gameObject.name) {
-//					case "Zombie":
-//						targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position), false);
-//						if (targetPositions.Count >= 2) {
-//							targetPositions.RemoveAt(targetPositions.Count - 1);
-//							targetPositions.RemoveAt(0);
-//						}
-//						targetPositions.Add(c.transform.position);
-//						break;
-//					case "Survivor":
-//						break;
+//		if (patrolDirection == 1) {
+//			if (targetPositions.Count <= 0) {
+//				targetPositions = gm.getPath(endTile, startTile, false);
+//				patrolDirection = -1;
+//			}
+//		}
+//		else if (patrolDirection == -1) {
+//			if (targetPositions.Count <= 0) {
+//				targetPositions = gm.getPath(startTile, endTile, false);
+//				patrolDirection = 1;
+//			}
+//		}
+		wander(true);
+
+//		int highestPrioritySurvivor = int.MaxValue;
+//		Survivor prioritySurvivor = null;
+//		foreach (Survivor s in gm.getSurvivorList()) {
+//			if (s != this) {
+//				float dist = Vector2.Distance(s.transform.position, this.transform.position);
+//				if (dist < viewDistance) {
+//					Vector2 toObject = s.transform.position - transform.position;
+//					RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
+//					if (hit.collider == null && s.priority < highestPrioritySurvivor) {
+//						//closestSurvivorList.Add(s);
+//						highestPrioritySurvivor = s.priority;
+//						prioritySurvivor = s;
 //					}
 //				}
 //			}
 //		}
-		if (patrolDirection == 1) {
-			if (targetPositions.Count <= 0) {
-				targetPositions = gm.getPath(endTile, startTile, false);
-				patrolDirection = -1;
-			}
-		}
-		else if (patrolDirection == -1) {
-			if (targetPositions.Count <= 0) {
-				targetPositions = gm.getPath(startTile, endTile, false);
-				patrolDirection = 1;
-			}
-		}
-		else if (patrolDirection == 0) {
-			wander();
-		}
-
-		int highestPrioritySurvivor = int.MaxValue;
-		Survivor prioritySurvivor = null;
-		foreach (Survivor s in gm.getSurvivorList()) {
-			if (s != this) {
-				float dist = Vector2.Distance(s.transform.position, this.transform.position);
-				if (dist < viewDistance) {
-					Vector2 toObject = s.transform.position - transform.position;
-					RaycastHit2D hit = Physics2D.Raycast(transform.position, toObject.normalized, dist, 1 << LayerMask.NameToLayer("Wall"));
-					if (hit.collider == null && s.priority < highestPrioritySurvivor) {
-						//closestSurvivorList.Add(s);
-						highestPrioritySurvivor = s.priority;
-						prioritySurvivor = s;
-					}
-				}
-			}
-		}
-		if (prioritySurvivor != null && prioritySurvivor.priority < priority/* && prioritySurvivor.nextPoint() != (Vector2) prioritySurvivor.transform.position*/) {
-			targetPositions = gm.getPath(tile, gm.getClosestTile(prioritySurvivor.lastPoint()), false);
-		}
+//		if (prioritySurvivor != null && prioritySurvivor.priority < priority/* && prioritySurvivor.nextPoint() != (Vector2) prioritySurvivor.transform.position*/) {
+//			targetPositions = gm.getPath(tile, gm.getClosestTile(prioritySurvivor.lastPoint()), false);
+//		}
 
 	    Tile oldTile = tile;
 		bool changedTile = move();
@@ -168,11 +151,11 @@ public class Survivor : Person {
 		shotTimer += Time.deltaTime;
 	}
 
-	void wander() {
-		if (targetPositions.Count == 0) {
-			targetPositions = gm.getPath(tile, gm.getRandomSurvivorHub(), true);
-		}
-	}
+//	void wander() {
+//		if (targetPositions.Count == 0) {
+//			targetPositions = 
+//		}
+//	}
 
 	void turnToZombie() {
 		GameObject zombie = new GameObject();
@@ -213,5 +196,18 @@ public class Survivor : Person {
 				zomb.onObjectShot(Random.Range(40, 61));
 			}
 		}
+	}
+
+	public void setDestination(ControlPoint cp) {
+		if (destination != null) {
+			destination.removeIncomingSurvivor(this);
+		}
+		destination = cp;
+		cp.addIncomingSurvivor(this);
+		targetPositions = gm.getPath(tile, cp, false);
+	}
+
+	public ControlPoint getDestination() {
+		return destination;
 	}
 }

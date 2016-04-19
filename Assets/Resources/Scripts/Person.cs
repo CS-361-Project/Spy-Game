@@ -47,6 +47,7 @@ public class Person : MonoBehaviour {
 
 		direction = new Vector2(1, 0);
 		intDirection = new Vector2(1, 0);
+		targetPositions = new List<Vector2>();
 		//targetPositions = gm.getPath(tile, gm.getFinishTile());
 	}
 
@@ -64,7 +65,9 @@ public class Person : MonoBehaviour {
 	}
 
 	public virtual void wander(bool avoidLasers) {
-		body.velocity = Vector2.zero;
+		if (targetPositions.Count == 0) {
+			body.velocity = Vector2.zero;
+		}
 		/*if (targetPositions.Count == 0) {
 			intDirection.Normalize();
 			Vector2 dir = intDirection;
@@ -111,12 +114,12 @@ public class Person : MonoBehaviour {
 	// called once per frame
 	public bool move() {
 		bool switchedTile = false;
-		if (onFire) {
-			timeOnFire += Time.deltaTime;
-			if (timeOnFire >= 5) {
-
-			}
-		}
+//		if (onFire) {
+//			timeOnFire += Time.deltaTime;
+//			if (timeOnFire >= 5) {
+//
+//			}
+//		}
 		if (!beingPushed && targetPositions.Count >= 1) {
 //			Vector2 toObject = targetPositions[0] - (Vector2)transform.position;
 //			RaycastHit2D hit;

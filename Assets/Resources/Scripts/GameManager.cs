@@ -46,9 +46,9 @@ public class GameManager : MonoBehaviour {
 		loseScreen.SetActive(false);
 
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
-		zombieCtrl.init(this);
+
 		survivorCtrl = new GameObject ().AddComponent<SurvivorControl> ();
-		survivorCtrl.init (this);
+
 		zombieList = new List<Guard>();
 		tileList = new List<Tile>();
 
@@ -69,6 +69,8 @@ public class GameManager : MonoBehaviour {
 		guardFolder = new GameObject();
 		guardFolder.name = "Guards";
 		generateLevel(width, height);
+		survivorCtrl.init (this);
+		zombieCtrl.init(this);
 		count = 0;
 	}
 	
@@ -126,16 +128,16 @@ public class GameManager : MonoBehaviour {
 					if (Random.value > 0.6 && zombieList.Count < 200) {
 						addGuard(x, y);
 					}
-					if (survivorCount < 5) {
+					if (survivorCount < 12 && x > width/2) {
 						addSurvivor (x, y);
 						survivorCount++;
 					}
 				}
 			}
 		}
-		for (int i = 0; i < 150; i++) {
-			addGuard(1, height / 2);
-		}
+//		for (int i = 0; i < 150; i++) {
+//			addGuard(1, height / 2);
+//		}
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
 		while (!(quad1 && quad2 && quad3 && quad4)) {
@@ -181,12 +183,15 @@ public class GameManager : MonoBehaviour {
 			tileList.Add(point);
 			Destroy(hub.gameObject);
 		}
+		foreach (Survivor s in survivorList) {
+			s.setDestination(controlPointList[findQuadrant(s.tile) - 1]);
+		}
 	}
 
 
 	
 
-	int findQuadrant(Tile hub) {
+	public int findQuadrant(Tile hub) {
 		int x = hub.posX;
 		int y = hub.posY;
 
@@ -194,7 +199,8 @@ public class GameManager : MonoBehaviour {
 			if (y < (float)height / 2F) {
 				return 1;
 			}
-			else if (y > (float)height / 2F) {
+//			else if (y > (float)height / 2F) {
+			else {
 				return 2;
 			}
 		}
@@ -202,7 +208,8 @@ public class GameManager : MonoBehaviour {
 			if (y < (float)height / 2F) {
 				return 4;
 			}
-			else if (y > (float)height / 2F) {
+//			else if (y > (float)height / 2F) {
+			else {
 				return 3;
 			}
 		}
@@ -319,7 +326,7 @@ public class GameManager : MonoBehaviour {
 		return tileList[Random.Range(0, tileList.Count)];
 	}
 
-	public Tile getRandomSurvivorHub() {
+	public Tile getRandomControlPoint() {
 		return controlPointList[Random.Range(0, controlPointList.Count())];
 	}
 
@@ -331,6 +338,10 @@ public class GameManager : MonoBehaviour {
 		return survivorList;
 	}
 
+	public ControlPoint[] getControlPoints(){
+		return controlPointList;
+	}
+
 	public void removeZombie(Guard g) {
 		zombieCtrl.removeZombie(g);
 		zombieList.Remove(g);
@@ -339,6 +350,34 @@ public class GameManager : MonoBehaviour {
 
 	public void removeSurvivor(Survivor s) {
 		survivorList.Remove(s);
+		s.getDestination().removeSurvivor(s);
+	}
+
+	// return number of zombies in nxn area centered on (x, y)
+	public int countZombiesInArea(int x, int y, int size) {
+		Tile center = getTile (x, y);
+		int count = 0;
+		if (center != null) {
+			foreach (Tile t in center.getNxNArea(size)) {
+				if (t != null) {
+					count += t.getZombieList().Count;
+				}
+			}
+		}
+		return count;
+	}
+
+	public int countSurvivorsInArea(int x, int y, int size) {
+		Tile center = getTile (x, y);
+		int count = 0;
+		if (center != null) {
+			foreach (Tile t in center.getNxNArea(size)) {
+				if (t != null) {
+					count += t.getSurvivorList().Count;
+				}
+			}
+		}
+		return count;
 	}
 
 
