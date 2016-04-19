@@ -176,7 +176,7 @@ public class Survivor : Person {
 
 	void turnToZombie() {
 		GameObject zombie = new GameObject();
-		zombie.AddComponent<Zombie>();
+		zombie.AddComponent<Guard>();
 		zombie.transform.position = transform.position;
 		Destroy(gameObject);
 	}

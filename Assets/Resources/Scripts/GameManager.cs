@@ -4,19 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class GameManager : MonoBehaviour {
-	List<Fan> fanList;
+	
 	List<Guard> zombieList;
-	List<Burner> burnerList;
-	List<Chemical> chemicalList;
-	List<LaserSensor> sensorList;
 	List<Tile> tileList;
+	List<Survivor> survivorList;
 
 	ControlPoint[] controlPointList;
 	bool quad1, quad2, quad3, quad4;
 
-	List<Survivor> survivorList;
-
-	GameObject wallFolder, tileFolder, doorFolder, guardFolder, burnerFolder, chemicalFolder, fanFolder, sensorFolder;
+	GameObject wallFolder, tileFolder, doorFolder, guardFolder;
 	GameObject winScreen, loseScreen;
 
 	Tile[,] board;
@@ -28,7 +24,6 @@ public class GameManager : MonoBehaviour {
 	int finishX = 0;
 	int finishY = 0;
 
-	List<Tile[]> sections;
 	ZombieControl zombieCtrl;
 	SurvivorControl survivorCtrl;
 
@@ -54,11 +49,7 @@ public class GameManager : MonoBehaviour {
 		zombieCtrl.init(this);
 		survivorCtrl = new GameObject ().AddComponent<SurvivorControl> ();
 		survivorCtrl.init (this);
-		fanList = new List<Fan>();
 		zombieList = new List<Guard>();
-		burnerList = new List<Burner>();
-		chemicalList = new List<Chemical>();
-		sensorList = new List<LaserSensor>();
 		tileList = new List<Tile>();
 
 		controlPointList = new ControlPoint[4];
@@ -77,27 +68,7 @@ public class GameManager : MonoBehaviour {
 		doorFolder.name = "Doors";
 		guardFolder = new GameObject();
 		guardFolder.name = "Guards";
-		burnerFolder = new GameObject();
-		burnerFolder.name = "Burners";
-		chemicalFolder = new GameObject();
-		chemicalFolder.name = "Chemicals";
-		fanFolder = new GameObject();
-		fanFolder.name = "Fans";
-		sensorFolder = new GameObject();
-		sensorFolder.name = "Sensors";
-		//buildBoard(10, 10);
-//		buildLevel(10, 10);
-//		buildTestChamber(10, 10);
-//		addFrank (5, 4);
-//		addFan(new Vector2(1, 1), "E");
-//		addFan(new Vector2(1, 6), "E");
-//		addSensor(1, 2, new Vector2(1, 0));
-		//addBurner(new Vector2(1, 1));
-		//addChemical (new Vector2 (2, 1));
-		//buildLevel();
-		//buildLevel(22,22);
 		generateLevel(width, height);
-//		addChemical (new Vector2 (2, 1));
 		count = 0;
 	}
 	
@@ -133,9 +104,6 @@ public class GameManager : MonoBehaviour {
 
 		}
 		count++;
-//		if (count == 150) {
-//			getTile(6, 6).setFire(1);
-//		}
 	}
 
 	void generateLevel(int width, int height) {
@@ -254,9 +222,7 @@ public class GameManager : MonoBehaviour {
 		int r = Random.Range(1, 16);
 		bool bit1 = (r & 1) == 1;
 		bool bit2 = (r & 2) == 2;
-//		float r2 = Random.Range(0f, 1f);
 		float r2 = Mathf.PerlinNoise(x * .5f + xSeed, y * .5f + ySeed);
-//		print("r2: " + r2);
 		if (r2 <= .35f) {
 			if (dx == 0) {
 				if (bit1) {
@@ -301,82 +267,6 @@ public class GameManager : MonoBehaviour {
 			}*/
 		}
 	}
-
-	#region building levels
-
-	void buildLevel(int width, int height) {
-		
-		this.width = width;
-		this.height = height;
-		board = new Tile[width, height];
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (x == 0 || y == 0 || x == width - 1 || y == height - 1) {
-					board[x, y] = addWall(x, y);
-				}
-				else if (Random.value > 0.8) {
-					board[x, y] = addWall(x, y);
-				}
-				else {
-					board[x, y] = addTile(x, y, 0, false);
-					if (Random.value > 0.6 && zombieList.Count < 200) {
-						//addGuard(x, y);
-					}
-
-				}
-			}
-		}
-
-	}
-
-
-	public int[] planSectionPath(Tile startTile, Tile endTile) {
-		List<int> integers = new List<int>();
-		List<Tile> pathTiles = getTilePath(startTile, endTile, true);
-		int currentSection = -1;
-		foreach (Tile t in pathTiles) {
-			if (t.section != currentSection && t.section > -1) {
-				currentSection = t.section;
-				integers.Add(currentSection);
-			}
-		}
-		return integers.ToArray();
-	}
-
-	void constructSections() {
-		int numSections = 0;
-		sections = new List<Tile[]>();
-		foreach (Tile tile in board) {
-			if (tile.section == -1 && tile.isPassable()) {
-				numSections++;
-				sections.Add(fillSection(tile, numSections - 1));
-			}
-		}
-	}
-
-	Tile[] fillSection(Tile section, int sectionNum) {
-		List<Tile> sectionQueue = new List<Tile>();
-		List<Tile> sectionMembers = new List<Tile>();
-		sectionQueue.Add(section);
-		while (sectionQueue.Count > 0) {
-			Tile tile = sectionQueue[0];
-			sectionQueue.RemoveAt(0);
-			tile.section = sectionNum;
-			sectionMembers.Add(tile);
-			foreach (Tile neighbor in tile.getNeighbors()) {
-				if (neighbor.section == -1 && neighbor.isPassable())
-					sectionQueue.Add(neighbor);
-			}
-		}
-		return sectionMembers.ToArray();
-	}
-
-	public Tile[] getSection(int sectionNum) {
-		//print(sections.Count + ":" + sectionNum);
-		return sections[sectionNum];
-	}
-
-	#endregion
 
 	public Tile getTile(int x, int y) {
 		if (onBoard(x, y)) {
@@ -645,36 +535,6 @@ public class GameManager : MonoBehaviour {
 		door.transform.parent = doorFolder.transform;
 		return door;
 	}
-	// NOTE: Can definitely come up with a better way to do this so we don't need seperate for loops for each type of object added
-
-	// register each guard to be notified when new fan is toggled
-	//	void addFan(Vector2 position, string direction) {
-	//		GameObject fanObj = new GameObject();
-	//		fanObj.name = "Fan";
-	//		fanObj.transform.position = position;
-	//		Fan fan = fanObj.AddComponent<Fan>();
-	//		fan.init(position.x, position.y, direction, this);
-	//		foreach (Guard g in zombieList) {
-	//			fan.FanToggled += g.onFanToggled;
-	//		}
-	//		fanList.Add(fan);
-	//	}
-
-	//	void addFrank(int x, int y) {
-	//		GameObject frankObj = new GameObject();
-	//		frankObj.name = "Frank";
-	//		Frank frank = frankObj.AddComponent<Frank>();
-	//		foreach (Fan fan in fanList) {
-	//			fan.FanToggled += frank.onFanToggled;
-	//		}
-	//		foreach (Burner bb in burnerList) {
-	//			bb.BurnerToggled += frank.onBurnerToggled;
-	//		}
-	//		foreach (Chemical chem in chemicalList) {
-	//			chem.ChemicalToggled += frank.onChemicalToggled;
-	//		}
-	//		frank.init(getTile(x, y), this);
-	//	}
 
 	public void addSurvivor(int x, int y) {
 		GameObject survObj = new GameObject();
@@ -684,67 +544,16 @@ public class GameManager : MonoBehaviour {
 		survivorList.Add(surv);
 
 	}
-
-	//	void addSensor(int x, int y, Vector2 direction) {
-	//		GameObject sensorObj = new GameObject();
-	//		sensorObj.name = "Laser Sensor";
-	//		LaserSensor sensor = sensorObj.AddComponent<LaserSensor>();
-	//		foreach (Guard g in zombieList) {
-	//			sensor.MotionDetected += g.onMotionDetected;
-	//		}
-	//		sensor.init(this, getTile(x, y).transform.position, direction);
-	//		sensor.transform.parent = sensorFolder.transform;
-	//		sensorList.Add(sensor);
-	//	}
-
+		
 	// register each guard to be notified when a fan is toggled
 	public void addGuard(int x, int y) {
 		GameObject guardObj = new GameObject();
 		guardObj.name = "Guard";
 		Guard guard = guardObj.AddComponent<Guard>();
-		foreach (Fan fan in fanList) {
-			fan.FanToggled += guard.onFanToggled;
-		}
-		foreach (Burner bb in burnerList) {
-			bb.BurnerToggled += guard.onBurnerToggled;
-		}
-		foreach (Chemical chem in chemicalList) {
-			chem.ChemicalToggled += guard.onChemicalToggled;
-		}
-		foreach (LaserSensor sensor in sensorList) {
-			sensor.MotionDetected += guard.onMotionDetected;
-		}
 		guard.init(getTile(x, y), this, maxZombiePriority++);
 		guard.transform.parent = guardFolder.transform;
 		zombieList.Add(guard);
 	}
-
-
-	//	void addBurner(Vector2 position) {
-	//		GameObject burnerObj = new GameObject();
-	//		burnerObj.name = "Burner";
-	//		burnerObj.transform.position = position;
-	//		Burner burner = burnerObj.AddComponent<Burner>();
-	//		burner.init(getTile((int)position.x, (int)position.y));
-	//		foreach (Guard g in zombieList) {
-	//			burner.BurnerToggled += g.onBurnerToggled;
-	//		}
-	//		burner.transform.parent = burnerFolder.transform;
-	//		burnerList.Add(burner);
-	//	}
-
-	//	void addChemical(Vector2 position) {
-	//		GameObject chemObj = new GameObject();
-	//		chemObj.name = "Chemical";
-	//		chemObj.transform.position = position;
-	//		Chemical chemical = chemObj.AddComponent<Chemical>();
-	//		foreach (Guard g in zombieList) {
-	//			chemical.ChemicalToggled += g.onChemicalToggled;
-	//		}
-	//		chemical.transform.parent = chemicalFolder.transform;
-	//		chemicalList.Add(chemical);
-	//	}
-
 	#endregion
 }
 
