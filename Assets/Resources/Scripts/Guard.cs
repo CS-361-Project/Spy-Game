@@ -163,16 +163,21 @@ public class Guard : Person {
 		}
 
 		Vector3 sumForce = Vector3.zero;
+		Vector3 sumAvoidance = Vector3.zero;
 		int neighborCount = 0;
 		foreach (Tile t in tile.getNxNArea(3)) {
 			if (t != null) {
 				foreach (Guard g in t.getZombieList()) {
 					if (g != this) {
 						float dist = Vector2.Distance(g.transform.position, transform.position);
-						if (dist <= 0.45) {
+						if (dist <= 0.3f) {
 							sumForce += -10f * (g.transform.position - transform.position).normalized *
 							radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), .1f)), 2);
 							neighborCount++;
+						}
+						if (dist <= 0.6f) {
+							sumAvoidance -= (g.transform.position - transform.position).normalized *
+								radius / Mathf.Pow((Mathf.Max(Mathf.Min(dist, radius), 0.3f)), 1.2f);
 						}
 					}
 				}
@@ -182,8 +187,10 @@ public class Guard : Person {
 			if (sumForce == Vector3.zero) {
 				sumForce = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
 			}
-			sumForce = sumForce.normalized * Mathf.Min(sumForce.magnitude / (float)neighborCount, 37);
-			body.AddForce(sumForce);
+			sumForce = sumForce.normalized * Mathf.Min(sumForce.magnitude / (float)neighborCount, 3);
+			body.velocity = (Vector2)body.velocity.normalized + (Vector2)sumAvoidance.normalized * 0.5f;
+			body.velocity = (Vector2)body.velocity.normalized * speed;
+			body.velocity += (Vector2)sumForce;
 		}
 		//body.velocity = body.velocity.normalized * speed;
 	}

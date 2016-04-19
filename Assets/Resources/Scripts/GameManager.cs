@@ -124,9 +124,9 @@ public class GameManager : MonoBehaviour {
 					board[x, y] = addWall(x, y);
 				}
 				else {
-//					if (Random.value > 0.6 && zombieList.Count < 200) {
-//						addGuard(x, y);
-//					}
+					if (Random.value > 0.6 && zombieList.Count < 200) {
+						addGuard(x, y);
+					}
 					if (survivorCount < 5) {
 						addSurvivor (x, y);
 						survivorCount++;
@@ -261,7 +261,7 @@ public class GameManager : MonoBehaviour {
 		foreach (Guard g in guards) {
 			//print(findPathToTarget(g.tile).Count);
 			List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
-			g.targetPositions = pathToPoints(findPathToTarget(g.tile));
+			g.targetPositions = optimizePath(pathToPoints(findPathToTarget(g.tile)));
 			/*for (int p =0;p<points.Count;p+=split){
 				List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
 				g.targetPositions.AddRange(optimizePath(optPoints));
