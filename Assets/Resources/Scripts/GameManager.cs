@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour {
 	List<Tile> tileList;
 
 	List<Tile> survivorHubs;
+	List<ControlPoint> controlPoints;
+
 	bool quad1, quad2, quad3, quad4;
 
 	List<Survivor> survivorList;
@@ -28,6 +30,7 @@ public class GameManager : MonoBehaviour {
 
 	List<Tile[]> sections;
 	ZombieControl zombieCtrl;
+	SurvivorControl survivorCtrl;
 
 	int maxZombiePriority;
 	int maxSurvivorPriority;
@@ -44,6 +47,8 @@ public class GameManager : MonoBehaviour {
 
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
 		zombieCtrl.init(this);
+		survivorCtrl = new GameObject ().AddComponent<SurvivorControl> ();
+		survivorCtrl.init (this);
 		fanList = new List<Fan>();
 		zombieList = new List<Guard>();
 		burnerList = new List<Burner>();
@@ -53,6 +58,8 @@ public class GameManager : MonoBehaviour {
 
 		survivorHubs = new List<Tile> ();
 		quad1 = false; quad2 = false; quad3 = false; quad4 = false;
+
+		controlPoints = new List<ControlPoint> ();
 
 		survivorList = new List<Survivor>();
 
@@ -120,7 +127,7 @@ public class GameManager : MonoBehaviour {
 //					if (Random.value > 0.6 && zombieList.Count < 200) {
 //						addGuard(x, y);
 //					}
-					if (survivorCount < 30) {
+					if (survivorCount < 5) {
 						addSurvivor (x, y);
 						survivorCount++;
 					}
@@ -130,10 +137,12 @@ public class GameManager : MonoBehaviour {
 
 		int zombiePriority = 0;
 
-		for (int i = 0; i < 250; i++) {
+		for (int i = 0; i < 0; i++) {
 			addGuard(1, height / 2);
 			zombiePriority++;
 		}
+
+		// INEFFICIENT!!!
 		while (survivorHubs.Count < 4) {
 			Tile hub = getRandomEmptyTile();
 			switch (findQuadrant (hub)) {
@@ -170,11 +179,14 @@ public class GameManager : MonoBehaviour {
 		foreach (Tile hub in survivorHubs) {
 			GameObject pointObj = new GameObject();
 			ControlPoint point = pointObj.AddComponent<ControlPoint>();
-			point.init(hub.posX,hub.posY, this);
-			point.transform.position = new Vector3(hub.posX, hub.posY, 0);
+
+			point.init(hub.posX,hub.posY, this, survivorCtrl);
+			point.transform.localPosition = new Vector3(hub.posX, hub.posY, 0);
 			board[hub.posX, hub.posY] = point;
 			tileList.Add(point);
-			Destroy (hub.gameObject);
+			//survivorHubs.Remove(hub);
+			controlPoints.Add(point);
+			Destroy(hub.gameObject);
 		}
 	}
 
@@ -385,6 +397,10 @@ public class GameManager : MonoBehaviour {
 
 	public Tile getRandomEmptyTile() {
 		return tileList[Random.Range(0, tileList.Count)];
+	}
+
+	public Tile getRandomSurvivorHub() {
+		return controlPoints[Random.Range(0, controlPoints.Count)];
 	}
 
 	public List<Guard> getZombieList() {

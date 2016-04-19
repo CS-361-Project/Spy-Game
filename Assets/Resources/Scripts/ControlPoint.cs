@@ -12,20 +12,20 @@ public class ControlPoint : Tile {
 		Zombie,
 		Unclaimed,
 		Survivor}
-
-	;
+	SurvivorControl sc;
 
 	public const float troopSpawnTime = 15f;
 	public const float zombieClaimPerSecond = 1f / 30f;
 	public const float survivorClaimPerSecond = 1f / 10f;
 	public const float revertClaimPerSecond = 1f/20f;
 
-	public void init(int x, int y, GameManager gm) {
+	public void init (int x, int y, GameManager gm, SurvivorControl control) {
 		survivorCount = 0;
 		zombieCount = 0;
 		base.init(x, y, gm, 0, 0, true);
 		currentOwner = Owner.Unclaimed;
 		controlState = 0;
+		sc = control;
 	}
 	
 	// Update is called once per frame
@@ -108,6 +108,9 @@ public class ControlPoint : Tile {
 		spawnClock += Time.deltaTime;
 		if (spawnClock >= troopSpawnTime) {
 			spawnUnit(currentOwner);
+		}
+		if (currentOwner == Owner.Survivor && controlState < 1) {
+			sc.underAttack (this);
 		}
 	}
 

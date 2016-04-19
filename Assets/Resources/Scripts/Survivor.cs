@@ -25,7 +25,6 @@ public class Survivor : Person {
 	public void init(Tile t, GameManager m, int priority) {
 		base.init(t, m);
 		this.priority = priority;
-		t.addSurvivor(this);
 		viewLayerMask = (1 << LayerMask.NameToLayer("Guard")) | (1 << LayerMask.NameToLayer("Wall"));
 		obstacleLayerMask = (1 << LayerMask.NameToLayer("Wall")) | (1 << LayerMask.NameToLayer("Survivor"));
 		viewDistance = 6f;
@@ -87,7 +86,7 @@ public class Survivor : Person {
 				}
 			}
 		}
-		if (prioritySurvivor != null && prioritySurvivor.priority < priority && prioritySurvivor.nextPoint() != (Vector2) prioritySurvivor.transform.position) {
+		if (prioritySurvivor != null && prioritySurvivor.priority < priority/* && prioritySurvivor.nextPoint() != (Vector2) prioritySurvivor.transform.position*/) {
 			targetPositions = gm.getPath(tile, gm.getClosestTile(prioritySurvivor.nextPoint()), false);
 		}
 		//Find the average direction of the closest survivors
@@ -157,19 +156,19 @@ public class Survivor : Person {
 		else if (patrolDirection == 0) {
 			wander();
 		}
-		Tile oldTile = tile;
+
+	    Tile oldTile = tile;
 		bool changedTile = move();
 		if (changedTile) {
-			oldTile.removeSurvivor(this);
-			tile.addSurvivor(this);
+			oldTile.removeSurvivor (this);
+			tile.addSurvivor (this);
 		}
 		shotTimer += Time.deltaTime;
-
 	}
 
 	void wander() {
 		if (targetPositions.Count == 0) {
-			targetPositions = gm.getPath(tile, gm.getRandomEmptyTile(), true);
+			targetPositions = gm.getPath(tile, gm.getRandomSurvivorHub(), true);
 		}
 	}
 
