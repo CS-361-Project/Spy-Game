@@ -249,6 +249,19 @@ public class GameManager : MonoBehaviour {
 	}
 
 
+	public List<Vector2> splitOptPath(List<Vector2> points, int split){
+		List<Vector2> results = new List<Vector2>();
+		for (int p =0;p<points.Count;p+=split){
+			List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
+			results.Add(optPoints[0]);
+			results.AddRange(optimizePath(optPoints));
+		}
+		if (results.Count > 0) {
+			results.RemoveAt(0);
+		}
+		return results;
+	}
+
 	public void moveTo(List<Guard> guards, Vector2 point) {
 		setTargetTile(getClosestTile(point));
 		int split = 12;
@@ -261,7 +274,7 @@ public class GameManager : MonoBehaviour {
 					if (t.pathToTarget.Count > 0) {
 						if (!pathObstructed(g.transform.position, t.transform.position)) {
 							g.targetPositions = new List<Vector2>();
-							g.targetPositions.Add(t.transform.position);
+							//g.targetPositions.Add(t.transform.position);
 							g.targetPositions.AddRange(t.pathToTarget);
 							foundCut = true;
 							break;
@@ -270,9 +283,9 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 			if (!foundCut) {
-				print("Doing this");
-				List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
-				g.targetPositions = optimizePath(pathToPoints(findPathToTarget(g.tile)));
+				//print("Doing this");
+				//List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
+				g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(g.tile)),10);
 				g.tile.pathToTarget = g.targetPositions;
 			}
 			/*for (int p =0;p<points.Count;p+=split){
