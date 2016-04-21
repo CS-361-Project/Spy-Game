@@ -4,6 +4,17 @@ using System.Collections;
 public class CameraControl : MonoBehaviour {
 	bool dragging = false;
 	Vector3 lastPos = Vector3.zero;
+
+	AudioSource audioSource;
+	public AudioClip soundTrack;
+
+	void Start(){
+		audioSource = gameObject.AddComponent<AudioSource>();
+		soundTrack = Resources.Load("Audio/Music/160412 Professor Quack (Long Edit)", typeof(AudioClip)) as AudioClip;
+		audioSource.PlayOneShot(soundTrack);
+		
+	}
+
 	void Update() {
 		if (Input.GetMouseButton(1)) {
 			if (!dragging) {

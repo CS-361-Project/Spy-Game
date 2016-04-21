@@ -301,6 +301,7 @@ public class GameManager : MonoBehaviour {
 			results.AddRange(optimizePath(optPoints));
 		}
 		if (results.Count > 0) {
+			print("Removing first element from path of length " + results.Count);
 			results.RemoveAt(0);
 		}
 		return results;
