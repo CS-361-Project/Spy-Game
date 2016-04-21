@@ -68,8 +68,8 @@ public class LaserSensor : MonoBehaviour {
 	}
 
 	void setBeamEndpoint(Vector2 pos) {
-		Tile startTile = gm.getClosestTile(transform.position);
-		Tile endTile = gm.getClosestTile(pos);
+		Tile startTile = gm.getClosestEmptyTile(transform.position);
+		Tile endTile = gm.getClosestEmptyTile(pos);
 		setLaser(startTile, endTile);
 
 		laserBeam.transform.localScale = new Vector2(Vector2.Distance(pos, transform.position), 0.1f);
@@ -83,7 +83,7 @@ public class LaserSensor : MonoBehaviour {
 		lastCoveredTiles.Clear();
 		Vector2 dir = endTile.transform.position - startTile.transform.position;
 		for (float i = 0; i <= 1; i+=1.0f/dir.magnitude) {
-			Tile t = gm.getClosestTile(Vector2.Lerp(startTile.transform.position, endTile.transform.position, i));
+			Tile t = gm.getClosestEmptyTile(Vector2.Lerp(startTile.transform.position, endTile.transform.position, i));
 			t.containsLaser = true;
 			lastCoveredTiles.Add(t);
 		}

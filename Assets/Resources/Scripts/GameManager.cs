@@ -296,7 +296,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void moveTo(List<Guard> guards, Vector2 point) {
-		setTargetTile(getClosestTile(point));
+		setTargetTile(getClosestEmptyTile(point));
+		Tile mouseTile = getClosestTile(point);
 		int split = 12;
 
 		foreach (Guard g in guards) {
@@ -319,7 +320,17 @@ public class GameManager : MonoBehaviour {
 				//print("Doing this");
 				//List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
 				g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(g.tile)),10);
+				g.direction = g.targetPositions[0] - (Vector2)g.transform.position;
 				g.tile.pathToTarget = g.targetPositions;
+				print("start");
+				foreach (Vector2 pos in g.targetPositions) {
+					print("pos " + pos);
+				}
+				print("end");
+			}
+			if (mouseTile != null && mouseTile.isPassable()) {
+				g.targetPositions.RemoveAt(g.targetPositions.Count - 1);
+				g.targetPositions.Add(point);
 			}
 			/*for (int p =0;p<points.Count;p+=split){
 				List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
@@ -346,7 +357,11 @@ public class GameManager : MonoBehaviour {
 		return x >= 0 && x < width && y >= 0 && y < height;
 	}
 
-	public Tile getClosestTile(Vector2 check) {
+	public Tile getClosestTile(Vector2 pos) {
+		return getTile(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+	}
+
+	public Tile getClosestEmptyTile(Vector2 check) {
 		int i = (int)Mathf.RoundToInt(check.x);
 		int j = (int)Mathf.RoundToInt(check.y);
 		Tile checkTile = getTile(i, j);

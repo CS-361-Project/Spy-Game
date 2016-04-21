@@ -8,7 +8,7 @@ public class Person : MonoBehaviour {
 	protected CircleCollider2D coll;
 	protected Rigidbody2D body;
 
-	protected Vector2 direction;
+	public Vector2 direction;
 	protected Vector2 intDirection;
 	public List<Vector2> targetPositions;
 
@@ -165,7 +165,7 @@ public class Person : MonoBehaviour {
 			direction = body.velocity.normalized;
 
 		}
-		Tile newTile = gm.getClosestTile(transform.position);
+		Tile newTile = gm.getClosestEmptyTile(transform.position);
 		if (newTile != tile) {
 			tile = newTile;
 			switchedTile = true;

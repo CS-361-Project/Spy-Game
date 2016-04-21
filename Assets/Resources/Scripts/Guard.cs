@@ -238,7 +238,7 @@ public class Guard : Person {
 		// sort of a way of saying "all clear"
 		// actually would be good to send message to all other guards letting them know there's nothing to see there
 //		print("Moving to position " + args.position);
-		Tile t = gm.getClosestTile(args.position);
+		Tile t = gm.getClosestEmptyTile(args.position);
 		List<Vector2> path = gm.getPath(tile, t, true);
 		if (path.Count <= 15) {
 			suspicion = 2f;
