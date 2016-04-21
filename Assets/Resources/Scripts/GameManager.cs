@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour {
 	List<Survivor> survivorList;
 	Tile[] zombieSpawn, survivorSpawn;
 
+	float zombieSpawnProgress, survivorSpawnProgress;
+	float zombieSpawnInterval, survivorSpawnInterval;
+
 	ControlPoint[] controlPointList;
 	bool quad1, quad2, quad3, quad4;
 
@@ -51,10 +54,16 @@ public class GameManager : MonoBehaviour {
 
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
 
-		survivorCtrl = new GameObject ().AddComponent<SurvivorControl> ();
+		survivorCtrl = new GameObject().AddComponent<SurvivorControl>();
 
 		zombieList = new List<Guard>();
 		tileList = new List<Tile>();
+
+		survivorSpawnProgress = 0;
+		zombieSpawnProgress = 0;
+
+		survivorSpawnInterval = 15;
+		zombieSpawnInterval = 3;
 
 		controlPointList = new ControlPoint[4];
 		quad1 = false;
@@ -73,15 +82,22 @@ public class GameManager : MonoBehaviour {
 		guardFolder = new GameObject();
 		guardFolder.name = "Guards";
 		generateLevel(width, height);
-		survivorCtrl.init (this);
+		survivorCtrl.init(this);
 		zombieCtrl.init(this);
 		count = 0;
 	}
 	
 	// Update is called once per frame
 	void Update() {
+		if (zombieSpawnProgress >= 1) {
+			zombieSpawnProgress -= 1;
+			spawnZombies(1);
+		}
+		if (survivorSpawnProgress >= 1) {
+			survivorSpawnProgress -= 1;
+			spawnSurvivors(1);
+		}
 		if (zombieList.Count == 0) {
-			print("The Game has ended");
 			loseScreen.SetActive(true);
 		}
 		else if (survivorList.Count == 0) {
@@ -107,8 +123,9 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 			// check if all control points captured
-
 		}
+		zombieSpawnProgress += Time.deltaTime / zombieSpawnInterval;
+		survivorSpawnProgress += Time.deltaTime / survivorSpawnInterval;
 		count++;
 	}
 
@@ -153,14 +170,8 @@ public class GameManager : MonoBehaviour {
 //				}
 			}
 		}
-		for (int i = 0; i < 150; i++) {
-			Tile t = zombieSpawn[Random.Range(0, zombieSpawn.Count())];
-			addGuard(t.posX, t.posY);
-		}
-		for (int i = 0; i < 10; i++) {
-			Tile t = survivorSpawn[Random.Range(0, survivorSpawn.Count())];
-			addSurvivor(t.posX, t.posY);
-		}
+		spawnZombies(150);
+		spawnSurvivors(10);
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
 		for (int i = 0; i < 4; i++) {
@@ -282,9 +293,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 
-	public List<Vector2> splitOptPath(List<Vector2> points, int split){
+	public List<Vector2> splitOptPath(List<Vector2> points, int split) {
 		List<Vector2> results = new List<Vector2>();
-		for (int p =0;p<points.Count;p+=split){
+		for (int p = 0; p < points.Count; p += split) {
 			List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
 			results.Add(optPoints[0]);
 			results.AddRange(optimizePath(optPoints));
@@ -304,7 +315,7 @@ public class GameManager : MonoBehaviour {
 			//print(findPathToTarget(g.tile).Count);
 			bool foundCut = false;
 			foreach (Tile t in g.tile.getNxNArea(3)) {
-				if (t != null){
+				if (t != null) {
 					if (t.pathToTarget.Count > 0) {
 						if (!pathObstructed(g.transform.position, t.transform.position)) {
 							g.targetPositions = new List<Vector2>();
@@ -322,25 +333,11 @@ public class GameManager : MonoBehaviour {
 				g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(g.tile)),10);
 				g.direction = g.targetPositions[0] - (Vector2)g.transform.position;
 				g.tile.pathToTarget = g.targetPositions;
-				print("start");
-				foreach (Vector2 pos in g.targetPositions) {
-					print("pos " + pos);
-				}
-				print("end");
 			}
 			if (mouseTile != null && mouseTile.isPassable()) {
 				g.targetPositions.RemoveAt(g.targetPositions.Count - 1);
 				g.targetPositions.Add(point);
 			}
-			/*for (int p =0;p<points.Count;p+=split){
-				List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
-				g.targetPositions.AddRange(optimizePath(optPoints));
-			}*/
-			/*if (g.targetPositions.Count > 0)
-				g.targetPositions.RemoveAt(0);*/
-			/*if (g.targetPositions.Count > 0) {
-				g.targetPositions.RemoveAt(0);
-			}*/
 		}
 	}
 
@@ -411,7 +408,7 @@ public class GameManager : MonoBehaviour {
 		return survivorList;
 	}
 
-	public ControlPoint[] getControlPoints(){
+	public ControlPoint[] getControlPoints() {
 		return controlPointList;
 	}
 
@@ -422,7 +419,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void removeSurvivor(Survivor s) {
-			survivorList.Remove(s);
+		survivorList.Remove(s);
 		if (s.getDestination() != null) {
 			s.getDestination().removeSurvivor(s);
 		}
@@ -430,7 +427,7 @@ public class GameManager : MonoBehaviour {
 
 	// return number of zombies in nxn area centered on (x, y)
 	public int countZombiesInArea(int x, int y, int size) {
-		Tile center = getTile (x, y);
+		Tile center = getTile(x, y);
 		int count = 0;
 		if (center != null) {
 			foreach (Tile t in center.getNxNArea(size)) {
@@ -443,7 +440,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public int countSurvivorsInArea(int x, int y, int size) {
-		Tile center = getTile (x, y);
+		Tile center = getTile(x, y);
 		int count = 0;
 		if (center != null) {
 			foreach (Tile t in center.getNxNArea(size)) {
@@ -624,6 +621,22 @@ public class GameManager : MonoBehaviour {
 
 	#region addObjects
 
+	public void spawnSurvivors(int n) {
+		int numTiles = survivorSpawn.Count();
+		for (int i = 0; i < n; i++) {
+			Tile spawnTile = survivorSpawn[Random.Range(0, numTiles)];
+			addSurvivor(spawnTile.posX, spawnTile.posY);
+		}
+	}
+
+	public void spawnZombies(int n) {
+		int numTiles = zombieSpawn.Count();
+		for (int i = 0; i < n; i++) {
+			Tile spawnTile = zombieSpawn[Random.Range(0, numTiles)];
+			addGuard(spawnTile.posX, spawnTile.posY);
+		}
+	}
+
 	Tile addTile(int x, int y, float fire, bool flammable) {
 		GameObject tileObj = new GameObject();
 		Tile tile = tileObj.AddComponent<Tile>();
@@ -672,6 +685,7 @@ public class GameManager : MonoBehaviour {
 		guard.transform.parent = guardFolder.transform;
 		zombieList.Add(guard);
 	}
+
 	#endregion
 }
 

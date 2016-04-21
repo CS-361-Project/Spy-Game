@@ -17,7 +17,6 @@ public class ControlPoint : Tile {
 	;
 	SurvivorControl sc;
 
-	public const float troopSpawnTime = 15f;
 	public const float zombieClaimPerSecond = 1f / 30f;
 	public const float survivorClaimPerSecond = 1f / 10f;
 	public const float revertClaimPerSecond = 1f/20f;
@@ -109,10 +108,6 @@ public class ControlPoint : Tile {
 			// color lerp for zombies by -controlState
 			rend.color = Color.Lerp(Color.white, Color.magenta, -controlState);
 		}
-		spawnClock += Time.deltaTime;
-		if (spawnClock >= troopSpawnTime) {
-			spawnUnit(currentOwner);
-		}
 	}
 
 	public virtual void setVisibility(bool visible) {
@@ -125,20 +120,6 @@ public class ControlPoint : Tile {
 			rend.sortingLayerName = "Default";
 			rend.sortingOrder = 0;
 		}
-	}
-
-	public void spawnUnit(Owner currentOwner) {
-		if (currentOwner == Owner.Zombie) {
-			gm.addGuard(posX, posY);
-			gm.addGuard(posX, posY);
-			gm.addGuard(posX, posY);
-			gm.addGuard(posX, posY);
-			gm.addGuard(posX, posY);
-		}
-		else if (currentOwner == Owner.Survivor) {
-			gm.addSurvivor(posX, posY);
-		}
-		spawnClock = 0;
 	}
 
 	public void addIncomingSurvivor(Survivor s) {
