@@ -297,11 +297,14 @@ public class GameManager : MonoBehaviour {
 		List<Vector2> results = new List<Vector2>();
 		for (int p = 0; p < points.Count; p += split) {
 			List<Vector2> optPoints = points.GetRange(p, Mathf.Min(split, points.Count - p));
-			results.Add(optPoints[0]);
+//			results.Add(optPoints[0]);
 			results.AddRange(optimizePath(optPoints));
 		}
 		if (results.Count > 0) {
 			print("Removing first element from path of length " + results.Count);
+			foreach (Vector2 v in results) {
+				print(v);
+			}
 			results.RemoveAt(0);
 		}
 		return results;
@@ -335,10 +338,10 @@ public class GameManager : MonoBehaviour {
 				g.direction = g.targetPositions[0] - (Vector2)g.transform.position;
 				g.tile.pathToTarget = g.targetPositions;
 			}
-			if (mouseTile != null && mouseTile.isPassable()) {
+//			if (mouseTile != null && mouseTile.isPassable()) {
 				g.targetPositions.RemoveAt(g.targetPositions.Count - 1);
 				g.targetPositions.Add(point);
-			}
+//			}
 		}
 	}
 
@@ -464,7 +467,11 @@ public class GameManager : MonoBehaviour {
 	#region pathfinding
 
 	public List<Vector2> getPath(Tile start, Tile end, bool ignoreDoors) {
-		return optimizePath(pathToPoints(getTilePath(start, end, ignoreDoors)));
+		List<Vector2> result = optimizePath(pathToPoints(getTilePath(start, end, ignoreDoors)));
+		if (result.Count > 0) {
+			result.RemoveAt(0);
+		}
+		return result;
 //		return pathToPoints(getTilePath(start, end, ignoreDoors));
 	}
 
@@ -497,7 +504,7 @@ public class GameManager : MonoBehaviour {
 				allPaths[i].Add(v);
 			}
 		}
-		allPaths[0].RemoveAt(0);
+//		allPaths[0].RemoveAt(0);
 		return allPaths[0];
 	}
 
