@@ -6,6 +6,7 @@ public class ZombieSelection : MonoBehaviour {
 	private bool mouseClicked = false;
 	private bool rightClick = false;
 	private Vector2 mouseStart = Vector2.zero;
+	private Vector2 screenStart = Vector2.zero;
 	private GameObject selectionBox;
 
 	public SelectionState state;
@@ -28,30 +29,33 @@ public class ZombieSelection : MonoBehaviour {
 	public Collider2D[] getSelectedObjects() {
 		mouseClicked = false;
 		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		bool mouse = false;
+		Vector2 screenPos = Input.mousePosition;
+		bool currentMouse = false;
 		if (Input.GetMouseButton(0)) {
-			mouse = true;
+			currentMouse = true;
 			rightClick = false;
 		}
 		else if (Input.GetMouseButton(1)) {
-			mouse = true;
+			currentMouse = true;
 			rightClick = true;
 		}
 		if (rightClick) {
-			if (mouse && !mouseDown) {
+			if (currentMouse && !mouseDown) {
 				mouseStart = mousePos;
+				screenStart = screenPos;
 				mouseDown = true;
 			}
-			else if (!mouse && mouseDown) {
-//				if (mousePos == mouseStart) {
-				if (Vector2.Distance(mousePos, mouseStart) <= 2) {
+			else if (!currentMouse && mouseDown) {
+				float distMoved = Vector2.Distance(screenStart, screenPos);
+				print("Mouse moved " + distMoved);
+				if (distMoved <= 2) {
 					mouseClicked = true;
 				}
 				mouseDown = false;
 			}
 		}
 		else {
-			if (mouse) {
+			if (currentMouse) {
 				if (mouseDown) {
 					state = SelectionState.Selecting;
 					return selectArea(mouseStart, mousePos);
@@ -60,6 +64,7 @@ public class ZombieSelection : MonoBehaviour {
 					state = SelectionState.BeginningSelection;
 					mouseDown = true;
 					mouseStart = mousePos;
+					screenStart = screenPos;
 				}
 			}
 			else {

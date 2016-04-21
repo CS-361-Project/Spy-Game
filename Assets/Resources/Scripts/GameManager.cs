@@ -335,13 +335,14 @@ public class GameManager : MonoBehaviour {
 				//print("Doing this");
 				//List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
 				g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(g.tile)),10);
-				g.direction = g.targetPositions[0] - (Vector2)g.transform.position;
+
 				g.tile.pathToTarget = g.targetPositions;
 			}
-//			if (mouseTile != null && mouseTile.isPassable()) {
+			if (g.targetPositions.Count > 0) {
+				g.direction = g.targetPositions[0] - (Vector2)g.transform.position;
 				g.targetPositions.RemoveAt(g.targetPositions.Count - 1);
 				g.targetPositions.Add(point);
-//			}
+			}
 		}
 	}
 

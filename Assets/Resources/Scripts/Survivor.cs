@@ -69,6 +69,9 @@ public class Survivor : Person {
 
 	// Update is called once per frame
 	void Update() {
+		if (shotTimer >= shotFrequency) {
+			speed = 1;
+		}
 //		if (patrolDirection == 2) {
 //			patrolDirection = 0;
 //		}
@@ -110,6 +113,7 @@ public class Survivor : Person {
 			aimDirection = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
 			if (shotTimer >= shotFrequency) {
 				shootAt((Vector2)transform.position + aimDirection);
+				speed = 0;
 			}
 		}
 //		}
