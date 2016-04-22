@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
 
 	float zombieSpawnProgress, survivorSpawnProgress;
 	float zombieSpawnInterval, survivorSpawnInterval;
+	float baseZombieSpawnInterval, baseSurvivorSpawnInterval;
 
 	ControlPoint[] controlPointList;
 	bool quad1, quad2, quad3, quad4;
@@ -62,8 +63,10 @@ public class GameManager : MonoBehaviour {
 		survivorSpawnProgress = 0;
 		zombieSpawnProgress = 0;
 
-		survivorSpawnInterval = 15;
-		zombieSpawnInterval = 3;
+		baseSurvivorSpawnInterval = 15;
+		baseZombieSpawnInterval = 3;
+		survivorSpawnInterval = baseSurvivorSpawnInterval;
+		zombieSpawnInterval = baseZombieSpawnInterval;
 
 		controlPointList = new ControlPoint[4];
 		quad1 = false;
@@ -415,6 +418,14 @@ public class GameManager : MonoBehaviour {
 
 	public ControlPoint[] getControlPoints() {
 		return controlPointList;
+	}
+
+	public void modifyZombieSpawnRate(float percent) {
+		zombieSpawnInterval = zombieSpawnInterval / (1 + (percent * baseZombieSpawnInterval * zombieSpawnInterval));
+	}
+
+	public void modifySurvivorSpawnRate(float percent) {
+		survivorSpawnInterval = survivorSpawnInterval / (1 + (percent * baseSurvivorSpawnInterval * survivorSpawnInterval));
 	}
 
 	public void removeZombie(Guard g) {

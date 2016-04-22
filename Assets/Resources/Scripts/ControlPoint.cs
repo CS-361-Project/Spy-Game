@@ -73,14 +73,19 @@ public class ControlPoint : Tile {
 		else if (survivorCount == 0) {
 			if (zombieCount > 0) {
 				if (currentOwner != Owner.Zombie) {
+					Owner oldOwner = currentOwner;
 					controlState -= zombieCount * zombieClaimPerSecond * gm.gameSpeed * Time.deltaTime;
 					if (controlState <= -1) {
 						controlState = -1;
 						currentOwner = Owner.Zombie;
+						gm.modifyZombieSpawnRate(.1f);
 						spawnClock = 0f;
 					}
 					else if (controlState <= 0) {
 						currentOwner = Owner.Unclaimed;
+					}
+					if (oldOwner == Owner.Survivor && oldOwner != currentOwner) {
+						gm.modifySurvivorSpawnRate(-.1f);
 					}
 				}
 			}
@@ -88,14 +93,19 @@ public class ControlPoint : Tile {
 		else if (zombieCount == 0) {
 			if (survivorCount > 0) {
 				if (currentOwner != Owner.Survivor) {
+					Owner oldOwner = currentOwner;
 					controlState += survivorCount * survivorClaimPerSecond * gm.gameSpeed * Time.deltaTime;
 					if (controlState >= 1) {
 						controlState = 1;
 						currentOwner = Owner.Survivor;
+						gm.modifyZombieSpawnRate(.1f);
 						spawnClock = 0f;
 					}
 					else if (controlState >= 0) {
 						currentOwner = Owner.Unclaimed;
+					}
+					if (oldOwner == Owner.Zombie && oldOwner != currentOwner) {
+						gm.modifyZombieSpawnRate(-.1f);
 					}
 				}
 			}
