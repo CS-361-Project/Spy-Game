@@ -31,6 +31,7 @@ public class Survivor : Person {
 		viewDistance = 6f;
 
 		gameObject.layer = LayerMask.NameToLayer("Survivor");
+		gameObject.tag = "Survivor";
 
 		shotTimer = 0; 
 		shotFrequency = .25f;

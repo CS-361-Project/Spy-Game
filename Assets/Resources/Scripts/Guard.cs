@@ -53,7 +53,7 @@ public class Guard : Person {
 		suspicion = 0.0f;
 		actionClock = 0.0f;
 		attackClock = 0.0f;
-		attackCooldown = .5f;
+		attackCooldown = .25f;
 		ignoreSurvivorsTime = 2f;
 		recievedCommand = false;
 		viewDistance = 6;
@@ -219,7 +219,7 @@ public class Guard : Person {
 		recievedCommand = true;
 	}
 
-	void OnCollisionEnter2D(Collision2D coll) {
+	void OnCollisionStay2D(Collision2D coll) {
 		if (attackClock >= attackCooldown && coll.gameObject.tag == "Survivor") {
 			coll.gameObject.GetComponent<Survivor>().damage(5);
 			attackClock = 0;
