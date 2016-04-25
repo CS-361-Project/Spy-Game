@@ -182,7 +182,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		spawnZombies(150);
-		spawnSurvivors(10);
+		spawnSurvivors(1);
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
 		for (int i = 0; i < 4; i++) {
@@ -666,7 +666,8 @@ public class GameManager : MonoBehaviour {
 		int numTiles = survivorSpawn.Count();
 		for (int i = 0; i < n; i++) {
 			Tile spawnTile = survivorSpawn[Random.Range(0, numTiles)];
-			addSurvivor(spawnTile.posX, spawnTile.posY);
+			//addSurvivor(spawnTile.posX, spawnTile.posY);
+			addTurret(spawnTile.posX, spawnTile.posY);
 		}
 	}
 
@@ -715,6 +716,17 @@ public class GameManager : MonoBehaviour {
 			surv.setDestination(controlPointList[findQuadrant(getTile(x, y)) - 1]);
 		}
 		survivorList.Add(surv);
+	}
+	
+	public void addTurret(int x, int y) {
+		GameObject turrObj = new GameObject();
+		turrObj.name = "Turret";
+		Turret turr = turrObj.AddComponent<Turret>();
+		turr.init(getTile(x, y), this, int.MaxValue);
+//		if (controlPointList[0] != null) {
+//			turr.setDestination(controlPointList[findQuadrant(getTile(x, y)) - 1]);
+//		}
+		//survivorList.Add(surv);
 	}
 		
 	// register each guard to be notified when a fan is toggled

@@ -8,15 +8,17 @@ using System.Collections.Generic;
 
 public class Survivor : Person {
 
-	SpriteRenderer rend;
-	GameObject bulletObj;
-	Vector2 aimDirection;
+	protected SpriteRenderer rend;
+	protected GameObject bulletObj;
+	protected Vector2 aimDirection;
 	public float size = .45f;
-	float shotTimer;
-	float shotFrequency;
-	float shotDuration;
+	protected float shotTimer;
+	protected float shotFrequency;
+	protected float shotDuration;
 	public int priority;
-	int health;
+	protected int health;
+	protected int damageTaken;
+	protected float rotationSpeed;
 	ControlPoint destination;
 
 	Tile startTile, endTile;
@@ -37,6 +39,8 @@ public class Survivor : Person {
 		shotFrequency = .25f;
 		shotDuration = .05f;
 		health = 100;
+		damageTaken = 5;
+		rotationSpeed = .1F;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
@@ -67,10 +71,8 @@ public class Survivor : Person {
 	}
 
 	// Update is called once per frame
-	void Update() {
-		if (shotTimer >= shotFrequency) {
-			speed = 1;
-		}
+
+	public virtual void Update() {
 //		if (patrolDirection == 2) {
 //			patrolDirection = 0;
 //		}
@@ -108,7 +110,7 @@ public class Survivor : Person {
 		}
 		else {
 			Vector2 targetDirection = (closestGuard.transform.position - transform.position).normalized;
-			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(aimDirection.y, aimDirection.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), .1f);
+			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(aimDirection.y, aimDirection.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), rotationSpeed);
 			aimDirection = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
 			if (shotTimer >= shotFrequency) {
 				shootAt((Vector2)transform.position + aimDirection);
