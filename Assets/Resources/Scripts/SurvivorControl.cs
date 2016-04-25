@@ -23,6 +23,7 @@ public class SurvivorControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		survivorList = gm.getSurvivorList();
 		assignSurvivors();
 	}
 

@@ -32,8 +32,8 @@ public class ControlPoint : Tile {
 	}
 	
 	// Update is called once per frame
-	public override void Update() {
-		base.Update();
+	public void Update() {
+		//base.Update();
 		survivorCount = getSurvivorList().Count;
 		zombieCount = getZombieList().Count;
 		if (survivorCount == 0 && zombieCount == 0) {

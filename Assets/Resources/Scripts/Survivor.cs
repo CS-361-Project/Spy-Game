@@ -17,7 +17,6 @@ public class Survivor : Person {
 	float shotDuration;
 	public int priority;
 	int health;
-	int damageTaken;
 	ControlPoint destination;
 
 	Tile startTile, endTile;
@@ -37,7 +36,6 @@ public class Survivor : Person {
 		shotFrequency = .25f;
 		shotDuration = .05f;
 		health = 100;
-		damageTaken = 5;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
@@ -181,12 +179,8 @@ public class Survivor : Person {
 		Destroy(gameObject);
 	}
 
-	void OnCollisionEnter2D(Collision2D coll) {
-		if (coll.gameObject.tag == "Zombie") {
-			health -= damageTaken;
-			print(health.ToString());
-			//begin infection timer
-		}
+	public void damage(int damage) {
+		health -= damage;
 		if (health <= 0) {
 			gm.removeSurvivor(this);
 			Destroy(gameObject);

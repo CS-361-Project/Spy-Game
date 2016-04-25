@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Guard : Person {
-	public static int tileViewDistance = 4;
+	public static int tileViewDistance = 6;
 	SpriteRenderer rend;
 
 	float suspicion;
@@ -22,8 +22,11 @@ public class Guard : Person {
 	Color selectionColor = new Color(.4f, .85f, 1f);
 
 	int priority = 0;
+	float attackClock;
+	float attackCooldown;
 	float actionClock;
-	bool commandPressed;
+	float ignoreSurvivorsTime;
+	bool recievedCommand;
 
 	// Use this for initialization
 	public void init(Tile t, GameManager m, int priority) {
@@ -49,7 +52,11 @@ public class Guard : Person {
 
 		suspicion = 0.0f;
 		actionClock = 0.0f;
-		commandPressed = false;
+		attackClock = 0.0f;
+		attackCooldown = .5f;
+		ignoreSurvivorsTime = 2f;
+		recievedCommand = false;
+		viewDistance = 6;
 
 		startTile = t;
 		//endTile = m.getTile(4, 6);
@@ -65,7 +72,8 @@ public class Guard : Person {
 	
 	// Update is called once per frame
 	void Update() {
-		actionClock += Time.deltaTime;
+		actionClock += Time.deltaTime * gm.gameSpeed;
+		attackClock += Time.deltaTime * gm.gameSpeed;
 
 
 		/*Vector2 lastPos = tile.transform.position;
@@ -139,8 +147,8 @@ public class Guard : Person {
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;
 
-		if (actionClock > 5F || (!commandPressed)) {
-			commandPressed = false;
+		if (actionClock > ignoreSurvivorsTime || (!recievedCommand)) {
+			recievedCommand = false;
 			foreach (Survivor s in gm.getSurvivorList()) {
 				float dist = Vector2.Distance (s.transform.position, this.transform.position);
 				if (dist < viewDistance && dist < minDist) {
@@ -208,7 +216,14 @@ public class Guard : Person {
 
 	public void startTimer(){
 		actionClock = 0f;
-		commandPressed = true;
+		recievedCommand = true;
+	}
+
+	void OnCollisionEnter2D(Collision2D coll) {
+		if (attackClock >= attackCooldown && coll.gameObject.tag == "Survivor") {
+			coll.gameObject.GetComponent<Survivor>().damage(5);
+			attackClock = 0;
+		}
 	}
 
 	public virtual void onFanToggled(object source, Fan.FanEventArgs args) {
@@ -233,7 +248,7 @@ public class Guard : Person {
 		}
 	}
 
-	public virtual void onMotionDetected(object source, LaserSensor.LaserEventArgs args) {
+	/*public virtual void onMotionDetected(object source, LaserSensor.LaserEventArgs args) {
 		// TODO: System if reached source of motion and haven't seen frank, ignore that sensor for x seconds
 		// sort of a way of saying "all clear"
 		// actually would be good to send message to all other guards letting them know there's nothing to see there
@@ -245,7 +260,7 @@ public class Guard : Person {
 //			print("Path from " + tile.transform.position + " to " + t.transform.position + " is " + path.Count + " tiles.");
 			targetPositions = path;
 		}
-	}
+	}*/
 
 	public void onObjectShot(int damage) {
 		health -= damage;

@@ -36,8 +36,8 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		width = 50;
-		height = 50;
+		width = 100;
+		height = 100;
 
 		GameObject.Find("Minimap Camera").GetComponent<Minimap>().init(this);
 
@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour {
 		zombieSpawnProgress = 0;
 
 		survivorSpawnInterval = 15;
-		zombieSpawnInterval = 3;
+		zombieSpawnInterval = 2f;
 
 		controlPointList = new ControlPoint[4];
 		quad1 = false;
@@ -301,10 +301,10 @@ public class GameManager : MonoBehaviour {
 			results.AddRange(optimizePath(optPoints));
 		}
 		if (results.Count > 0) {
-			print("Removing first element from path of length " + results.Count);
+			/*print("Removing first element from path of length " + results.Count);
 			foreach (Vector2 v in results) {
 				print(v);
-			}
+			}*/
 			results.RemoveAt(0);
 		}
 		return results;
@@ -317,11 +317,12 @@ public class GameManager : MonoBehaviour {
 
 		foreach (Guard g in guards) {
 			//print(findPathToTarget(g.tile).Count);
+			Tile start = getClosestEmptyTile(g.lastPoint());
 			bool foundCut = false;
-			foreach (Tile t in g.tile.getNxNArea(3)) {
+			foreach (Tile t in start.getNxNArea(3)) {
 				if (t != null) {
 					if (t.pathToTarget.Count > 0) {
-						if (!pathObstructed(g.transform.position, t.transform.position)) {
+						if (!pathObstructed(start.transform.position, t.transform.position)) {
 							g.targetPositions = new List<Vector2>();
 							//g.targetPositions.Add(t.transform.position);
 							g.targetPositions.AddRange(t.pathToTarget);

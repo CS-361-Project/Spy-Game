@@ -97,9 +97,9 @@ public class Tile : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	public virtual void Update() {
-		if (needToCheckVisibility) {
-			bool foundZombie = false;
+	//public virtual void Update() {
+	//	if (needToCheckVisibility) {
+			/*bool foundZombie = false;
 			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
 				ControlPoint cp = t as ControlPoint;
 				if (t.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie)) {
@@ -112,8 +112,8 @@ public class Tile : MonoBehaviour {
 //				Destroy(fogRend.gameObject);
 //				visited = true;
 //			}
-			needToCheckVisibility = false;
-		}
+			needToCheckVisibility = false;*/
+		//}
 
 
 //		if (flammable) {
@@ -135,7 +135,7 @@ public class Tile : MonoBehaviour {
 //
 //			}
 //		}
-	}
+	//}
 
 	public virtual bool isPassable() {
 		return true;
