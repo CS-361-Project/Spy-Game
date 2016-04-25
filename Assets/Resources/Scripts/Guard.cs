@@ -214,6 +214,14 @@ public class Guard : Person {
 		//body.velocity = body.velocity.normalized * speed;
 	}
 
+	public bool isPathing(){
+		if (targetPositions.Count == 0)
+			return false;
+		if (chasingSurvivor)
+			return false;
+		return true;
+	}
+
 	public void startTimer(){
 		actionClock = 0f;
 		recievedCommand = true;

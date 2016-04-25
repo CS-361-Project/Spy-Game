@@ -56,10 +56,11 @@ public class ZombieControl : MonoBehaviour {
 				break;
 		}
 		if (zombieSelector.getMouseClicked()) {
-			gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords());
-			foreach (Guard g in selection) {
-				g.startTimer ();
-				g.chasingSurvivor = false;
+			if (Input.GetKey(KeyCode.LeftShift)) {
+				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), false);
+			}
+			else {
+				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), false);
 			}
 		}
 	}

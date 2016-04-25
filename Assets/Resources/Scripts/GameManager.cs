@@ -321,20 +321,25 @@ public class GameManager : MonoBehaviour {
 		return results;
 	}
 
-	public void moveTo(List<Guard> guards, Vector2 point) {
+	public void moveTo(List<Guard> guards, Vector2 point, bool shouldOverwrite) {
 		setTargetTile(getClosestEmptyTile(point));
 		Tile mouseTile = getClosestTile(point);
 		int split = 12;
 
 		foreach (Guard g in guards) {
 			//print(findPathToTarget(g.tile).Count);
-			Tile start = getClosestEmptyTile(g.lastPoint());
+			Vector2 startPoint = g.transform.position;
+			if (!shouldOverwrite && g.isPathing()) {
+				startPoint = g.targetPositions.Last();
+			}
+			Tile start = getClosestEmptyTile(startPoint);
 			bool foundCut = false;
 			foreach (Tile t in start.getNxNArea(3)) {
 				if (t != null) {
 					if (t.pathToTarget.Count > 0) {
-						if (!pathObstructed(start.transform.position, t.transform.position)) {
-							g.targetPositions = new List<Vector2>();
+						if (!pathObstructed(startPoint, t.transform.position)) {
+							if (shouldOverwrite)
+								g.targetPositions = new List<Vector2>();
 							//g.targetPositions.Add(t.transform.position);
 							g.targetPositions.AddRange(t.pathToTarget);
 							foundCut = true;
@@ -346,14 +351,21 @@ public class GameManager : MonoBehaviour {
 			if (!foundCut) {
 				//print("Doing this");
 				//List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
-				g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(g.tile)),10);
-
+				if (shouldOverwrite)
+					g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))),10);
+				else
+					g.targetPositions.AddRange(splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))),10));
 				g.tile.pathToTarget = g.targetPositions;
 			}
 			if (g.targetPositions.Count > 0) {
 				g.direction = g.targetPositions[0] - (Vector2)g.transform.position;
 				g.targetPositions.RemoveAt(g.targetPositions.Count - 1);
 				g.targetPositions.Add(point);
+			}
+			//misc guard stuff
+			if (shouldOverwrite || (g.chasingSurvivor && g.targetPositions.Count < 2)) {
+				g.startTimer();
+				g.chasingSurvivor = false;
 			}
 		}
 	}
