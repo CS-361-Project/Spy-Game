@@ -40,8 +40,8 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		width = 100;
-		height = 100;
+		width = 60;
+		height = 60;
 
 		GameObject.Find("Minimap Camera").GetComponent<Minimap>().init(this);
 
@@ -182,7 +182,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		spawnZombies(150);
-		//spawnSurvivors(10);
+		spawnSurvivors(10);
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
 		for (int i = 0; i < 4; i++) {

@@ -5,9 +5,12 @@ public class ZombieSelection : MonoBehaviour {
 	private bool mouseDown = false;
 	private bool mouseClicked = false;
 	private bool rightClick = false;
+	private bool minimapSelection = false;
 	private Vector2 mouseStart = Vector2.zero;
 	private Vector2 screenStart = Vector2.zero;
 	private GameObject selectionBox;
+
+	private Camera minimap;
 
 	public SelectionState state;
 
@@ -26,10 +29,26 @@ public class ZombieSelection : MonoBehaviour {
 		selectionBox.SetActive(false);
 	}
 
+	public void init(Camera minimapCam) {
+		minimap = minimapCam;
+	}
+
 	public Collider2D[] getSelectedObjects() {
 		mouseClicked = false;
-		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		Vector2 mousePos;
 		Vector2 screenPos = Input.mousePosition;
+
+		if (state == SelectionState.Idle) {
+			minimapSelection = onMinimap(screenPos);
+		}
+
+		if (minimapSelection) {
+			mousePos = minimap.ScreenToWorldPoint(Input.mousePosition);
+		}
+		else {
+			mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		}
+
 		bool currentMouse = false;
 		if (Input.GetMouseButton(0)) {
 			currentMouse = true;
@@ -47,7 +66,6 @@ public class ZombieSelection : MonoBehaviour {
 			}
 			else if (!currentMouse && mouseDown) {
 				float distMoved = Vector2.Distance(screenStart, screenPos);
-				print("Mouse moved " + distMoved);
 				if (distMoved <= 2) {
 					mouseClicked = true;
 				}
@@ -93,7 +111,22 @@ public class ZombieSelection : MonoBehaviour {
 	}
 
 	public Vector2 getMousePosInWorldCoords() {
-		return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		if (onMinimap(Input.mousePosition)) {
+			return minimap.ScreenToWorldPoint(Input.mousePosition);
+		}
+		else {
+			return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		}
+	}
+
+	public bool onMinimap(Vector2 pos) {
+		int maxY = (int)(.3f * Screen.height);
+		if (pos.x <= maxY && pos.y <= maxY) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
 

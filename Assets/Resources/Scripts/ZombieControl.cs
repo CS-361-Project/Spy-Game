@@ -13,6 +13,8 @@ public class ZombieControl : MonoBehaviour {
 		gm = g;
 		zombieSelector = new GameObject().AddComponent<ZombieSelection>();
 		zombieSelector.gameObject.name = "Zombie Selection";
+		Minimap minimap = GameObject.Find("Minimap Camera").GetComponent<Minimap>();
+		zombieSelector.init(minimap.cam);
 		selection = new HashSet<Guard>();
 		name = "Zombie Control";
 	}
