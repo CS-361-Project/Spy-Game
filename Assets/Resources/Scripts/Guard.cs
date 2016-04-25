@@ -18,7 +18,7 @@ public class Guard : Person {
 	public bool selected;
 	public bool chasingSurvivor;
 
-	Color baseColor = Color.magenta;
+	Color baseColor;
 	Color selectionColor = new Color(.4f, .85f, 1f);
 
 	int priority = 0;
@@ -33,6 +33,9 @@ public class Guard : Person {
 		base.init(t, m);
 		t.addZombie(this);
 		viewLayerMask = 1 << 9 | 1 << 10;
+
+		baseColor = new Color(Random.Range(0, 55) / 255f, Random.Range(100, 255) / 255f, Random.Range(0, 14) / 255f);
+		selectionColor = baseColor + new Color(.8f, 0, .4f);
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Box");
