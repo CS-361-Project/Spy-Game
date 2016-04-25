@@ -119,7 +119,7 @@ public class ZombieSelection : MonoBehaviour {
 		}
 	}
 
-	public bool onMinimap(Vector2 pos) {
+	public static bool onMinimap(Vector2 pos) {
 		int maxY = (int)(.3f * Screen.height);
 		if (pos.x <= maxY && pos.y <= maxY) {
 			return true;
