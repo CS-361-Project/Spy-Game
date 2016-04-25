@@ -60,7 +60,7 @@ public class ZombieControl : MonoBehaviour {
 				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), false);
 			}
 			else {
-				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), false);
+				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), true);
 			}
 		}
 	}
