@@ -3,7 +3,9 @@ using System.Collections;
 
 public class CameraControl : MonoBehaviour {
 	bool dragging = false;
-	Vector3 lastPos = Vector3.zero;
+	bool minimapMovement = false;
+	Camera minimap;
+	Vector2 lastPos = Vector2.zero;
 	Vector2 camDimensions;
 	float aspect;
 
@@ -21,6 +23,8 @@ public class CameraControl : MonoBehaviour {
 		audioSource = gameObject.AddComponent<AudioSource>();
 		soundTrack = Resources.Load("Audio/Music/160412 Professor Quack (Long Edit)", typeof(AudioClip)) as AudioClip;
 		audioSource.PlayOneShot(soundTrack);
+
+		minimap = GameObject.Find("Minimap Camera").GetComponent<Camera>();
 
 		lines = new GameObject[4];
 		for (int i = 0; i < 4; i++) {
@@ -44,18 +48,39 @@ public class CameraControl : MonoBehaviour {
 
 	void Update() {
 		if (Input.GetMouseButton(1)) {
+			Vector2 lastPosCopy = lastPos;
+			Vector2 mousePos;
 			if (!dragging) {
+				minimapMovement = ZombieSelection.onMinimap(Input.mousePosition);
+				if (minimapMovement) {
+					mousePos = minimap.ScreenToWorldPoint(Input.mousePosition);
+					transform.position = new Vector3(mousePos.x, mousePos.y, transform.position.z);
+				}
+				else {
+					mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				}
 				dragging = true;
+				lastPosCopy = mousePos;
 			}
 			else {
-				transform.Translate(lastPos - Camera.main.ScreenToWorldPoint(Input.mousePosition));
+				if (minimapMovement) {
+					mousePos = minimap.ScreenToWorldPoint(Input.mousePosition);
+					transform.Translate(mousePos - lastPos);
+					lastPosCopy = mousePos;
+				}
+				else {
+					mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					transform.Translate(lastPos - mousePos);
+				}
+
 			}
-			lastPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			lastPos = lastPosCopy;
 			resetLines();
 		}
 		else {
 			if (dragging) {
 				dragging = false;
+				minimapMovement = false;
 			}
 		}
 //		float scroll = Input.GetAxis("Mouse ScrollWheel");
