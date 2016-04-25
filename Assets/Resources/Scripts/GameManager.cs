@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour {
 	int maxZombiePriority;
 	int maxSurvivorPriority;
 
+	AudioSource audioSource;
+	public AudioClip defeatScreen;
+
 	// Use this for initialization
 	void Start() {
 		width = 100;
@@ -88,6 +91,9 @@ public class GameManager : MonoBehaviour {
 		survivorCtrl.init(this);
 		zombieCtrl.init(this);
 		count = 0;
+
+		audioSource = gameObject.AddComponent<AudioSource>();
+		defeatScreen = Resources.Load("Audio/Music/160418 Zombie_Paradise", typeof(AudioClip)) as AudioClip;
 	}
 	
 	// Update is called once per frame
@@ -102,9 +108,11 @@ public class GameManager : MonoBehaviour {
 		}
 		if (zombieList.Count == 0) {
 			loseScreen.SetActive(true);
+			audioSource.PlayOneShot(defeatScreen);
 		}
 		else if (survivorList.Count == 0) {
 			winScreen.SetActive(true);
+			audioSource.PlayOneShot(defeatScreen);
 		}
 		else {
 			ControlPoint.Owner owner = controlPointList[0].currentOwner;
@@ -174,7 +182,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		spawnZombies(150);
-		spawnSurvivors(10);
+		//spawnSurvivors(10);
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
 		for (int i = 0; i < 4; i++) {
