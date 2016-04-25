@@ -108,11 +108,11 @@ public class GameManager : MonoBehaviour {
 		}
 		if (zombieList.Count == 0) {
 			loseScreen.SetActive(true);
-			audioSource.PlayOneShot(defeatScreen);
+//			audioSource.PlayOneShot(defeatScreen);
 		}
 		else if (survivorList.Count == 0) {
 			winScreen.SetActive(true);
-			audioSource.PlayOneShot(defeatScreen);
+//			audioSource.PlayOneShot(defeatScreen);
 		}
 		else {
 			ControlPoint.Owner owner = controlPointList[0].currentOwner;
@@ -133,7 +133,6 @@ public class GameManager : MonoBehaviour {
 					}
 				}
 			}
-			// check if all control points captured
 		}
 		zombieSpawnProgress += Time.deltaTime / zombieSpawnInterval;
 		survivorSpawnProgress += Time.deltaTime / survivorSpawnInterval;

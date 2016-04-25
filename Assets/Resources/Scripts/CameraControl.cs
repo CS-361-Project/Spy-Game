@@ -76,15 +76,15 @@ public class CameraControl : MonoBehaviour {
 	void resetLines() {
 		float size = Camera.main.orthographicSize;
 		lines[0].transform.localPosition = new Vector3(0, camDimensions.y + lineThickness / 2, z);
-		lines[0].transform.localScale = new Vector2(camDimensions.x * 2, lineThickness);
+		lines[0].transform.localScale = new Vector2((camDimensions.x + lineThickness) * 2, lineThickness);
 
 		lines[1].transform.localPosition = new Vector3(camDimensions.x + lineThickness / 2, 0, z);
-		lines[1].transform.localScale = new Vector2(lineThickness, camDimensions.y * 2);
+		lines[1].transform.localScale = new Vector2(lineThickness, (camDimensions.y + lineThickness) * 2);
 
 		lines[2].transform.localPosition = new Vector3(0, -(camDimensions.y + lineThickness / 2), z);
-		lines[2].transform.localScale = new Vector2(camDimensions.x * 2, lineThickness);
+		lines[2].transform.localScale = new Vector2((camDimensions.x + lineThickness) * 2, lineThickness);
 
 		lines[3].transform.localPosition = new Vector3(-(camDimensions.x + lineThickness / 2), 0, z);
-		lines[3].transform.localScale = new Vector2(lineThickness, camDimensions.y * 2);
+		lines[3].transform.localScale = new Vector2(lineThickness, (camDimensions.y + lineThickness) * 2);
 	}
 }
