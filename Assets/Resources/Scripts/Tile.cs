@@ -92,7 +92,7 @@ public class Tile : MonoBehaviour {
 //		visited = false;
 		containsLaser = false;
 		visible = false;
-		needToCheckVisibility = false;
+		needToCheckVisibility = true;
 	}
 
 //	public void setColor() {

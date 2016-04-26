@@ -107,6 +107,7 @@ public class Survivor : Person {
 				
 		if (closestGuard == null) {
 			bulletObj.SetActive(false);
+			speed = 2;
 		}
 		else {
 			Vector2 targetDirection = (closestGuard.transform.position - transform.position).normalized;
@@ -170,8 +171,13 @@ public class Survivor : Person {
 	}
 
 	void wander() {
-		if (targetPositions.Count == 0) {
-			targetPositions.Add(destination.transform.position);
+		if (targetPositions.Count == 0 && tile != destination) {
+			List<Vector2> pathToDestination = gm.getPath(tile, destination, false);
+//			print("Moving from " + transform.position + " to " + destination.transform.position + " with path length " + pathToDestination.Count);
+			targetPositions = pathToDestination;
+		}
+		else {
+			body.velocity = Vector2.zero;
 		}
 	}
 
