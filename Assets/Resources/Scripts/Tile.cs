@@ -53,6 +53,7 @@ public class Tile : MonoBehaviour {
 		this.gm = game;
 		this.posX = x;
 		this.posY = y;
+		passable = true;
 		gameObject.name = "Tile";
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 0;
