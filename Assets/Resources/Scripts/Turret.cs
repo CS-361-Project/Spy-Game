@@ -16,6 +16,8 @@ public class Turret : Survivor {
 		rend.sprite = Resources.Load<Sprite>("Sprites/turret");
 		t.setPassable(false);
 		Destroy(body);
+		coll = gameObject.AddComponent<BoxCollider2D>();
+		((BoxCollider2D)coll).size = new Vector2(.9f, .9f);
 
 	}
 	

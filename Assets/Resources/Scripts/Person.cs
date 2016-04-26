@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Person : MonoBehaviour {
 	public Tile tile;
 	protected GameManager gm;
-	protected CircleCollider2D coll;
+	protected Collider2D coll;
 	protected Rigidbody2D body;
 
 	public Vector2 direction;
@@ -35,7 +35,7 @@ public class Person : MonoBehaviour {
 
 
 		coll = gameObject.AddComponent<CircleCollider2D>();
-		coll.radius = 0.45f;
+		((CircleCollider2D)coll).radius = 0.45f;
 
 		coll.sharedMaterial = Resources.Load<PhysicsMaterial2D>("WallMaterial");
 		body = gameObject.AddComponent<Rigidbody2D>();
