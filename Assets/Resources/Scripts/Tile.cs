@@ -15,6 +15,7 @@ public class Tile : MonoBehaviour {
 	bool needToCheckVisibility;
 	public float fire;
 	public float gas;
+	public bool passable;
 
 	bool fanEffect;
 	string fanDirec;
@@ -51,6 +52,7 @@ public class Tile : MonoBehaviour {
 		this.gm = game;
 		this.posX = x;
 		this.posY = y;
+		passable = true;
 		gameObject.name = "Tile";
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sortingOrder = 0;
@@ -95,6 +97,10 @@ public class Tile : MonoBehaviour {
 	public void setColor() {
 		rend.color = Color.green;
 	}
+
+	public void setPassable(bool value){
+		passable = value;
+	}
 	
 	// Update is called once per frame
 	public virtual void Update() {
@@ -138,7 +144,7 @@ public class Tile : MonoBehaviour {
 	}
 
 	public virtual bool isPassable() {
-		return true;
+		return passable;
 	}
 
 	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY) {

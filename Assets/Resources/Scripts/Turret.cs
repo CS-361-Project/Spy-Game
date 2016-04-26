@@ -3,16 +3,20 @@ using System.Collections;
 
 public class Turret : Survivor {
 
+	Tile t;
+
 	// Use this for initialization
 	public void init(Tile t, GameManager m, int priority){
 		size = 1f;
 		base.init(t, m, priority);
+		this.t = t;
 		health = 200;
 		shotFrequency = .15f;
 		rotationSpeed = .01f;
 		rend.sprite = Resources.Load<Sprite>("Sprites/turret");
-		Tile tile =gm.getClosestTile(new Vector2(transform.position.x, transform.position.y));
-		//tile.isPassable
+		t.setPassable(false);
+		Destroy(body);
+
 	}
 	
 	// Update is called once per frame
@@ -59,7 +63,7 @@ public class Turret : Survivor {
 
 		shotTimer += Time.deltaTime;
 	}
-
+		
 	public override void shootAt(Vector2 pos) {
 		bulletObj.SetActive(true);
 		shotTimer = 0f;
@@ -83,4 +87,9 @@ public class Turret : Survivor {
 	}
 
 
+	public void destroyTurret(){
+		Destroy(gameObject);
+		//set the tile it is on to passable again
+		t.setPassable(true);
+	}
 }
