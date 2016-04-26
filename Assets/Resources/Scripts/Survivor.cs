@@ -11,7 +11,7 @@ public class Survivor : Person {
 	protected SpriteRenderer rend;
 	protected GameObject bulletObj;
 	protected Vector2 aimDirection;
-	public float size = .45f;
+	protected float size = .45f;
 	protected float shotTimer;
 	protected float shotFrequency;
 	protected float shotDuration;
@@ -190,7 +190,7 @@ public class Survivor : Person {
 		}
 	}
 
-	public void shootAt(Vector2 pos) {
+	public virtual void shootAt(Vector2 pos) {
 		bulletObj.SetActive(true);
 		shotTimer = 0f;
 
