@@ -11,8 +11,8 @@ public class Turret : Survivor {
 		base.init(t, m, priority);
 		this.t = t;
 		health = 200;
-		shotFrequency = .15f;
-		rotationSpeed = .01f;
+		shotFrequency = .07f;
+		rotationSpeed = .09f;
 		rend.sprite = Resources.Load<Sprite>("Sprites/turret");
 		t.setPassable(false);
 		Destroy(body);
@@ -89,9 +89,12 @@ public class Turret : Survivor {
 	}
 
 
-	public void destroyTurret(){
-		Destroy(gameObject);
-		//set the tile it is on to passable again
-		t.setPassable(true);
+
+	public override void damage(int damage) {
+		health -= damage;
+		if (health <= 0) {
+			Destroy(gameObject);
+			t.setPassable(true);
+		}
 	}
 }

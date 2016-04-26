@@ -117,6 +117,7 @@ public class GameManager : MonoBehaviour {
 			survivorSpawnProgress -= 1;
 			spawnSurvivors(1);
 		}
+<<<<<<< Updated upstream
 		if (state == GameState.Playing) {
 			if (zombieList.Count == 0) {
 				loseScreen.SetActive(true);
@@ -137,6 +138,7 @@ public class GameManager : MonoBehaviour {
 							allPointsCaptured = false;
 							break;
 						}
+
 					}
 					if (allPointsCaptured) {
 						if (owner == ControlPoint.Owner.Survivor) {
@@ -195,8 +197,8 @@ public class GameManager : MonoBehaviour {
 //				}
 			}
 		}
-		spawnZombies(150);
-		spawnSurvivors(1);
+		spawnZombies(100);
+		spawnSurvivors(20);
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
 		for (int i = 0; i < 4; i++) {
@@ -680,8 +682,8 @@ public class GameManager : MonoBehaviour {
 		int numTiles = survivorSpawn.Count();
 		for (int i = 0; i < n; i++) {
 			Tile spawnTile = survivorSpawn[Random.Range(0, numTiles)];
-			//addSurvivor(spawnTile.posX, spawnTile.posY);
-			addTurret(spawnTile.posX, spawnTile.posY);
+			addSurvivor(spawnTile.posX, spawnTile.posY);
+			//addTurret(spawnTile.posX, spawnTile.posY);
 		}
 	}
 

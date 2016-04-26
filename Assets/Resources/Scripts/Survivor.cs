@@ -182,7 +182,7 @@ public class Survivor : Person {
 		Destroy(gameObject);
 	}
 
-	public void damage(int damage) {
+	public virtual void damage(int damage) {
 		health -= damage;
 		if (health <= 0) {
 			gm.removeSurvivor(this);
