@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class GameManager : MonoBehaviour {
-	
 	List<Guard> zombieList;
 	List<Tile> tileList;
 	List<Survivor> survivorList;
