@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -109,6 +110,9 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
+		if (Input.GetKeyDown(KeyCode.R)) {
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
 		if (zombieSpawnProgress >= 1) {
 			zombieSpawnProgress -= 1;
 			spawnZombies(1);
