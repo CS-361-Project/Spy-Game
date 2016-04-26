@@ -37,6 +37,16 @@ public class GameManager : MonoBehaviour {
 	AudioSource audioSource;
 	public AudioClip defeatScreen;
 
+	public enum GameState {
+		Playing,
+		Paused,
+		Victory,
+		Defeat}
+
+	;
+
+	GameState state;
+
 	// Use this for initialization
 	void Start() {
 		width = 60;
@@ -93,6 +103,8 @@ public class GameManager : MonoBehaviour {
 
 		audioSource = gameObject.AddComponent<AudioSource>();
 		defeatScreen = Resources.Load("Audio/Music/160418 Zombie_Paradise", typeof(AudioClip)) as AudioClip;
+
+		state = GameState.Playing;
 	}
 	
 	// Update is called once per frame
@@ -105,30 +117,34 @@ public class GameManager : MonoBehaviour {
 			survivorSpawnProgress -= 1;
 			spawnSurvivors(1);
 		}
-		if (zombieList.Count == 0) {
-			loseScreen.SetActive(true);
-//			audioSource.PlayOneShot(defeatScreen);
-		}
-		else if (survivorList.Count == 0) {
-			winScreen.SetActive(true);
-//			audioSource.PlayOneShot(defeatScreen);
-		}
-		else {
-			ControlPoint.Owner owner = controlPointList[0].currentOwner;
-			if (owner != ControlPoint.Owner.Unclaimed) {
-				bool allPointsCaptured = true;
-				for (int i = 1; i < 4; i++) {
-					if (controlPointList[i].currentOwner != owner) {
-						allPointsCaptured = false;
-						break;
+		if (state == GameState.Playing) {
+			if (zombieList.Count == 0) {
+				loseScreen.SetActive(true);
+				state = GameState.Defeat;
+				audioSource.PlayOneShot(defeatScreen);
+			}
+			else if (survivorList.Count == 0) {
+				winScreen.SetActive(true);
+				state = GameState.Victory;
+				audioSource.PlayOneShot(defeatScreen);
+			}
+			else {
+				ControlPoint.Owner owner = controlPointList[0].currentOwner;
+				if (owner != ControlPoint.Owner.Unclaimed) {
+					bool allPointsCaptured = true;
+					for (int i = 1; i < 4; i++) {
+						if (controlPointList[i].currentOwner != owner) {
+							allPointsCaptured = false;
+							break;
+						}
 					}
-				}
-				if (allPointsCaptured) {
-					if (owner == ControlPoint.Owner.Survivor) {
-						loseScreen.SetActive(true);
-					}
-					else {
-						winScreen.SetActive(true);
+					if (allPointsCaptured) {
+						if (owner == ControlPoint.Owner.Survivor) {
+							loseScreen.SetActive(true);
+						}
+						else {
+							winScreen.SetActive(true);
+						}
 					}
 				}
 			}
@@ -350,9 +366,9 @@ public class GameManager : MonoBehaviour {
 				//print("Doing this");
 				//List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
 				if (shouldOverwrite)
-					g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))),10);
+					g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))), 10);
 				else
-					g.targetPositions.AddRange(splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))),10));
+					g.targetPositions.AddRange(splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))), 10));
 				g.tile.pathToTarget = g.targetPositions;
 			}
 			if (g.targetPositions.Count > 0) {
@@ -715,7 +731,7 @@ public class GameManager : MonoBehaviour {
 		}
 		survivorList.Add(surv);
 	}
-	
+
 	public void addTurret(int x, int y) {
 		GameObject turrObj = new GameObject();
 		turrObj.name = "Turret";

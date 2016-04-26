@@ -92,9 +92,9 @@ public class Tile : MonoBehaviour {
 		needToCheckVisibility = false;
 	}
 
-	public void setColor() {
-		rend.color = Color.green;
-	}
+//	public void setColor() {
+//		rend.color = Color.green;
+//	}
 	
 	// Update is called once per frame
 	public virtual void Update() {
@@ -104,6 +104,7 @@ public class Tile : MonoBehaviour {
 				ControlPoint cp = t as ControlPoint;
 				if (t.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie)) {
 					foundZombie = true;
+					break;
 				}
 			}
 			setVisibility(foundZombie);
@@ -141,18 +142,18 @@ public class Tile : MonoBehaviour {
 		return true;
 	}
 
-	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY) {
-		fanEffect = true;
-		fanDirec = direc;
-		flammable = false;
-		this.fanPosX = fanPosX;
-		this.fanPosY = fanPosY;
-	}
+//	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY) {
+//		fanEffect = true;
+//		fanDirec = direc;
+//		flammable = false;
+//		this.fanPosX = fanPosX;
+//		this.fanPosY = fanPosY;
+//	}
 
-	public virtual void removeFanForce() {
-		fanEffect = false;
-		flammable = true;
-	}
+//	public virtual void removeFanForce() {
+//		fanEffect = false;
+//		flammable = true;
+//	}
 
 	public Tile[] getNeighbors() {
 		List<Tile> neighbors = new List<Tile>();
@@ -212,82 +213,23 @@ public class Tile : MonoBehaviour {
 		return result.ToArray();
 	}
 
-	void checkForFire() {
-		//if one of the neighbors is burning then start burning
-		Tile[] Neighbors = getNeighbors();
-		foreach (Tile neighbor in Neighbors) {
-			
-			if (neighbor.fire >= 2) {
-				if (gas >= 0) {
-					fire = Mathf.Max(fire, 1);
-					fire = Mathf.Min(Mathf.Max(fire, (gas * 10) * fire), 3);
-					gas = 0;
-				}
-				else {
-					fire = Mathf.Max(fire, 1);
-				}
-			}
-		}
-	}
-
-	void checkForGas() {
-		if (fanEffect) {
-			if (gas > 0) {
-				Tile neighbor;
-				switch (fanDirec) {
-					case "E":
-						neighbor = gm.getTile(posX + 1, posY);
-						if (neighbor.isPassable()) {
-							neighbor.gas = neighbor.gas + (gas / ((posX - fanPosX)));
-							gas = gas - (gas / (posX - fanPosX));
-						}
-						break;
-					case "S":
-						neighbor = gm.getTile(posX + 1, posY);
-						if (neighbor.isPassable()) {
-							neighbor.gas = neighbor.gas + gas;
-							gas = 0;
-						}
-						break;
-					case "W":
-						neighbor = gm.getTile(posX + 1, posY);
-						if (neighbor.isPassable()) {
-							neighbor.gas = neighbor.gas + gas;
-							gas = 0;
-						}
-						break;
-					case "N":
-						neighbor = gm.getTile(posX + 1, posY);
-						if (neighbor.isPassable()) {
-							neighbor.gas = neighbor.gas + gas;
-							gas = 0;
-						}
-						break;
-				}
-
-			}
-		}
-		else {
-
-			foreach (Tile neighbor in getNeighbors()) {
-				if (neighbor.gas < gas && neighbor.isPassable()) {
-					float amt = (gas - neighbor.gas);
-					neighbor.gas += amt * Time.deltaTime;
-					gas -= amt * Time.deltaTime;
-				}
-			}
-		}
-	}
-
-	public void setGas(float gas) {
-		this.gas += gas;
-
-	}
-
-	public void setFire(float fire) {
-		this.fire += fire;
-
-	}
+//	void checkForFire() {
+//		//if one of the neighbors is burning then start burning
+//		Tile[] Neighbors = getNeighbors();
+//		foreach (Tile neighbor in Neighbors) {
+//			
+//			if (neighbor.fire >= 2) {
+//				if (gas >= 0) {
+//					fire = Mathf.Max(fire, 1);
+//					fire = Mathf.Min(Mathf.Max(fire, (gas * 10) * fire), 3);
+//					gas = 0;
+//				}
+//				else {
+//					fire = Mathf.Max(fire, 1);
+//				}
+//			}
+//		}
+//	}
 
 	public void addZombie(Guard z) {
 		if (zombies.Count == 0) {

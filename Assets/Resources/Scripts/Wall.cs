@@ -16,11 +16,11 @@ public class Wall : Tile {
 		gameObject.layer = LayerMask.NameToLayer("Wall");
 	}
 
-	public override void applyFanForce(string direc, int fanPosX, int fanPosY) {
-	}
-
-	public override void removeFanForce() {
-	}
+//	public override void applyFanForce(string direc, int fanPosX, int fanPosY) {
+//	}
+//
+//	public override void removeFanForce() {
+//	}
 
 	public override void setVisibility(bool visible) {
 		if (!visible) {

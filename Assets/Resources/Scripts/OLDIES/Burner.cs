@@ -30,11 +30,11 @@ public class Burner : MonoBehaviour {
 		gameObject.layer = LayerMask.NameToLayer("Room Objects");
 	}
 
-	void Update () {
-		if (state) {
-			location.setGas(.1f);
-		}
-	}
+//	void Update () {
+//		if (state) {
+//			location.setGas(.1f);
+//		}
+//	}
 
 	void OnMouseDown() {
 		toggle();
