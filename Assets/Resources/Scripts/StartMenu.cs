@@ -16,7 +16,7 @@ public class StartMenu : MonoBehaviour {
 	// Use this for initialization
 	void Awake() {
 
-		GetComponent<Canvas>().sortingLayerName = "Foreground";
+		//GetComponent<Canvas>().sortingLayerName = "Foreground";
 		startButton = startButton.GetComponent<Button>();
 		exitButton = exitButton.GetComponent<Button>();
 
