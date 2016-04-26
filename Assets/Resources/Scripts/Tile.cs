@@ -15,6 +15,8 @@ public class Tile : MonoBehaviour {
 	bool needToCheckVisibility;
 	public float fire;
 	public float gas;
+	public bool passable;
+
 
 	bool fanEffect;
 	string fanDirec;
@@ -139,7 +141,11 @@ public class Tile : MonoBehaviour {
 	}
 
 	public virtual bool isPassable() {
-		return true;
+		return passable;
+	}
+
+	public void setPassable(bool value){
+		passable = value;
 	}
 
 //	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY) {

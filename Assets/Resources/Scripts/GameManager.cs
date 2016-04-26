@@ -117,7 +117,6 @@ public class GameManager : MonoBehaviour {
 			survivorSpawnProgress -= 1;
 			spawnSurvivors(1);
 		}
-<<<<<<< Updated upstream
 		if (state == GameState.Playing) {
 			if (zombieList.Count == 0) {
 				loseScreen.SetActive(true);
