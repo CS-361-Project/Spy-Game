@@ -62,11 +62,11 @@ public class Survivor : Person {
 		//endTile = m.getTile(4, 6);
 //		patrolDirection = 0;
 		//		targetPositions = gm.getPath(tile, endTile);
-//		setDestination(gm.getControlPoints()[gm.findQuadrant(t) - 1]);
+		setDestination(gm.getControlPoints()[gm.findQuadrant(t) - 1]);
 //		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
-		speed = 1f;
+		speed = 2f;
 		aimDirection = direction;
 	}
 
@@ -134,7 +134,7 @@ public class Survivor : Person {
 //				patrolDirection = 1;
 //			}
 //		}
-		wander(true);
+		wander();
 
 //		int highestPrioritySurvivor = int.MaxValue;
 //		Survivor prioritySurvivor = null;
@@ -169,11 +169,11 @@ public class Survivor : Person {
 		shotTimer += Time.deltaTime;
 	}
 
-//	void wander() {
-//		if (targetPositions.Count == 0) {
-//			targetPositions = 
-//		}
-//	}
+	void wander() {
+		if (targetPositions.Count == 0) {
+			targetPositions.Add(destination.transform.position);
+		}
+	}
 
 	void turnToZombie() {
 		GameObject zombie = new GameObject();
