@@ -220,6 +220,20 @@ public class Tile : MonoBehaviour {
 		return result.ToArray();
 	}
 
+	public Tile[] getNxNEmptyTiles(int n, bool includeThisTile) {
+		List<Tile> result = new List<Tile>();;
+		int i = 0;
+		for (int x = posX - n/2; x <= posX + n/2; x++) {
+			for (int y = posY - n/2; y <= posY + n/2; y++) {
+				Tile t = gm.getTile(x, y);
+				if (t != null && t.isPassable() && (!includeThisTile || t != this)) {
+					result.Add(t);
+				}
+			}
+		}
+		return result.ToArray();
+	}
+
 //	void checkForFire() {
 //		//if one of the neighbors is burning then start burning
 //		Tile[] Neighbors = getNeighbors();

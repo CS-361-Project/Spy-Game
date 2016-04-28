@@ -746,10 +746,6 @@ public class GameManager : MonoBehaviour {
 		turrObj.name = "Turret";
 		Turret turr = turrObj.AddComponent<Turret>();
 		turr.init(getTile(x, y), this, int.MaxValue);
-//		if (controlPointList[0] != null) {
-//			turr.setDestination(controlPointList[findQuadrant(getTile(x, y)) - 1]);
-//		}
-		//survivorList.Add(surv);
 	}
 		
 	// register each guard to be notified when a fan is toggled

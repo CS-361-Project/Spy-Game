@@ -8,7 +8,7 @@ public class ControlPoint : Tile {
 	int zombieCount;
 	int turretSpawnClock;
 	int turretSpawnRate = 15;
-	int maxTurret=1;
+	int remainingTurrets=1;
 	float controlState;
 	float spawnClock;
 	public Owner currentOwner;
@@ -125,8 +125,10 @@ public class ControlPoint : Tile {
 		}
 		if (controlState >= 1) {
 			turretSpawnClock++;
+			if (turretSpawnClock >= turretSpawnRate && remainingTurrets > 0) {
+				spawnTurret ();
+			}
 		}
-		spawnTurret ();
 	}
 
 	public virtual void setVisibility(bool visible) {
@@ -158,13 +160,11 @@ public class ControlPoint : Tile {
 	}
 
 	public void spawnTurret(){
-		if (controlState >= 1 && turretSpawnRate<=turretSpawnClock && maxTurret>0) {
-			Tile turret = gm.getClosestEmptyTile (transform.position);
-			print ("Spawning Turret!!");
-			gm.addTurret(turret.posX,turret.posY);
-			turretSpawnClock=0;
-			maxTurret = maxTurret - 1;
-		}
-
+		Tile[] area = getNxNEmptyTiles (5, false);
+		Tile turret = area [Random.Range (0, area.Length)];
+		print ("Spawning Turret!!");
+		gm.addTurret (turret.posX, turret.posY);
+		turretSpawnClock = 0;
+		remainingTurrets = remainingTurrets - 1;
 	}
 }

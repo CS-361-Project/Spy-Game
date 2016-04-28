@@ -14,8 +14,8 @@ public class Turret : Survivor {
 		shotFrequency = .05f;
 		rotationSpeed = .09f;
 		viewDistance = 4.0f;
-		rend.sprite = Resources.Load<Sprite>("Sprites/Box");
-		t.setPassable(false);
+		rend.sprite = Resources.Load<Sprite>("Sprites/turret");
+//		t.setPassable(false);
 		Destroy(body);
 		coll = gameObject.AddComponent<BoxCollider2D>();
 		((BoxCollider2D)coll).size = new Vector2(.9f, .9f);
