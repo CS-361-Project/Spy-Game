@@ -59,7 +59,9 @@
      <Compile Include="Assets\Resources\Scripts\OLDIES\Fan.cs" />
      <Compile Include="Assets\Resources\Scripts\OLDIES\LaserSensor.cs" />
      <Compile Include="Assets\Resources\Scripts\Person.cs" />
+     <Compile Include="Assets\Resources\Scripts\PlayVideo.cs" />
      <Compile Include="Assets\Resources\Scripts\SpriteReferences.cs" />
+     <Compile Include="Assets\Resources\Scripts\StartMenu.cs" />
      <Compile Include="Assets\Resources\Scripts\Survivor.cs" />
      <Compile Include="Assets\Resources\Scripts\SurvivorControl.cs" />
      <Compile Include="Assets\Resources\Scripts\Tile.cs" />
