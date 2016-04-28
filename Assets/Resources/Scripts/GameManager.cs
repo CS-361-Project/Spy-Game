@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,13 +93,31 @@ public class GameManager : MonoBehaviour {
 		wallFolder.name = "Walls";
 		tileFolder = new GameObject();
 		tileFolder.name = "Tiles";
-		doorFolder = new GameObject();
-		doorFolder.name = "Doors";
 		guardFolder = new GameObject();
 		guardFolder.name = "Guards";
 		generateLevel(width, height);
 		survivorCtrl.init(this);
 		zombieCtrl.init(this);
+		//buildBoard(10, 10);
+//		buildLevel(10, 10);
+//		buildTestChamber(10, 10);
+//		addGuard(2, 3);
+//		addGuard(2, 4);
+//		addGuard(4, 2);
+//		addGuard(3, 2);
+//		addGuard(2, 2);
+//		addGuard(1, 2);
+//		addFrank (5, 4);
+//		addFan(new Vector2(1, 1), "E");
+//		addFan(new Vector2(1, 6), "E");
+//		addSensor(1, 2, new Vector2(1, 0));
+		//addBurner(new Vector2(1, 1));
+		//addChemical (new Vector2 (2, 1));
+		//buildLevel1();
+		//buildLevel1();
+		//buildInflammableTestChamber();
+		//constructSections();
+//		addChemical (new Vector2 (2, 1));
 		count = 0;
 
 		audioSource = gameObject.AddComponent<AudioSource>();
@@ -109,6 +128,9 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
+		if (Input.GetKeyDown(KeyCode.R)) {
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
 		if (zombieSpawnProgress >= 1) {
 			zombieSpawnProgress -= 1;
 			spawnZombies(1);
@@ -164,10 +186,11 @@ public class GameManager : MonoBehaviour {
 		this.height = height + 2;
 		board = new Tile[width, height];
 		float xSeed1 = Random.Range(-9999f, 9999f);
-//		float xSeed2 = Random.Range(-9999f, 9999f);
+		float xSeed2 = Random.Range(-9999f, 9999f);
 		float ySeed1 = Random.Range(-9999f, 9999f);
-//		float ySeed2 = Random.Range(-9999f, 9999f);
+		float ySeed2 = Random.Range(-9999f, 9999f);
 		branch(1, height / 2, 1, 0, xSeed1, ySeed1);
+		branch(width, height / 2, -1, 0, xSeed2, ySeed2);
 //		branch(width / 2, 1, 0, 1, xSeed2, ySeed2);
 
 		int spawnTiles = 0;
@@ -196,8 +219,7 @@ public class GameManager : MonoBehaviour {
 //				}
 			}
 		}
-		spawnZombies(100);
-		spawnSurvivors(20);
+
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
 		for (int i = 0; i < 4; i++) {
@@ -243,12 +265,16 @@ public class GameManager : MonoBehaviour {
 			point.transform.position = new Vector3(hub.posX, hub.posY, 0);
 			board[hub.posX, hub.posY] = point;
 			controlPointList[k++] = point;
+			tileList.Remove(hub);
 			tileList.Add(point);
 			Destroy(hub.gameObject);
 		}
-		foreach (Survivor s in survivorList) {
-			s.setDestination(controlPointList[findQuadrant(s.tile) - 1]);
-		}
+
+		spawnZombies(100);
+		spawnSurvivors(20);
+//		foreach (Survivor s in survivorList) {
+//			s.setDestination(controlPointList[findQuadrant(s.tile) - 1]);
+//		}
 	}
 
 
@@ -738,10 +764,6 @@ public class GameManager : MonoBehaviour {
 		turrObj.name = "Turret";
 		Turret turr = turrObj.AddComponent<Turret>();
 		turr.init(getTile(x, y), this, int.MaxValue);
-//		if (controlPointList[0] != null) {
-//			turr.setDestination(controlPointList[findQuadrant(getTile(x, y)) - 1]);
-//		}
-		//survivorList.Add(surv);
 	}
 		
 	// register each guard to be notified when a fan is toggled

@@ -145,7 +145,7 @@ public class Person : MonoBehaviour {
 //					wander(true);
 //				}
 //			}
-			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .15) {
+			if (Vector2.Distance((Vector2)transform.position, targetPositions[0]) <= .25) {
 				targetPositions.RemoveAt(0);
 				if (targetPositions.Count < 1) {
 					return false;

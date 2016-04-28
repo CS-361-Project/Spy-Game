@@ -92,7 +92,7 @@ public class Tile : MonoBehaviour {
 //		visited = false;
 		containsLaser = false;
 		visible = false;
-		needToCheckVisibility = false;
+		needToCheckVisibility = true;
 	}
 
 //	public void setColor() {
@@ -213,6 +213,20 @@ public class Tile : MonoBehaviour {
 			for (int y = posY - n/2; y <= posY + n/2; y++) {
 				Tile t = gm.getTile(x, y);
 				if (t != null) {
+					result.Add(t);
+				}
+			}
+		}
+		return result.ToArray();
+	}
+
+	public Tile[] getNxNEmptyTiles(int n, bool includeThisTile) {
+		List<Tile> result = new List<Tile>();;
+		int i = 0;
+		for (int x = posX - n/2; x <= posX + n/2; x++) {
+			for (int y = posY - n/2; y <= posY + n/2; y++) {
+				Tile t = gm.getTile(x, y);
+				if (t != null && t.isPassable() && (!includeThisTile || t != this)) {
 					result.Add(t);
 				}
 			}

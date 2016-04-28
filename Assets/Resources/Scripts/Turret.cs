@@ -11,10 +11,11 @@ public class Turret : Survivor {
 		base.init(t, m, priority);
 		this.t = t;
 		health = 200;
-		shotFrequency = .07f;
+		shotFrequency = .05f;
 		rotationSpeed = .09f;
+		viewDistance = 4.0f;
 		rend.sprite = Resources.Load<Sprite>("Sprites/turret");
-		t.setPassable(false);
+//		t.setPassable(false);
 		Destroy(body);
 		coll = gameObject.AddComponent<BoxCollider2D>();
 		((BoxCollider2D)coll).size = new Vector2(.9f, .9f);
@@ -53,7 +54,7 @@ public class Turret : Survivor {
 				float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(aimDirection.y, aimDirection.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), rotationSpeed);
 				transform.eulerAngles = new Vector3(0, 0, angle - 90);
 				aimDirection = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
-				if (Vector2.Angle(aimDirection, targetDirection) < 15) {
+				if (Vector2.Angle(aimDirection, targetDirection) < 25) {
 					shootAt((Vector2)transform.position + aimDirection);
 				}
 			}
