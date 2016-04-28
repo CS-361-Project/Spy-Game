@@ -6,6 +6,9 @@ public class ControlPoint : Tile {
 	int survivorCount;
 	List<Survivor> incomingSurvivorList;
 	int zombieCount;
+	int turretSpawnClock;
+	int turretSpawnRate = 15;
+	int maxTurret=1;
 	float controlState;
 	float spawnClock;
 	public Owner currentOwner;
@@ -25,6 +28,7 @@ public class ControlPoint : Tile {
 		incomingSurvivorList = new List<Survivor>();
 		survivorCount = 0;
 		zombieCount = 0;
+		turretSpawnClock = 0;
 		base.init(x, y, gm, 0, 0, true);
 		currentOwner = Owner.Unclaimed;
 		controlState = 0;
@@ -78,6 +82,7 @@ public class ControlPoint : Tile {
 					if (controlState <= -1) {
 						controlState = -1;
 						currentOwner = Owner.Zombie;
+						//HEY I THINK there is a issue with our calls to modify spawn rates, we never positibly modify the survivor spawn rate?
 						gm.modifyZombieSpawnRate(.1f);
 						spawnClock = 0f;
 					}
@@ -118,6 +123,10 @@ public class ControlPoint : Tile {
 			// color lerp for zombies by -controlState
 			rend.color = Color.Lerp(Color.white, Color.magenta, -controlState);
 		}
+		if (controlState >= 1) {
+			turretSpawnClock++;
+		}
+		spawnTurret ();
 	}
 
 	public virtual void setVisibility(bool visible) {
@@ -149,8 +158,13 @@ public class ControlPoint : Tile {
 	}
 
 	public void spawnTurret(){
-		if (controlState >= 1) {
-
+		if (controlState >= 1 && turretSpawnRate<=turretSpawnClock && maxTurret>0) {
+			Tile turret = gm.getClosestEmptyTile (transform.position);
+			print ("Spawning Turret!!");
+			gm.addTurret(turret.posX,turret.posY);
+			turretSpawnClock=0;
+			maxTurret = maxTurret - 1;
 		}
+
 	}
 }
