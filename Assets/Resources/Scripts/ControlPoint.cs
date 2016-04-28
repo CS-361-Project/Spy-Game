@@ -147,4 +147,10 @@ public class ControlPoint : Tile {
 	public List<Survivor> getIncomingSurvivors() {
 		return incomingSurvivorList;
 	}
+
+	public void spawnTurret(){
+		if (controlState >= 1) {
+
+		}
+	}
 }
