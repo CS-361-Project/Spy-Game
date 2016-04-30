@@ -57,7 +57,7 @@ public class Guard : Person {
 		actionClock = 0.0f;
 		attackClock = 0.0f;
 		attackCooldown = .25f;
-		ignoreSurvivorsTime = 2f;
+		ignoreSurvivorsTime = .5f;
 		recievedCommand = false;
 		viewDistance = 6;
 

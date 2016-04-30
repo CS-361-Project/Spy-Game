@@ -56,27 +56,18 @@ public class CameraControl : MonoBehaviour {
 				if (minimapMovement) {
 					mousePos = minimap.ScreenToWorldPoint(Input.mousePosition);
 					transform.position = new Vector3(mousePos.x, mousePos.y, transform.position.z);
+					dragging = true;
+					lastPos = mousePos;
 				}
-				else {
-					mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				}
-				dragging = true;
-				lastPosCopy = mousePos;
 			}
 			else {
 				if (minimapMovement) {
 					mousePos = minimap.ScreenToWorldPoint(Input.mousePosition);
 					transform.Translate(mousePos - lastPos);
-					lastPosCopy = mousePos;
+					lastPos = mousePos;
+					resetLines();
 				}
-				else {
-					mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-					transform.Translate(lastPos - mousePos);
-				}
-
 			}
-			lastPos = lastPosCopy;
-			resetLines();
 		}
 		else {
 			if (dragging) {
@@ -84,10 +75,28 @@ public class CameraControl : MonoBehaviour {
 				minimapMovement = false;
 			}
 		}
-//		float scroll = Input.GetAxis("Mouse ScrollWheel");
-//		if (scroll != 0 && Camera.main.orthographicSize >= 1 && Camera.main.orthographicSize <= 50) {
-//			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + 3 * scroll, 1, 50);
-//		}
+
+		Vector2 moveDirection = getMoveDir();
+		if (moveDirection != Vector2.zero) {
+			transform.position += (Vector3)moveDirection * Camera.main.orthographicSize * .05f;
+		}
+	}
+
+	Vector2 getMoveDir() {
+		Vector2 result = Vector2.zero;
+		if (Input.GetKey(KeyCode.W)) {
+			result += Vector2.up;
+		}
+		if (Input.GetKey(KeyCode.A)) {
+			result += Vector2.left;
+		}
+		if (Input.GetKey(KeyCode.S)) {
+			result += Vector2.down;
+		}
+		if (Input.GetKey(KeyCode.D)) {
+			result += Vector2.right;
+		}
+		return result.normalized;
 	}
 
 	void OnGUI() {

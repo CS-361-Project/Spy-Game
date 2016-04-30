@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour {
 	Tile[] zombieSpawn, survivorSpawn;
 
 	float zombieSpawnProgress, survivorSpawnProgress;
-	float zombieSpawnInterval, survivorSpawnInterval;
+	public float zombieSpawnInterval, survivorSpawnInterval;
 	float baseZombieSpawnInterval, baseSurvivorSpawnInterval;
 
 	ControlPoint[] controlPointList;
@@ -127,11 +127,6 @@ public class GameManager : MonoBehaviour {
 				state = GameState.Defeat;
 				audioSource.PlayOneShot(defeatScreen);
 			}
-			else if (survivorList.Count == 0) {
-				winScreen.SetActive(true);
-				state = GameState.Victory;
-				audioSource.PlayOneShot(defeatScreen);
-			}
 			else {
 				ControlPoint.Owner owner = controlPointList[0].currentOwner;
 				if (owner != ControlPoint.Owner.Unclaimed) {
@@ -147,8 +142,9 @@ public class GameManager : MonoBehaviour {
 						if (owner == ControlPoint.Owner.Survivor) {
 							loseScreen.SetActive(true);
 						}
-						else {
+						else if (survivorList.Count == 0) {
 							winScreen.SetActive(true);
+							state = GameState.Victory;
 						}
 					}
 				}
@@ -465,11 +461,11 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void modifyZombieSpawnRate(float percent) {
-		zombieSpawnInterval = zombieSpawnInterval / (1 + (percent * baseZombieSpawnInterval * zombieSpawnInterval));
+		zombieSpawnInterval = (zombieSpawnInterval * baseZombieSpawnInterval) / (baseZombieSpawnInterval + percent * zombieSpawnInterval);
 	}
 
 	public void modifySurvivorSpawnRate(float percent) {
-		survivorSpawnInterval = survivorSpawnInterval / (1 + (percent * baseSurvivorSpawnInterval * survivorSpawnInterval));
+		survivorSpawnInterval = (survivorSpawnInterval * baseSurvivorSpawnInterval) / (baseSurvivorSpawnInterval + percent * survivorSpawnInterval);
 	}
 
 	public void removeZombie(Guard g) {

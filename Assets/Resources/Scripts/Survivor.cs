@@ -36,7 +36,7 @@ public class Survivor : Person {
 		gameObject.tag = "Survivor";
 
 		shotTimer = 0; 
-		shotFrequency = .25f;
+		shotFrequency = .6f;
 		shotDuration = .05f;
 		health = 100;
 		damageTaken = 5;

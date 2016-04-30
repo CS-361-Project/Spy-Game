@@ -6,9 +6,9 @@ public class ControlPoint : Tile {
 	int survivorCount;
 	List<Survivor> incomingSurvivorList;
 	int zombieCount;
-	int turretSpawnClock;
-	int turretSpawnRate = 15;
-	int remainingTurrets=1;
+	float turretSpawnClock;
+	float turretSpawnRate = 15;
+	int remainingTurrets = 2;
 	float controlState;
 	float spawnClock;
 	public Owner currentOwner;
@@ -103,7 +103,7 @@ public class ControlPoint : Tile {
 					if (controlState >= 1) {
 						controlState = 1;
 						currentOwner = Owner.Survivor;
-						gm.modifyZombieSpawnRate(.1f);
+						gm.modifySurvivorSpawnRate(.1f);
 						spawnClock = 0f;
 					}
 					else if (controlState >= 0) {
@@ -124,7 +124,7 @@ public class ControlPoint : Tile {
 			rend.color = Color.Lerp(Color.white, Color.magenta, -controlState);
 		}
 		if (controlState >= 1) {
-			turretSpawnClock++;
+			turretSpawnClock += Time.deltaTime;
 			if (turretSpawnClock >= turretSpawnRate && remainingTurrets > 0) {
 				spawnTurret ();
 			}

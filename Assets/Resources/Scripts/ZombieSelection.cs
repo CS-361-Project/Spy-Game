@@ -66,9 +66,9 @@ public class ZombieSelection : MonoBehaviour {
 			}
 			else if (!currentMouse && mouseDown) {
 				float distMoved = Vector2.Distance(screenStart, screenPos);
-				if (distMoved <= 2) {
+//				if (distMoved <= 2) {
 					mouseClicked = true;
-				}
+//				}
 				mouseDown = false;
 			}
 		}
