@@ -30,7 +30,8 @@ public class ControlPoint : Tile {
 		zombieCount = 0;
 		turretSpawnClock = 0;
 		base.init(x, y, gm, 0, 0, true);
-		currentOwner = Owner.Unclaimed;
+//		currentOwner = Owner.Unclaimed;
+		currentOwner = Owner.Survivor;
 		controlState = 0;
 		sc = control;
 	}

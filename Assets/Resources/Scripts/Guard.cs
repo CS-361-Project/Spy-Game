@@ -57,7 +57,7 @@ public class Guard : Person {
 		actionClock = 0.0f;
 		attackClock = 0.0f;
 		attackCooldown = .25f;
-		ignoreSurvivorsTime = .5f;
+		ignoreSurvivorsTime = 1f;
 		recievedCommand = false;
 		viewDistance = 6;
 
@@ -165,7 +165,7 @@ public class Guard : Person {
 			}
 		}
 		if (closestSurvivor != null) {
-			if (chasingSurvivor) {
+			if (chasingSurvivor && targetPositions.Count > 0) {
 				targetPositions[0] = closestSurvivor.transform.position;
 			}
 			else {

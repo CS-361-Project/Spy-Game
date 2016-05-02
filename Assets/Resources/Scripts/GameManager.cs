@@ -252,10 +252,7 @@ public class GameManager : MonoBehaviour {
 		}
 
 		spawnZombies(100);
-		spawnSurvivors(20);
-//		foreach (Survivor s in survivorList) {
-//			s.setDestination(controlPointList[findQuadrant(s.tile) - 1]);
-//		}
+//		spawnSurvivors(20);
 	}
 
 
@@ -373,10 +370,12 @@ public class GameManager : MonoBehaviour {
 			if (!foundCut) {
 				//print("Doing this");
 				//List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
-				if (shouldOverwrite)
+				if (shouldOverwrite) {
 					g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))), 10);
-				else
+				}
+				else {
 					g.targetPositions.AddRange(splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))), 10));
+				}
 				g.tile.pathToTarget = g.targetPositions;
 			}
 			if (g.targetPositions.Count > 0) {

@@ -159,10 +159,10 @@ public class Person : MonoBehaviour {
 //			Debug.DrawLine(transform.position, targetPositions[0]);
 
 			//direction = Vector2.Lerp(direction, targetDirection, 0.3f).normalized;
+			float angle = Vector2.Angle(direction, targetDirection);
 			float currAngle = Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x);
 			float targetAngle = Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x);
-			float angle;
-			if (currAngle < targetAngle) {
+			if (angle > 180) {
 				angle = currAngle + rotationDegPerSecond * Time.deltaTime;
 				if (angle > targetAngle) {
 					angle = targetAngle;
