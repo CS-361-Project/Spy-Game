@@ -16,6 +16,7 @@ public class Person : MonoBehaviour {
 	protected float viewDistance = 2.5f;
 
 	public float radius = 0.5f;
+	protected float rotationDegPerSecond = 2200;
 
 	protected int viewLayerMask = 1 << 10;
 	protected int obstacleLayerMask = (1 << LayerMask.NameToLayer("Wall"));
@@ -158,7 +159,21 @@ public class Person : MonoBehaviour {
 //			Debug.DrawLine(transform.position, targetPositions[0]);
 
 			//direction = Vector2.Lerp(direction, targetDirection, 0.3f).normalized;
-			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), .5f);
+			float currAngle = Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x);
+			float targetAngle = Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x);
+			float angle;
+			if (currAngle < targetAngle) {
+				angle = currAngle + rotationDegPerSecond * Time.deltaTime;
+				if (angle > targetAngle) {
+					angle = targetAngle;
+				}
+			}
+			else {
+				angle = currAngle - rotationDegPerSecond * Time.deltaTime;
+				if (angle < targetAngle) {
+					angle = targetAngle;
+				}
+			}
 			direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
 
 			body.velocity = direction * speed * gm.gameSpeed;
