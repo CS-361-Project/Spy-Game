@@ -70,9 +70,12 @@ public class SurvivorControl : MonoBehaviour {
 				}
 			}
 			if (maxSourceIndex != 0 || maxDestIndex != 0) {
-				sendReinforcements(controlPoints[maxSourceIndex], controlPoints[maxDestIndex]);
-				numAssigned[maxSourceIndex]--;
-				numAssigned[maxDestIndex]++;
+				sendReinforcements (controlPoints [maxSourceIndex], controlPoints [maxDestIndex]);
+				numAssigned [maxSourceIndex]--;
+				numAssigned [maxDestIndex]++;
+			} 
+			else {
+				canSendSurvivors = false;
 			}
 //			int minSecurityIndex = 0;
 //			int maxSecurityIndex = 0;

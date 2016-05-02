@@ -12,6 +12,9 @@ public class ControlPoint : Tile {
 	float controlState;
 	float spawnClock;
 	public Owner currentOwner;
+	GameObject alertRing;
+	SpriteRenderer ringRend;
+	float ringFlashTimer = 0;
 
 	public enum Owner {
 		Zombie,
@@ -30,10 +33,19 @@ public class ControlPoint : Tile {
 		zombieCount = 0;
 		turretSpawnClock = 0;
 		base.init(x, y, gm, 0, 0, true);
-//		currentOwner = Owner.Unclaimed;
-		currentOwner = Owner.Survivor;
+		currentOwner = Owner.Unclaimed;
+//		currentOwner = Owner.Survivor;
 		controlState = 0;
 		sc = control;
+
+		alertRing = new GameObject ();
+		alertRing.transform.parent = transform;
+		alertRing.transform.localPosition = Vector3.zero;
+		alertRing.transform.localScale = Vector3.one * 2;
+		ringRend = alertRing.AddComponent<SpriteRenderer> ();
+		ringRend.sprite = Resources.Load<Sprite> ("Sprites/Ring");
+		ringRend.color = Color.red;
+		alertRing.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -104,11 +116,16 @@ public class ControlPoint : Tile {
 					if (controlState >= 1) {
 						controlState = 1;
 						currentOwner = Owner.Survivor;
-						gm.modifySurvivorSpawnRate(.1f);
+						gm.modifySurvivorSpawnRate (.1f);
 						spawnClock = 0f;
-					}
-					else if (controlState >= 0) {
+					} else if (controlState >= 0) {
 						currentOwner = Owner.Unclaimed;
+						alertRing.SetActive (false);
+					} else {
+						// control point is being contested!
+						alertRing.SetActive(true);
+						ringRend.color = Color.Lerp (Color.white, Color.red, Mathf.Sin (ringFlashTimer * 2 * Mathf.PI) / 2 + .5f);
+						ringFlashTimer += Time.deltaTime;
 					}
 					if (oldOwner == Owner.Zombie && oldOwner != currentOwner) {
 						gm.modifyZombieSpawnRate(-.1f);

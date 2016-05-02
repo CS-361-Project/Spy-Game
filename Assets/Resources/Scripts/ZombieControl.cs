@@ -56,12 +56,9 @@ public class ZombieControl : MonoBehaviour {
 				break;
 		}
 		if (zombieSelector.getMouseClicked()) {
-			if (Input.GetKey(KeyCode.LeftShift)) {
-				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), false);
-			}
-			else {
-				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), true);
-			}
+			bool overwritePath = !Input.GetKey (KeyCode.LeftShift);
+			bool attackSurvivors = Input.GetKey (KeyCode.F);
+			gm.moveTo (selection.ToList (), zombieSelector.getMousePosInWorldCoords (), overwritePath, attackSurvivors);
 		}
 	}
 }

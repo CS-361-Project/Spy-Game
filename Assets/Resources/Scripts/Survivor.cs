@@ -43,7 +43,7 @@ public class Survivor : Person {
 		rotationSpeed = .1F;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
-		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
+		rend.sprite = Resources.Load<Sprite>("Sprites/Survivor");
 		rend.color = Color.blue;
 //		rend.sortingLayerName = "UI";
 		rend.sortingOrder = 1;
@@ -167,6 +167,7 @@ public class Survivor : Person {
 				targetPositions.Add(oldTile.transform.position);
 			}
 		}
+		transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(aimDirection.y, aimDirection.x));
 		shotTimer += Time.deltaTime;
 	}
 

@@ -252,7 +252,7 @@ public class GameManager : MonoBehaviour {
 		}
 
 		spawnZombies(100);
-//		spawnSurvivors(20);
+		spawnSurvivors(20);
 	}
 
 
@@ -340,7 +340,7 @@ public class GameManager : MonoBehaviour {
 		return results;
 	}
 
-	public void moveTo(List<Guard> guards, Vector2 point, bool shouldOverwrite) {
+	public void moveTo(List<Guard> guards, Vector2 point, bool shouldOverwrite, bool attackSurvivors) {
 		setTargetTile(getClosestEmptyTile(point));
 		Tile mouseTile = getClosestTile(point);
 		int split = 12;
@@ -381,13 +381,14 @@ public class GameManager : MonoBehaviour {
 			if (g.targetPositions.Count > 0) {
 				g.direction = g.targetPositions[0] - (Vector2)g.transform.position;
 				g.targetPositions.RemoveAt(g.targetPositions.Count - 1);
-				g.targetPositions.Add(point);
 			}
+			g.targetPositions.Add(point);
 			//misc guard stuff
 			if (shouldOverwrite || (g.chasingSurvivor && g.targetPositions.Count < 2)) {
-				g.startTimer();
+//				g.startTimer();
 				g.chasingSurvivor = false;
 			}
+			g.setIgnoreSurvivors (!attackSurvivors);
 		}
 	}
 

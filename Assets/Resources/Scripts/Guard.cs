@@ -26,7 +26,8 @@ public class Guard : Person {
 	float attackCooldown;
 	float actionClock;
 	float ignoreSurvivorsTime;
-	bool recievedCommand;
+	bool receivedCommand;
+	bool ignoreSurvivors;
 
 	// Use this for initialization
 	public void init(Tile t, GameManager m, int priority) {
@@ -38,7 +39,7 @@ public class Guard : Person {
 		selectionColor = baseColor + new Color(.8f, 0, .4f);
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
-		rend.sprite = Resources.Load<Sprite>("Sprites/Box");
+		rend.sprite = Resources.Load<Sprite>("Sprites/Box"); 
 		rend.color = baseColor;
 		rend.sortingOrder = 1;
 
@@ -58,7 +59,7 @@ public class Guard : Person {
 		attackClock = 0.0f;
 		attackCooldown = .25f;
 		ignoreSurvivorsTime = 1f;
-		recievedCommand = false;
+		receivedCommand = false;
 		viewDistance = 6;
 
 		startTile = t;
@@ -71,6 +72,7 @@ public class Guard : Person {
 		speed = 4f;
 		health = 100;
 		chasingSurvivor = false;
+		ignoreSurvivors = false;
 	}
 	
 	// Update is called once per frame
@@ -144,14 +146,15 @@ public class Guard : Person {
 			}
 		}
 		else if (patrolDirection == 0 || patrolDirection == 3) {
-			wander(true);
+			wander();
 		}
 
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;
 
-		if (actionClock > ignoreSurvivorsTime || (!recievedCommand)) {
-			recievedCommand = false;
+//		if (actionClock > ignoreSurvivorsTime || (!receivedCommand) || !ignoreSurvivors) {
+		if (!ignoreSurvivors) {
+			receivedCommand = false;
 			foreach (Survivor s in gm.getSurvivorList()) {
 				float dist = Vector2.Distance (s.transform.position, this.transform.position);
 				if (dist < viewDistance && dist < minDist) {
@@ -217,6 +220,13 @@ public class Guard : Person {
 		//body.velocity = body.velocity.normalized * speed;
 	}
 
+	public void wander() {
+		if (targetPositions.Count == 0) {
+			body.velocity = Vector2.zero;
+//			ignoreUntilDestination = false;
+		}
+	}
+
 	public bool isPathing(){
 		if (targetPositions.Count == 0)
 			return false;
@@ -227,7 +237,11 @@ public class Guard : Person {
 
 	public void startTimer(){
 		actionClock = 0f;
-		recievedCommand = true;
+		receivedCommand = true;
+	}
+
+	public void setIgnoreSurvivors(bool ignore) {
+		ignoreSurvivors = ignore;
 	}
 
 	void OnCollisionStay2D(Collision2D coll) {
