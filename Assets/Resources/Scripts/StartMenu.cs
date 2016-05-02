@@ -10,7 +10,6 @@ public class StartMenu : MonoBehaviour {
 	public Button exitButton;
 	public Button yesQuit;
 	public Button noQuit;
-
 	public Image exitMessage;
 
 	// Use this for initialization

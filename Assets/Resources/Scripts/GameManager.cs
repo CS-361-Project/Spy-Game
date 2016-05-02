@@ -31,11 +31,12 @@ public class GameManager : MonoBehaviour {
 
 	ZombieControl zombieCtrl;
 	SurvivorControl survivorCtrl;
+	AudioControl audioCtrl;
 
 	int maxZombiePriority;
 	int maxSurvivorPriority;
 
-	AudioSource audioSource;
+	public AudioSource audioSource;
 	public AudioClip defeatScreen;
 
 	public enum GameState {
@@ -70,6 +71,8 @@ public class GameManager : MonoBehaviour {
 
 		survivorCtrl = new GameObject().AddComponent<SurvivorControl>();
 
+		audioCtrl = new GameObject().AddComponent<AudioControl>();
+
 		zombieList = new List<Guard>();
 		tileList = new List<Tile>();
 
@@ -98,26 +101,8 @@ public class GameManager : MonoBehaviour {
 		generateLevel(width, height);
 		survivorCtrl.init(this);
 		zombieCtrl.init(this);
-		//buildBoard(10, 10);
-//		buildLevel(10, 10);
-//		buildTestChamber(10, 10);
-//		addGuard(2, 3);
-//		addGuard(2, 4);
-//		addGuard(4, 2);
-//		addGuard(3, 2);
-//		addGuard(2, 2);
-//		addGuard(1, 2);
-//		addFrank (5, 4);
-//		addFan(new Vector2(1, 1), "E");
-//		addFan(new Vector2(1, 6), "E");
-//		addSensor(1, 2, new Vector2(1, 0));
-		//addBurner(new Vector2(1, 1));
-		//addChemical (new Vector2 (2, 1));
-		//buildLevel1();
-		//buildLevel1();
-		//buildInflammableTestChamber();
-		//constructSections();
-//		addChemical (new Vector2 (2, 1));
+		audioCtrl.init(this);
+
 		count = 0;
 
 		audioSource = gameObject.AddComponent<AudioSource>();

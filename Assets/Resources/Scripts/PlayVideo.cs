@@ -14,6 +14,7 @@ public class PlayVideo : MonoBehaviour {
 	void Start () {
 		GetComponent<RawImage>().canvas.sortingLayerName = "Background";
 		GetComponent<RawImage>().texture = movie as MovieTexture;
+		movie.loop = true;
 		audio = GetComponent<AudioSource>();
 		audio.clip = movie.audioClip;
 		movie.Play();
