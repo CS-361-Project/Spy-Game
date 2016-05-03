@@ -155,7 +155,7 @@ public class Guard : Person {
 //		if (actionClock > ignoreSurvivorsTime || (!receivedCommand) || !ignoreSurvivors) {
 		if (!ignoreSurvivors) {
 			receivedCommand = false;
-			foreach (Survivor s in gm.getSurvivorList()) {
+			foreach (Survivor s in gm.getEnemyList()) {
 				float dist = Vector2.Distance (s.transform.position, this.transform.position);
 				if (dist < viewDistance && dist < minDist) {
 					Vector2 toObject = s.transform.position - transform.position;

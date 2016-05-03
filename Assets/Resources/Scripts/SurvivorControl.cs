@@ -6,13 +6,13 @@ public class SurvivorControl : MonoBehaviour {
 	GameManager gm;
 	List<Survivor> survivorList;
 	ControlPoint[] controlPoints;
-
+	int numControlPoints;
 	// Use this for initialization
-	public void init (GameManager m) {
-		
+	public void init(GameManager m, int numControlPoints) {
+		this.numControlPoints = numControlPoints;
 		gm = m;
 
-		survivorList = gm.getSurvivorList();
+		survivorList = gm.getEnemyList();
 		controlPoints = gm.getControlPoints();
 
 		name = "Survivor Control";
@@ -22,8 +22,9 @@ public class SurvivorControl : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		survivorList = gm.getSurvivorList();
+	void Update() {
+		print("Survivor count: " + survivorList.Count);
+		survivorList = gm.getEnemyList();
 		assignSurvivors();
 	}
 
@@ -34,16 +35,17 @@ public class SurvivorControl : MonoBehaviour {
 	}
 
 	public void assignSurvivors() {
-		float[] zombieCount = new float[4];
-		float[] target = new float[4];
-		float[] numAssigned = new float[4];
+		float[] zombieCount = new float[numControlPoints];
+		float[] target = new float[numControlPoints];
+		float[] numAssigned = new float[numControlPoints];
 		float totalZombies = 0;
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < numControlPoints; i++) {
 			zombieCount[i] = gm.countZombiesInArea(controlPoints[i].posX, controlPoints[i].posY, 6) + 1;
 			totalZombies += zombieCount[i];
 		}
-		for (int i = 0; i < 4; i++) {
-			target[i] = .15f * (float)survivorList.Count + (zombieCount[i] / totalZombies) * .4f * (float)survivorList.Count;
+		float percentPerCtrlPoint = .6f / numControlPoints;
+		for (int i = 0; i < numControlPoints; i++) {
+			target[i] = percentPerCtrlPoint * (float)survivorList.Count + (zombieCount[i] / totalZombies) * .4f * (float)survivorList.Count;
 			numAssigned[i] = (float)controlPoints[i].getIncomingSurvivorCount();
 		}
 		bool canSendSurvivors = true;
@@ -52,8 +54,8 @@ public class SurvivorControl : MonoBehaviour {
 			int maxSourceIndex = 0;
 			int maxDestIndex = 0;
 			float minDiffChange = 0;
-			for (int i = 0; i < 4; i++) {
-				for (int j = 0; j < 4; j++) {
+			for (int i = 0; i < numControlPoints; i++) {
+				for (int j = 0; j < numControlPoints; j++) {
 					if (i != j && controlPoints[i].getIncomingSurvivors().Count > 0) {
 						float oldSourceDiff = Mathf.Abs(target[i] - numAssigned[i]);
 						float newSourceDiff = Mathf.Abs(target[i] - (numAssigned[i] - 1));
@@ -70,49 +72,17 @@ public class SurvivorControl : MonoBehaviour {
 				}
 			}
 			if (maxSourceIndex != 0 || maxDestIndex != 0) {
-				sendReinforcements (controlPoints [maxSourceIndex], controlPoints [maxDestIndex]);
-				numAssigned [maxSourceIndex]--;
-				numAssigned [maxDestIndex]++;
-			} 
+				sendReinforcements(controlPoints[maxSourceIndex], controlPoints[maxDestIndex]);
+				numAssigned[maxSourceIndex]--;
+				numAssigned[maxDestIndex]++;
+			}
 			else {
 				canSendSurvivors = false;
 			}
-//			int minSecurityIndex = 0;
-//			int maxSecurityIndex = 0;
-//			for (int i = 1; i < 4; i++) {
-//				if (security[i] < security[minSecurityIndex]) {
-//					minSecurityIndex = i;
-//				}
-//				if (security[i] > security[maxSecurityIndex]) {
-//					maxSecurityIndex = i;
-//				}
-//			}
-//			print("Min: " + security[minSecurityIndex]);
-//			print("Max: " + security[maxSecurityIndex]);
-////			if (security[minSecurityIndex] >= 1) {
-////				canSendSurvivors = false;
-////			}
-////			else {
-//			float newMinSecurity = security[minSecurityIndex] + (6f / zombieCount[minSecurityIndex]);
-//			float newMaxSecurity = security[maxSecurityIndex] - (6f / zombieCount[maxSecurityIndex]);
-//			if (newMaxSecurity < newMinSecurity) {
-//				canSendSurvivors = false;
-//				print("Stopping to avoid loop.");
-//			}
-//			else if (newMaxSecurity <= 1) {
-//				canSendSurvivors = false;
-//				print("Max dropping below 1, exiting.");
-//			}
-//			else {
-//				sendReinforcements(controlPoints[maxSecurityIndex], controlPoints[minSecurityIndex]);
-//				security[minSecurityIndex] = newMinSecurity;
-//				security[maxSecurityIndex] = newMaxSecurity;
-//			}
-//			}
 		}
 	}
 
-	public void sendReinforcements(ControlPoint source, ControlPoint dest){
+	public void sendReinforcements(ControlPoint source, ControlPoint dest) {
 //		print("Sending reinforcements from " + source.transform.position + " to " + dest.transform.position);
 		List<Survivor> survivors = source.getIncomingSurvivors();
 		Survivor closestSurvivor = null;
