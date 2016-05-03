@@ -58,11 +58,33 @@ public class ZombieControl : MonoBehaviour {
 		if (zombieSelector.getMouseClicked()) {
 			if (Input.GetKey(KeyCode.LeftShift)) {
 				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), false);
+				roar();
+
 			}
 			else {
 				gm.moveTo(selection.ToList(), zombieSelector.getMousePosInWorldCoords(), true);
+				roar();
 			}
 		}
+	}
+
+	void roar(){
+		int rand = Random.Range(0, 2);
+		switch (rand) {
+			case 0:
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar1);
+				break;
+			case 1: 
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar2);
+				break;
+			case 2:
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar3);
+				break;
+			default:
+				print("huh? this shouldn't happen.");
+				break;
+		}
+
 	}
 }
 

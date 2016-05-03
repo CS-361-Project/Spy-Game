@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour {
 
 	ZombieControl zombieCtrl;
 	SurvivorControl survivorCtrl;
-	AudioControl audioCtrl;
+	public AudioControl audioCtrl;
 
 	int maxZombiePriority;
 	int maxSurvivorPriority;

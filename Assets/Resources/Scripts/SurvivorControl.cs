@@ -110,7 +110,7 @@ public class SurvivorControl : MonoBehaviour {
 	}
 
 	public void sendReinforcements(ControlPoint source, ControlPoint dest){
-		print("Sending reinforcements from " + source.transform.position + " to " + dest.transform.position);
+		// print("Sending reinforcements from " + source.transform.position + " to " + dest.transform.position);
 		List<Survivor> survivors = source.getIncomingSurvivors();
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;

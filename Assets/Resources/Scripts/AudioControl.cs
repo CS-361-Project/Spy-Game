@@ -11,24 +11,25 @@ public class AudioControl : MonoBehaviour {
 		zombieRoar3,
 		zombieCheer,
 		zombieHoard, 
-		alarm1
+		alarm
 	}
 
-	AudioClip[] audioClips;
+	AudioSource source;
+	public AudioClip[] audioClips;
 	GameManager gm;
 
 	public void init (GameManager m) {
 		gm = m;
 		audioClips = new AudioClip[Enum.GetNames(typeof(clips)).Length];
+		source = gameObject.AddComponent<AudioSource>();
+		//print(source);
 
-
-
-		audioClips[(int)clips.zombieRoar1] = Resources.Load("Audio/Diagetic Sounds:Feedback/Zombie Roar 1", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieRoar2] = Resources.Load("Audio/Diagetic Sounds:Feedback/Zombie Roar 2", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieRoar3] = Resources.Load("Audio/Diagetic Sounds:Feedback/Zombie Roar 3", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieCheer] = Resources.Load("Audio/Diagetic Sounds:Feedback/Zombie Cheer 1", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieHoard] = Resources.Load("Audio/Diagetic Sounds:Feedback/Zombie Hoard Loop", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.alarm1] = Resources.Load("Audio/Diagetic Sounds:Feedback/Arcade Alarm 2", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)clips.zombieRoar1] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 1", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)clips.zombieRoar2] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 2", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)clips.zombieRoar3] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 3", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)clips.zombieCheer] = Resources.Load("Audio/Diagetic Sounds/Zombie Cheer 1", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)clips.zombieHoard] = Resources.Load("Audio/Diagetic Sounds/Zombie Hoard Loop", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)clips.alarm] = Resources.Load("Audio/Diagetic Sounds/Arcade Alarm 2", typeof(AudioClip)) as AudioClip;
 	}
 	
 	// Update is called once per frame
@@ -37,6 +38,10 @@ public class AudioControl : MonoBehaviour {
 	}
 
 	public void playClip(int clipIndex){
-		gm.audioSource.PlayOneShot(audioClips[clipIndex]);
+		source.PlayOneShot(audioClips[clipIndex]);
+	}
+
+	public AudioSource getSource(){
+		return source;
 	}
 }
