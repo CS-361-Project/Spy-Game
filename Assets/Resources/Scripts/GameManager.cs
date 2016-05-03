@@ -62,11 +62,16 @@ public class GameManager : MonoBehaviour {
 		gameSpeed = 1f;
 
 		//Set up Cursor
-		//Cursor.visible = false;
+		Cursor.visible = false;
 		cursor = new GameObject();
-		cursorRend = gameObject.AddComponent<SpriteRenderer>();
-		cursorRend.sprite = Resources.Load<Texture2D>("Sprites/CrossHair");
-		cursorRend.transform= Cursor.
+		cursorRend = cursor.AddComponent<SpriteRenderer>();
+		cursorRend.sprite = Resources.Load<Sprite>("Sprites/Mouse");
+		cursorRend.sortingLayerName = "UI";
+		cursorRend.sortingOrder = 4;
+		cursor.layer = LayerMask.NameToLayer("Mouse");
+		cursorRend.color = Color.red;
+
+		cursor.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
 
 		maxZombiePriority = 0;
@@ -124,6 +129,10 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
+		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		cursor.transform.position = mousePos;
+		cursorRend.transform.localScale = new Vector3(1,1,1) *  Camera.main.orthographicSize * .05f;
+
 		if (Input.GetKeyDown(KeyCode.R)) {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
