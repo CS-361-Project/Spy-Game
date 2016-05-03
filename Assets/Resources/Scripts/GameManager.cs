@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour {
 	void Update() {
 		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		cursor.transform.position = mousePos;
-		cursorRend.transform.localScale = new Vector3(1,1,1) *  Camera.main.orthographicSize * .05f;
+		cursorRend.transform.localScale = new Vector3(1,1,1) *  Camera.main.orthographicSize * .02f;
 
 		if (Input.GetKeyDown(KeyCode.R)) {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -469,8 +469,9 @@ public class GameManager : MonoBehaviour {
 	public void removeSurvivor(Survivor s) {
 		survivorList.Remove(s);
 		if (s.getDestination() != null) {
-			s.getDestination().removeSurvivor(s);
+			s.getDestination().removeIncomingSurvivor(s);
 		}
+		s.tile.removeSurvivor(s);
 	}
 
 	// return number of zombies in nxn area centered on (x, y)

@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class ControlPoint : Tile {
-	int survivorCount;
+	public int survivorCount;
 	List<Survivor> incomingSurvivorList;
-	int zombieCount;
+	public int zombieCount;
 	float turretSpawnClock;
 	float turretSpawnRate = 15;
 	int remainingTurrets = 2;
-	float controlState;
+	public float controlState;
 	float spawnClock;
 	public Owner currentOwner;
 	GameObject alertRing;
@@ -196,7 +196,6 @@ public class ControlPoint : Tile {
  	void spawnTurret() {
 		Tile[] area = getNxNEmptyTiles(5, false);
 		Tile turret = area[Random.Range(0, area.Length)];
-		print("Spawning Turret!!");
 		gm.addTurret(turret.posX, turret.posY);
 		turretSpawnClock = 0;
 		remainingTurrets = remainingTurrets - 1;

@@ -17,7 +17,6 @@ public class Survivor : Person {
 	protected float shotDuration;
 	public int priority;
 	protected int health;
-	protected int damageTaken;
 	protected float rotationSpeed;
 	ControlPoint destination;
 
@@ -39,7 +38,6 @@ public class Survivor : Person {
 		shotFrequency = .6f;
 		shotDuration = .05f;
 		health = 100;
-		damageTaken = 5;
 		rotationSpeed = .1F;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
