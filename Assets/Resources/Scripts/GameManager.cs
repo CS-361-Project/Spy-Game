@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour {
 	public AudioSource audioSource;
 	public AudioClip defeatScreen;
 
+	GameObject cursor;
+
 	public enum GameState {
 		Playing,
 		Paused,
@@ -57,6 +59,8 @@ public class GameManager : MonoBehaviour {
 		GameObject.Find("Minimap Camera").GetComponent<Minimap>().init(this);
 
 		gameSpeed = 1f;
+		Cursor.visible = false;
+		cursor = new GameObject();
 
 		maxZombiePriority = 0;
 		maxSurvivorPriority = 0;
