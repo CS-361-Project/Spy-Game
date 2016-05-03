@@ -45,6 +45,7 @@ public class CameraControl : MonoBehaviour {
 		aspect = (float)Screen.width / (float)Screen.height;
 		camDimensions = new Vector2(Camera.main.orthographicSize * aspect, Camera.main.orthographicSize);
 		resetLines();
+		Camera.main.orthographic = false;
 	}
 
 	void Update() {

@@ -78,9 +78,9 @@ public class Turret : Survivor {
 		}
 		else if (state == TurretState.Idle) {
 			float closestDistance = float.MaxValue;
-			Guard closestGuard = null;
+			Zombie closestGuard = null;
 			foreach (Tile t in tile.getNxNArea((int)viewDistance)) {
-				foreach (Guard z in t.getZombieList()) {
+				foreach (Zombie z in t.getZombieList()) {
 					float dist = Vector2.Distance(z.transform.position, this.transform.position);
 					if (dist < viewDistance && dist < closestDistance) {
 						if (canSee(z.transform.position)) {
@@ -117,7 +117,7 @@ public class Turret : Survivor {
 		bulletObj.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(toHit.y, toHit.x));
 
 		if (hit.collider != null) {
-			Guard zomb = hit.collider.gameObject.GetComponent<Guard>();
+			Zombie zomb = hit.collider.gameObject.GetComponent<Zombie>();
 			if (zomb != null) {
 				zomb.onObjectShot(Random.Range(61, 81));
 			}

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Guard : Person {
+public class Zombie : Person {
 	public static int tileViewDistance = 6;
 	SpriteRenderer rend;
 
@@ -11,7 +11,6 @@ public class Guard : Person {
 
 	AlertIcon alert;
 
-	Tile startTile, endTile;
 	[SerializeField]
 	int patrolDirection;
 
@@ -45,14 +44,6 @@ public class Guard : Person {
 
 		gameObject.layer = LayerMask.NameToLayer("Guard");
 		gameObject.tag = "Zombie";
-		//gameObject.transform.localScale = new Vector3(.4f, .4f, 1);
-
-		/*GameObject fovObj = new GameObject();
-		fovObj.name = "FOV";
-		fovObj.transform.parent = transform;
-		fovObj.transform.localScale = new Vector3(1 / .7f, 1 / .7f, 1);
-		fovDisplay = fovObj.AddComponent<FOV>();
-		fovDisplay.init(viewDistance);*/
 
 		suspicion = 0.0f;
 		actionClock = 0.0f;
@@ -62,13 +53,7 @@ public class Guard : Person {
 		receivedCommand = false;
 		viewDistance = 6;
 
-		startTile = t;
-		//endTile = m.getTile(4, 6);
-		patrolDirection = 3;
-//		targetPositions = gm.getPath(tile, endTile);
 		targetPositions = new List<Vector2>();
-		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
-		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 4f;
 		health = 100;
 		chasingSurvivor = false;
@@ -80,74 +65,10 @@ public class Guard : Person {
 		actionClock += Time.deltaTime * gm.gameSpeed;
 		attackClock += Time.deltaTime * gm.gameSpeed;
 
-
-		/*Vector2 lastPos = tile.transform.position;
-
-		foreach (Vector2 position in targetPositions) {
-			Debug.DrawLine(lastPos, position);
-			lastPos = position;
-		}*/
-
-		//fovDisplay.setDirection(direction);
-//		if (suspicion >= 1f) {
-//			if (alert == null) {
-//				GameObject alertObj = new GameObject();
-//				alertObj.name = "Alert";
-//				alert = alertObj.AddComponent<AlertIcon>();
-//				alert.transform.parent = transform;
-//				alert.transform.localPosition = Vector3.up;
-//			}
-//			suspicion -= .01f;
-//			if (suspicion < 1f) {
-//				Destroy(alert.gameObject);
-//			}
-//		}
-//		if (targetPositions.Count > 0) {
-//			print("Count: " + targetPositions.Count);
-//		}
 		if (patrolDirection == 2) {
 			patrolDirection = 0;
 		}
-
-		/*foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, viewDistance)) {
-			if (c != coll && c.gameObject.name != "Wall") {
-				if (Vector2.Distance(c.transform.position, transform.position) <= viewDistance / 2 || canSee(c.transform.position)) {
-					switch (c.gameObject.name) {
-						case "Frank":
-							print("Guard sees Frank");
-							suspicion = 2f;
-							targetPositions = gm.getPath(tile, gm.getClosestTile(c.transform.position), false);
-							if (targetPositions.Count >= 2) {
-								targetPositions.RemoveAt(targetPositions.Count - 1);
-								targetPositions.RemoveAt(0);
-							}
-							targetPositions.Add(c.transform.position);
-							patrolDirection = 2;
-							break;
-						case "Chemical":
-							if (c.gameObject.GetComponent<Chemical>().spilled) {
-								suspicion += .25f;
-							}
-							break;
-					}
-				}
-			}
-		}*/
-		if (patrolDirection == 1) {
-			if (targetPositions.Count <= 0) {
-				targetPositions = gm.getPath(endTile, startTile, false);
-				patrolDirection = -1;
-			}
-		}
-		else if (patrolDirection == -1) {
-			if (targetPositions.Count <= 0) {
-				targetPositions = gm.getPath(startTile, endTile, false);
-				patrolDirection = 1;
-			}
-		}
-		else if (patrolDirection == 0 || patrolDirection == 3) {
-			wander();
-		}
+		wander();
 
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;
@@ -192,7 +113,7 @@ public class Guard : Person {
 		int neighborCount = 0;
 		foreach (Tile t in tile.getNxNArea(3)) {
 			if (t != null) {
-				foreach (Guard g in t.getZombieList()) {
+				foreach (Zombie g in t.getZombieList()) {
 					if (g != this) {
 						float dist = Vector2.Distance(g.transform.position, transform.position);
 						if (dist <= 0.3f) {
@@ -223,7 +144,6 @@ public class Guard : Person {
 	public void wander() {
 		if (targetPositions.Count == 0) {
 			body.velocity = Vector2.zero;
-//			ignoreUntilDestination = false;
 		}
 	}
 
@@ -272,20 +192,6 @@ public class Guard : Person {
 			print("that's supsicious");
 		}
 	}
-
-	/*public virtual void onMotionDetected(object source, LaserSensor.LaserEventArgs args) {
-		// TODO: System if reached source of motion and haven't seen frank, ignore that sensor for x seconds
-		// sort of a way of saying "all clear"
-		// actually would be good to send message to all other guards letting them know there's nothing to see there
-//		print("Moving to position " + args.position);
-		Tile t = gm.getClosestEmptyTile(args.position);
-		List<Vector2> path = gm.getPath(tile, t, true);
-		if (path.Count <= 15) {
-			suspicion = 2f;
-//			print("Path from " + tile.transform.position + " to " + t.transform.position + " is " + path.Count + " tiles.");
-			targetPositions = path;
-		}
-	}*/
 
 	public void onObjectShot(int damage) {
 		health -= damage;
