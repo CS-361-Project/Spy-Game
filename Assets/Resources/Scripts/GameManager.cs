@@ -60,10 +60,13 @@ public class GameManager : MonoBehaviour {
 		GameObject.Find("Minimap Camera").GetComponent<Minimap>().init(this);
 
 		gameSpeed = 1f;
-		Cursor.visible = false;
+
+		//Set up Cursor
+		//Cursor.visible = false;
 		cursor = new GameObject();
 		cursorRend = gameObject.AddComponent<SpriteRenderer>();
 		cursorRend.sprite = Resources.Load<Texture2D>("Sprites/CrossHair");
+		cursorRend.transform= Cursor.
 
 
 		maxZombiePriority = 0;
