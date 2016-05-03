@@ -59,7 +59,13 @@ public class Survivor : Person {
 		bulletObj.SetActive(false);
 
 		startTile = t;
+		//endTile = m.getTile(4, 6);
+//		patrolDirection = 0;
+		//		targetPositions = gm.getPath(tile, endTile);
 		setDestination(gm.getControlPoints()[Random.Range(0, 4)]);
+//		targetPositions = new List<Vector2>();
+		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
+		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 2f;
 		aimDirection = Vector2.left;
 	}
@@ -86,9 +92,9 @@ public class Survivor : Person {
 
 //		if (shotTimer >= shotFrequency) {
 		float closestDistance = float.MaxValue;
-		Zombie closestGuard = null;
+		Guard closestGuard = null;
 		foreach (Tile t in tile.getNxNArea((int)viewDistance)) {
-			foreach (Zombie z in t.getZombieList()) {
+			foreach (Guard z in t.getZombieList()) {
 				float dist = Vector2.Distance(z.transform.position, this.transform.position);
 				if (dist < viewDistance && dist < closestDistance) {
 					if (canSee(z.transform.position)) {
@@ -178,7 +184,7 @@ public class Survivor : Person {
 
 	void turnToZombie() {
 		GameObject zombie = new GameObject();
-		zombie.AddComponent<Zombie>();
+		zombie.AddComponent<Guard>();
 		zombie.transform.position = transform.position;
 		Destroy(gameObject);
 	}
@@ -206,7 +212,7 @@ public class Survivor : Person {
 		bulletObj.transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(toHit.y, toHit.x));
 
 		if (hit.collider != null) {
-			Zombie zomb = hit.collider.gameObject.GetComponent<Zombie>();
+			Guard zomb = hit.collider.gameObject.GetComponent<Guard>();
 			if (zomb != null) {
 				zomb.onObjectShot(Random.Range(40, 61));
 			}

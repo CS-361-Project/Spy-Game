@@ -6,7 +6,7 @@ using System.Linq;
 public class ZombieControl : MonoBehaviour {
 	ZombieSelection zombieSelector;
 	GameManager gm;
-	HashSet<Zombie> selection;
+	HashSet<Guard> selection;
 
 	// Use this for initialization
 	public void init(GameManager g) {
@@ -15,11 +15,11 @@ public class ZombieControl : MonoBehaviour {
 		zombieSelector.gameObject.name = "Zombie Selection";
 		Minimap minimap = GameObject.Find("Minimap Camera").GetComponent<Minimap>();
 		zombieSelector.init(minimap.cam);
-		selection = new HashSet<Zombie>();
+		selection = new HashSet<Guard>();
 		name = "Zombie Control";
 	}
 
-	public void removeZombie(Zombie g) {
+	public void removeZombie(Guard g) {
 		selection.Remove(g);
 	}
 	// Update is called once per frame
@@ -29,7 +29,7 @@ public class ZombieControl : MonoBehaviour {
 		switch (zombieSelector.state) {
 			case ZombieSelection.SelectionState.BeginningSelection:
 				if (!shift) {
-					foreach (Zombie g in selection) {
+					foreach (Guard g in selection) {
 						g.setSelected(false);
 					}
 					selection.Clear();
@@ -39,14 +39,14 @@ public class ZombieControl : MonoBehaviour {
 				break;
 			case ZombieSelection.SelectionState.Selecting:
 				if (!shift) {
-					foreach (Zombie g in selection) {
+					foreach (Guard g in selection) {
 						g.setSelected(false);
 					}
 					selection.Clear();
 				}
 				foreach (Collider2D coll in currSelection) {
 					if (coll.gameObject.name == "Guard") {
-						Zombie g = coll.gameObject.GetComponent<Zombie>();
+						Guard g = coll.gameObject.GetComponent<Guard>();
 						selection.Add(g);
 						g.setSelected(true);
 					}

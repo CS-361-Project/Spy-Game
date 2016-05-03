@@ -37,7 +37,7 @@ public class Tile : MonoBehaviour {
 	public float dist = -1;
 	public float crowdFactor = 0;
 
-	List<Zombie> zombies;
+	List<Guard> zombies;
 	List<Survivor> survivors;
 
 	//ACCCK
@@ -66,19 +66,44 @@ public class Tile : MonoBehaviour {
 			rend.color = Color.Lerp(Color.grey, Color.black, .5F);
 		}
 
-		zombies = new List<Zombie>();
+//		GameObject obj = new GameObject();
+//		obj.transform.parent = transform;
+//		obj.transform.localPosition = Vector3.zero;
+//		gasRend = obj.AddComponent<SpriteRenderer>();
+//		gasRend.sortingOrder = 1;
+//		gasRend.sprite = Resources.Load<Sprite>("Sprites/Box");
+//		col = Color.green;
+//		col.a = 0f;
+//		gasRend.color = col;
+//
+//		GameObject fogObj = new GameObject();
+//		fogObj.transform.parent = transform;
+//		fogObj.transform.localPosition = Vector3.zero;
+//		fogObj.name = "Fog";
+//		fogRend = fogObj.AddComponent<SpriteRenderer>();
+//		fogRend.sprite = Resources.Load<Sprite>("Sprites/Box");
+//		fogRend.color = Color.white;
+//		fogRend.sortingLayerName = "Foreground";
+//		fogRend.sortingOrder = 3;
+
+		zombies = new List<Guard>();
 		survivors = new List<Survivor>();
 
+//		visited = false;
 		containsLaser = false;
 		visible = false;
 		needToCheckVisibility = true;
 	}
+
+//	public void setColor() {
+//		rend.color = Color.green;
+//	}
 	
 	// Update is called once per frame
 	public virtual void Update() {
 		if (needToCheckVisibility) {
 			bool foundZombie = false;
-			foreach (Tile t in getNxNArea(Zombie.tileViewDistance * 2)) {
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
 				ControlPoint cp = t as ControlPoint;
 				if (t.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie)) {
 					foundZombie = true;
@@ -86,8 +111,34 @@ public class Tile : MonoBehaviour {
 				}
 			}
 			setVisibility(foundZombie);
+//			setVisibility(true);
+//			if (foundZombie && !visited) {
+//				Destroy(fogRend.gameObject);
+//				visited = true;
+//			}
 			needToCheckVisibility = false;
 		}
+
+
+//		if (flammable) {
+//			checkForFire();
+//		}
+//		if (isPassable()) {
+////			checkForGas();
+////			col = Color.green;
+////			//TODO we are capping ALPHA VALUE not GAS PER TILE come back to this later and think more
+////			col.a = Mathf.Min(gas, 0.25f);
+////			gasRend.color = col;
+//			//TODO if a tile was previously inflammable and now has gas on it. That tile should become flammable. 
+//		}
+//		if (fire >= 1) {
+//			fireTimer += Time.deltaTime;
+//			rend.color = Color.red;
+//			if (fireTimer > TimeBeforeSpread) {
+//				fire = Mathf.Max(2, fire);
+//
+//			}
+//		}
 	}
 
 	public virtual bool isPassable() {
@@ -97,6 +148,19 @@ public class Tile : MonoBehaviour {
 	public void setPassable(bool value){
 		passable = value;
 	}
+
+//	public virtual void applyFanForce(string direc, int fanPosX, int fanPosY) {
+//		fanEffect = true;
+//		fanDirec = direc;
+//		flammable = false;
+//		this.fanPosX = fanPosX;
+//		this.fanPosY = fanPosY;
+//	}
+
+//	public virtual void removeFanForce() {
+//		fanEffect = false;
+//		flammable = true;
+//	}
 
 	public Tile[] getNeighbors() {
 		List<Tile> neighbors = new List<Tile>();
@@ -110,6 +174,35 @@ public class Tile : MonoBehaviour {
 				}
 			}
 		}
+		//Remove all neighbors effected by fan
+//		foreach(Tile neighbor in neighbors){
+//			if (fanEffect) {
+//				switch (fanDirec) {
+//					case "E":
+//						if (neighbor.posX < posX) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "S":
+//						if (neighbor.posY > posY) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "W":
+//						if (neighbor.posX > posX) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//					case "N":
+//						if (neighbor.posY < posY) {
+//							neighbors.Remove(neighbor);
+//						}
+//						break;
+//				}
+//			}
+//		}
+
+
 		return neighbors.ToArray();
 	}
 
@@ -141,25 +234,43 @@ public class Tile : MonoBehaviour {
 		return result.ToArray();
 	}
 
-	public void addZombie(Zombie z) {
+//	void checkForFire() {
+//		//if one of the neighbors is burning then start burning
+//		Tile[] Neighbors = getNeighbors();
+//		foreach (Tile neighbor in Neighbors) {
+//			
+//			if (neighbor.fire >= 2) {
+//				if (gas >= 0) {
+//					fire = Mathf.Max(fire, 1);
+//					fire = Mathf.Min(Mathf.Max(fire, (gas * 10) * fire), 3);
+//					gas = 0;
+//				}
+//				else {
+//					fire = Mathf.Max(fire, 1);
+//				}
+//			}
+//		}
+//	}
+
+	public void addZombie(Guard z) {
 		if (zombies.Count == 0) {
-			foreach (Tile t in getNxNArea(Zombie.tileViewDistance * 2)) {
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
 				t.checkVisibility();
 			}
 		}
 		zombies.Add(z);
 	}
 
-	public void removeZombie(Zombie z) {
+	public void removeZombie(Guard z) {
 		zombies.Remove(z);
 		if (zombies.Count == 0) {
-			foreach (Tile t in getNxNArea(Zombie.tileViewDistance * 2)) {
+			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
 				t.checkVisibility();
 			}
 		}
 	}
 
-	public List<Zombie> getZombieList() {
+	public List<Guard> getZombieList() {
 		return zombies;
 	}
 

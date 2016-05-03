@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class GameManager : MonoBehaviour {
-	List<Zombie> zombieList;
+	List<Guard> zombieList;
 	List<Tile> emptyTileList;
 	List<Survivor> survivorList;
 	Tile[] zombieSpawn, survivorSpawn;
@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour {
 
 		audioCtrl = new GameObject().AddComponent<AudioControl>();
 
-		zombieList = new List<Zombie>();
+		zombieList = new List<Guard>();
 		emptyTileList = new List<Tile>();
 
 		survivorSpawnProgress = 0;
@@ -309,12 +309,12 @@ public class GameManager : MonoBehaviour {
 		return results;
 	}
 
-	public void moveTo(List<Zombie> guards, Vector2 point, bool shouldOverwrite, bool attackSurvivors) {
+	public void moveTo(List<Guard> guards, Vector2 point, bool shouldOverwrite, bool attackSurvivors) {
 		setTargetTile(getClosestEmptyTile(point));
 		Tile mouseTile = getClosestTile(point);
 		int split = 12;
 
-		foreach (Zombie g in guards) {
+		foreach (Guard g in guards) {
 			//print(findPathToTarget(g.tile).Count);
 			Vector2 startPoint = g.transform.position;
 			if (!shouldOverwrite && g.isPathing()) {
@@ -420,7 +420,7 @@ public class GameManager : MonoBehaviour {
 		return controlPointList[Random.Range(0, controlPointList.Count())];
 	}
 
-	public List<Zombie> getZombieList() {
+	public List<Guard> getZombieList() {
 		return zombieList;
 	}
 
@@ -440,7 +440,7 @@ public class GameManager : MonoBehaviour {
 		survivorSpawnInterval = (survivorSpawnInterval * baseSurvivorSpawnInterval) / (baseSurvivorSpawnInterval + percent * survivorSpawnInterval);
 	}
 
-	public void removeZombie(Zombie g) {
+	public void removeZombie(Guard g) {
 		zombieCtrl.removeZombie(g);
 		zombieList.Remove(g);
 		g.tile.removeZombie(g);
@@ -720,7 +720,7 @@ public class GameManager : MonoBehaviour {
 	public void addGuard(int x, int y) {
 		GameObject guardObj = new GameObject();
 		guardObj.name = "Guard";
-		Zombie guard = guardObj.AddComponent<Zombie>();
+		Guard guard = guardObj.AddComponent<Guard>();
 		guard.init(getTile(x, y), this, maxZombiePriority++);
 		guard.transform.parent = guardFolder.transform;
 		zombieList.Add(guard);
