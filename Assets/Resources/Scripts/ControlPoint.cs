@@ -12,27 +12,42 @@ public class ControlPoint : Tile {
 	float controlState;
 	float spawnClock;
 	public Owner currentOwner;
+	GameObject alertRing;
+	SpriteRenderer ringRend;
+	float ringFlashTimer = 0;
 
 	public enum Owner {
 		Zombie,
 		Unclaimed,
 		Survivor}
 	;
+
 	SurvivorControl sc;
 
 	public const float zombieClaimPerSecond = 1f / 30f;
 	public const float survivorClaimPerSecond = 1f / 10f;
-	public const float revertClaimPerSecond = 1f/20f;
+	public const float revertClaimPerSecond = 1f / 20f;
 
-	public void init (int x, int y, GameManager gm, SurvivorControl control) {
+	public void init(int x, int y, GameManager gm, SurvivorControl control) {
 		incomingSurvivorList = new List<Survivor>();
 		survivorCount = 0;
 		zombieCount = 0;
 		turretSpawnClock = 0;
 		base.init(x, y, gm, 0, 0, true);
 		currentOwner = Owner.Unclaimed;
+//		currentOwner = Owner.Survivor;
 		controlState = 0;
 		sc = control;
+
+		alertRing = new GameObject();
+		alertRing.transform.parent = transform;
+		alertRing.transform.localPosition = Vector3.zero;
+		alertRing.transform.localScale = Vector3.one * 2;
+		ringRend = alertRing.AddComponent<SpriteRenderer>();
+		ringRend.sprite = Resources.Load<Sprite>("Sprites/Ring");
+		ringRend.color = Color.red;
+		ringRend.sortingLayerName = "Foreground";
+		alertRing.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -40,6 +55,8 @@ public class ControlPoint : Tile {
 		//base.Update();
 		survivorCount = getSurvivorList().Count;
 		zombieCount = getZombieList().Count;
+
+		bool contested = false;
 		if (survivorCount == 0 && zombieCount == 0) {
 			switch (currentOwner) {
 				case Owner.Zombie:
@@ -108,15 +125,30 @@ public class ControlPoint : Tile {
 						currentOwner = Owner.Survivor;
 						gm.modifySurvivorSpawnRate(.1f);
 						spawnClock = 0f;
+						alertRing.SetActive(false);
 					}
 					else if (controlState >= 0) {
 						currentOwner = Owner.Unclaimed;
+						alertRing.SetActive(false);
+					}
+					else {
+						// control point is being contested!
+
+						contested = true;
 					}
 					if (oldOwner == Owner.Zombie && oldOwner != currentOwner) {
 						gm.modifyZombieSpawnRate(-.1f);
 					}
 				}
 			}
+		}
+		if (contested) {
+			alertRing.SetActive(true);
+			ringRend.color = Color.Lerp(Color.white, Color.red, Mathf.Sin(ringFlashTimer * 2 * Mathf.PI) / 2 + .5f);
+			ringFlashTimer += Time.deltaTime;
+		}
+		else {
+			alertRing.SetActive(false);
 		}
 		if (controlState > 0) {
 			rend.color = Color.Lerp(Color.white, Color.blue, controlState);
@@ -129,7 +161,7 @@ public class ControlPoint : Tile {
 		if (controlState >= 1) {
 			turretSpawnClock += Time.deltaTime;
 			if (turretSpawnClock >= turretSpawnRate && remainingTurrets > 0) {
-				spawnTurret ();
+				spawnTurret();
 			}
 		}
 	}
@@ -161,11 +193,11 @@ public class ControlPoint : Tile {
 	public List<Survivor> getIncomingSurvivors() {
 		return incomingSurvivorList;
 	}
-
-	public void spawnTurret(){
-		Tile[] area = getNxNEmptyTiles (5, false);
-		Tile turret = area [Random.Range (0, area.Length)];
-		gm.addTurret (turret.posX, turret.posY);
+ 	void spawnTurret() {
+		Tile[] area = getNxNEmptyTiles(5, false);
+		Tile turret = area[Random.Range(0, area.Length)];
+		print("Spawning Turret!!");
+		gm.addTurret(turret.posX, turret.posY);
 		turretSpawnClock = 0;
 		remainingTurrets = remainingTurrets - 1;
 	}

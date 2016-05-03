@@ -70,9 +70,12 @@ public class SurvivorControl : MonoBehaviour {
 				}
 			}
 			if (maxSourceIndex != 0 || maxDestIndex != 0) {
-				sendReinforcements(controlPoints[maxSourceIndex], controlPoints[maxDestIndex]);
-				numAssigned[maxSourceIndex]--;
-				numAssigned[maxDestIndex]++;
+				sendReinforcements (controlPoints [maxSourceIndex], controlPoints [maxDestIndex]);
+				numAssigned [maxSourceIndex]--;
+				numAssigned [maxDestIndex]++;
+			} 
+			else {
+				canSendSurvivors = false;
 			}
 //			int minSecurityIndex = 0;
 //			int maxSecurityIndex = 0;
@@ -110,7 +113,7 @@ public class SurvivorControl : MonoBehaviour {
 	}
 
 	public void sendReinforcements(ControlPoint source, ControlPoint dest){
-		// print("Sending reinforcements from " + source.transform.position + " to " + dest.transform.position);
+//		print("Sending reinforcements from " + source.transform.position + " to " + dest.transform.position);
 		List<Survivor> survivors = source.getIncomingSurvivors();
 		Survivor closestSurvivor = null;
 		float minDist = float.MaxValue;

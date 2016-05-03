@@ -35,7 +35,7 @@ public class Survivor : Person {
 		gameObject.layer = LayerMask.NameToLayer("Survivor");
 		gameObject.tag = "Survivor";
 
-		shotTimer = 0; 
+		shotTimer = 0;
 		shotFrequency = .6f;
 		shotDuration = .05f;
 		health = 100;
@@ -43,7 +43,7 @@ public class Survivor : Person {
 		rotationSpeed = .1F;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
-		rend.sprite = Resources.Load<Sprite>("Sprites/Guard");
+		rend.sprite = Resources.Load<Sprite>("Sprites/Survivor");
 		rend.color = Color.blue;
 //		rend.sortingLayerName = "UI";
 		rend.sortingOrder = 1;
@@ -62,12 +62,12 @@ public class Survivor : Person {
 		//endTile = m.getTile(4, 6);
 //		patrolDirection = 0;
 		//		targetPositions = gm.getPath(tile, endTile);
-		setDestination(gm.getControlPoints()[gm.findQuadrant(t) - 1]);
+		setDestination(gm.getControlPoints()[Random.Range(0, 4)]);
 //		targetPositions = new List<Vector2>();
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 2f;
-		aimDirection = direction;
+		aimDirection = Vector2.left;
 	}
 
 	// Update is called once per frame
@@ -167,6 +167,7 @@ public class Survivor : Person {
 				targetPositions.Add(oldTile.transform.position);
 			}
 		}
+		transform.eulerAngles = new Vector3(0, 0, Mathf.Rad2Deg * Mathf.Atan2(aimDirection.y, aimDirection.x));
 		shotTimer += Time.deltaTime;
 	}
 

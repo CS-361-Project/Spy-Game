@@ -6,7 +6,7 @@ using System.Linq;
 
 public class GameManager : MonoBehaviour {
 	List<Guard> zombieList;
-	List<Tile> tileList;
+	List<Tile> emptyTileList;
 	List<Survivor> survivorList;
 	Tile[] zombieSpawn, survivorSpawn;
 
@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour {
 		audioCtrl = new GameObject().AddComponent<AudioControl>();
 
 		zombieList = new List<Guard>();
-		tileList = new List<Tile>();
+		emptyTileList = new List<Tile>();
 
 		survivorSpawnProgress = 0;
 		zombieSpawnProgress = 0;
@@ -203,41 +203,10 @@ public class GameManager : MonoBehaviour {
 
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[4];
-		for (int i = 0; i < 4; i++) {
-			hubs[i] = getRandomEmptyTile();
-		}
-//		while (!(quad1 && quad2 && quad3 && quad4)) {
-//			Tile hub = getRandomEmptyTile();
-//			switch (findQuadrant(hub)) {
-//				case 0:
-//					print("invalid tile");
-//					break;
-//				case 1:
-//					if (!quad1) {
-//						hubs[0] = hub;
-//						quad1 = true;
-//					}
-//					break;
-//				case 2:
-//					if (!quad2) {
-//						hubs[1] = hub;
-//						quad2 = true;
-//					}
-//					break;
-//				case 3:
-//					if (!quad3) {
-//						hubs[2] = hub;
-//						quad3 = true;
-//					}
-//					break;
-//				case 4:
-//					if (!quad4) {
-//						hubs[3] = hub;
-//						quad4 = true;
-//					}
-//					break;
-//			}
-//		}
+		hubs[0] = getClosestEmptyTile(new Vector2(Random.Range(0, width/2), Random.Range(height/2, height)));
+		hubs[1] = getClosestEmptyTile(new Vector2(Random.Range(width/2, width), Random.Range(height/2, height)));
+		hubs[2] = getClosestEmptyTile(new Vector2(Random.Range(0, width/2), Random.Range(0, height/2)));
+		hubs[3] = getClosestEmptyTile(new Vector2(Random.Range(width/2, width), Random.Range(0, height/2)));
 		int k = 0;
 		foreach (Tile hub in hubs) {
 			GameObject pointObj = new GameObject();
@@ -246,16 +215,13 @@ public class GameManager : MonoBehaviour {
 			point.transform.position = new Vector3(hub.posX, hub.posY, 0);
 			board[hub.posX, hub.posY] = point;
 			controlPointList[k++] = point;
-			tileList.Remove(hub);
-			tileList.Add(point);
+			emptyTileList.Remove(hub);
+			emptyTileList.Add(point);
 			Destroy(hub.gameObject);
 		}
 
 		spawnZombies(100);
 		spawnSurvivors(20);
-//		foreach (Survivor s in survivorList) {
-//			s.setDestination(controlPointList[findQuadrant(s.tile) - 1]);
-//		}
 	}
 
 
@@ -343,7 +309,7 @@ public class GameManager : MonoBehaviour {
 		return results;
 	}
 
-	public void moveTo(List<Guard> guards, Vector2 point, bool shouldOverwrite) {
+	public void moveTo(List<Guard> guards, Vector2 point, bool shouldOverwrite, bool attackSurvivors) {
 		setTargetTile(getClosestEmptyTile(point));
 		Tile mouseTile = getClosestTile(point);
 		int split = 12;
@@ -373,22 +339,25 @@ public class GameManager : MonoBehaviour {
 			if (!foundCut) {
 				//print("Doing this");
 				//List<Vector2> points = pathToPoints(findPathToTarget(g.tile));
-				if (shouldOverwrite)
+				if (shouldOverwrite) {
 					g.targetPositions = splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))), 10);
-				else
+				}
+				else {
 					g.targetPositions.AddRange(splitOptPath(pathToPoints(findPathToTarget(getClosestTile(startPoint))), 10));
+				}
 				g.tile.pathToTarget = g.targetPositions;
 			}
 			if (g.targetPositions.Count > 0) {
 				g.direction = g.targetPositions[0] - (Vector2)g.transform.position;
 				g.targetPositions.RemoveAt(g.targetPositions.Count - 1);
-				g.targetPositions.Add(point);
 			}
+			g.targetPositions.Add(point);
 			//misc guard stuff
 			if (shouldOverwrite || (g.chasingSurvivor && g.targetPositions.Count < 2)) {
-				g.startTimer();
+//				g.startTimer();
 				g.chasingSurvivor = false;
 			}
+			g.setIgnoreSurvivors (!attackSurvivors);
 		}
 	}
 
@@ -444,7 +413,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public Tile getRandomEmptyTile() {
-		return tileList[Random.Range(0, tileList.Count)];
+		return emptyTileList[Random.Range(0, emptyTileList.Count)];
 	}
 
 	public Tile getRandomControlPoint() {
@@ -707,7 +676,7 @@ public class GameManager : MonoBehaviour {
 		tile.init(x, y, this, fire, 0, true);
 		tile.transform.localPosition = new Vector3(x, y, 0);
 		tile.transform.parent = tileFolder.transform;
-		tileList.Add(tile);
+		emptyTileList.Add(tile);
 		return tile;
 	}
 
