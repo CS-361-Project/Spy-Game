@@ -16,6 +16,8 @@ public class ControlPoint : Tile {
 	SpriteRenderer ringRend;
 	float ringFlashTimer = 0;
 
+	AudioSource source;
+
 	public enum Owner {
 		Zombie,
 		Unclaimed,
@@ -29,6 +31,8 @@ public class ControlPoint : Tile {
 	public const float revertClaimPerSecond = 1f / 20f;
 
 	public void init(int x, int y, GameManager gm, SurvivorControl control) {
+		source = gameObject.AddComponent<AudioSource>();
+
 		incomingSurvivorList = new List<Survivor>();
 		survivorCount = 0;
 		zombieCount = 0;
@@ -58,6 +62,7 @@ public class ControlPoint : Tile {
 
 		bool contested = false;
 		if (survivorCount == 0 && zombieCount == 0) {
+			
 			switch (currentOwner) {
 				case Owner.Zombie:
 					if (controlState > -1) {
@@ -94,12 +99,22 @@ public class ControlPoint : Tile {
 		else if (survivorCount == 0) {
 			if (zombieCount > 0) {
 				if (currentOwner != Owner.Zombie) {
-					if (!gm.audioCtrl.getSource().isPlaying) {
-						gm.audioCtrl.playClip((int)AudioControl.clips.zombieHoard);
-					}
 					Owner oldOwner = currentOwner;
 					controlState -= zombieCount * zombieClaimPerSecond * gm.gameSpeed * Time.deltaTime;
 					if (controlState <= -1) {
+						if (!source.isPlaying) {
+							switch (Random.Range(0, 2)) {
+								case 0:
+									gm.audioCtrl.playClip((int)AudioControl.clips.zombieCheer1, source);
+									break;
+								case 1:
+									gm.audioCtrl.playClip((int)AudioControl.clips.zombieCheer2, source);
+									break;
+								default:
+									print("what");
+									break;
+							}
+						}
 						controlState = -1;
 						currentOwner = Owner.Zombie;
 						//HEY I THINK there is a issue with our calls to modify spawn rates, we never positibly modify the survivor spawn rate?
@@ -121,6 +136,12 @@ public class ControlPoint : Tile {
 					Owner oldOwner = currentOwner;
 					controlState += survivorCount * survivorClaimPerSecond * gm.gameSpeed * Time.deltaTime;
 					if (controlState >= 1) {
+						if (source.isPlaying) {
+							source.Stop();
+						}
+						captureSound();
+
+
 						controlState = 1;
 						currentOwner = Owner.Survivor;
 						gm.modifySurvivorSpawnRate(.1f);
@@ -143,6 +164,9 @@ public class ControlPoint : Tile {
 			}
 		}
 		if (contested) {
+			if (!source.isPlaying){
+				gm.audioCtrl.playSurvivorClip(Random.Range(0, gm.audioCtrl.getSurvivorSounds().Length), source);
+			}
 			alertRing.SetActive(true);
 			ringRend.color = Color.Lerp(Color.white, Color.red, Mathf.Sin(ringFlashTimer * 2 * Mathf.PI) / 2 + .5f);
 			ringFlashTimer += Time.deltaTime;
@@ -163,6 +187,23 @@ public class ControlPoint : Tile {
 			if (turretSpawnClock >= turretSpawnRate && remainingTurrets > 0) {
 				spawnTurret();
 			}
+		}
+	}
+
+	void captureSound(){
+		switch(Random.Range(0,3)){
+			case 0:
+				gm.audioCtrl.playClip((int)AudioControl.clips.captureSound1, source);
+				break;
+			case 1:
+				gm.audioCtrl.playClip((int)AudioControl.clips.captureSound2, source);
+				break;
+			case 2:
+				gm.audioCtrl.playClip((int)AudioControl.clips.captureSound3, source);
+				break;
+			default:
+				print("NO");
+				break;
 		}
 	}
 
@@ -196,7 +237,6 @@ public class ControlPoint : Tile {
  	void spawnTurret() {
 		Tile[] area = getNxNEmptyTiles(5, false);
 		Tile turret = area[Random.Range(0, area.Length)];
-		print("Spawning Turret!!");
 		gm.addTurret(turret.posX, turret.posY);
 		turretSpawnClock = 0;
 		remainingTurrets = remainingTurrets - 1;

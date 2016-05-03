@@ -88,27 +88,30 @@ public class ZombieControl : MonoBehaviour {
 			roar();
 
 		}
-		if (attackSurvivors) {
-			Cursor.visible = false;
-			cursorRend.enabled = true;
-		} else {
-			Cursor.visible = true;
-			cursorRend.enabled = false;
-		}
 
+		if (selection.Count != 0) {
+			if (!gm.audioCtrl.getPointSource().isPlaying) {
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieHoard, gm.audioCtrl.getPointSource());
+			}
+		}
+		else {
+			if (gm.audioCtrl.getPointSource().isPlaying) {
+				gm.audioCtrl.getPointSource().Stop();
+			}
+		}
 	}
 
 	void roar(){
-		int rand = Random.Range(0, 2);
+		int rand = Random.Range(0, 3);
 		switch (rand) {
 			case 0:
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar1);
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar1, gm.audioCtrl.getClickSource());
 				break;
 			case 1: 
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar2);
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar2, gm.audioCtrl.getClickSource());
 				break;
 			case 2:
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar3);
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar3, gm.audioCtrl.getClickSource());
 				break;
 			default:
 				print("huh? this shouldn't happen.");

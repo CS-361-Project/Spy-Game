@@ -24,6 +24,8 @@ public class Survivor : Person {
 	Tile startTile, endTile;
 	[SerializeField]
 	int patrolDirection;
+
+	AudioSource source;
 	// Use this for initialization
 	public void init(Tile t, GameManager m, int priority) {
 		base.init(t, m);
@@ -34,6 +36,8 @@ public class Survivor : Person {
 
 		gameObject.layer = LayerMask.NameToLayer("Survivor");
 		gameObject.tag = "Survivor";
+
+		source = gameObject.AddComponent<AudioSource>();
 
 		shotTimer = 0;
 		shotFrequency = .6f;
@@ -192,12 +196,45 @@ public class Survivor : Person {
 	public virtual void damage(int damage) {
 		health -= damage;
 		if (health <= 0) {
+			deathSound();
 			gm.removeSurvivor(this);
 			Destroy(gameObject);
+
+		}
+	}
+
+	void deathSound(){
+		if (source.isPlaying) {
+			source.Stop();
+		}
+		int rand = Random.Range(0, 5);
+		switch(rand){
+			case 0:
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death1, gm.audioCtrl.getPointSource());
+				break;
+			case 1:					
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death2, gm.audioCtrl.getPointSource());
+				break;
+			case 2:
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death3, gm.audioCtrl.getPointSource());
+				break;
+			case 3:
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death4, gm.audioCtrl.getPointSource());
+				break;
+			case 4:
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death5, gm.audioCtrl.getPointSource());
+				break;
+			default:
+				print("NO" + rand);
+				break;
 		}
 	}
 
 	public virtual void shootAt(Vector2 pos) {
+		if (!source.isPlaying) {
+			shootSound();
+		}
+
 		bulletObj.SetActive(true);
 		shotTimer = 0f;
 
@@ -216,6 +253,20 @@ public class Survivor : Person {
 			if (zomb != null) {
 				zomb.onObjectShot(Random.Range(40, 61));
 			}
+		}
+	}
+
+	void shootSound(){
+		switch(Random.Range(0,2)){
+			case 0:
+				gm.audioCtrl.playClip((int)AudioControl.clips.gunFire1, source);
+				break;
+			case 1:
+				gm.audioCtrl.playClip((int)AudioControl.clips.gunFire2, source);
+				break;
+			default:
+				print("NO");
+				break;
 		}
 	}
 

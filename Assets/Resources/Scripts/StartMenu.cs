@@ -37,7 +37,6 @@ public class StartMenu : MonoBehaviour {
 
 
 	public void ExitPressed() {
-		print("Exit Pressed");
 		exitMessage.gameObject.SetActive(true);
 		yesQuit.gameObject.SetActive (true);
 		noQuit.gameObject.SetActive (true);
@@ -48,7 +47,6 @@ public class StartMenu : MonoBehaviour {
 	}
 
 	public void NoPressed() {
-		print("No pressed");
 		exitMessage.gameObject.SetActive(false);
 		yesQuit.gameObject.SetActive (false);
 		noQuit.gameObject.SetActive (false);
@@ -58,7 +56,6 @@ public class StartMenu : MonoBehaviour {
 	}
 
 	public void StartGame() {
-		print("start pressed");
 		SceneManager.LoadScene("TestRoom");
 	}
 
