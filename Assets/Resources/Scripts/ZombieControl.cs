@@ -99,6 +99,13 @@ public class ZombieControl : MonoBehaviour {
 				gm.audioCtrl.getPointSource().Stop();
 			}
 		}
+		if (attackSurvivors) {
+			Cursor.visible = false;
+			cursorRend.enabled = true;
+		} else {
+			Cursor.visible = true;
+			cursorRend.enabled = false;
+		}
 	}
 
 	void roar(){
