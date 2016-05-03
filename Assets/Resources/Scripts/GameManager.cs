@@ -7,7 +7,7 @@ using System.Linq;
 public class GameManager : MonoBehaviour {
 	List<Guard> zombieList;
 	List<Tile> emptyTileList;
-	List<Survivor> survivorList;
+	List<Survivor> enemyList, survivorList;
 	Tile[] zombieSpawn, survivorSpawn;
 
 	float zombieSpawnProgress, survivorSpawnProgress;
@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour {
 	int finishX = 0;
 	int finishY = 0;
 
+	int startZombies, startSurvivors;
+
 	ZombieControl zombieCtrl;
 	SurvivorControl survivorCtrl;
 	public AudioControl audioCtrl;
@@ -38,9 +40,10 @@ public class GameManager : MonoBehaviour {
 
 	public AudioSource audioSource;
 	public AudioClip defeatScreen;
+	int numControlPoints = 6;
 
-	GameObject cursor;
-	SpriteRenderer cursorRend;
+//	GameObject cursor;
+//	SpriteRenderer cursorRend;
 
 	public enum GameState {
 		Playing,
@@ -62,16 +65,16 @@ public class GameManager : MonoBehaviour {
 		gameSpeed = 1f;
 
 		//Set up Cursor
-		Cursor.visible = false;
-		cursor = new GameObject();
-		cursorRend = cursor.AddComponent<SpriteRenderer>();
-		cursorRend.sprite = Resources.Load<Sprite>("Sprites/Mouse");
-		cursorRend.sortingLayerName = "UI";
-		cursorRend.sortingOrder = 4;
-		cursor.layer = LayerMask.NameToLayer("Mouse");
-		cursorRend.color = Color.red;
-
-		cursor.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+//		Cursor.visible = false;
+//		cursor = new GameObject();
+//		cursorRend = cursor.AddComponent<SpriteRenderer>();
+//		cursorRend.sprite = Resources.Load<Sprite>("Sprites/Mouse");
+//		cursorRend.sortingLayerName = "UI";
+//		cursorRend.sortingOrder = 4;
+//		cursor.layer = LayerMask.NameToLayer("Mouse");
+//		cursorRend.color = Color.red;
+//
+//		cursor.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
 
 		maxZombiePriority = 0;
@@ -95,17 +98,21 @@ public class GameManager : MonoBehaviour {
 		survivorSpawnProgress = 0;
 		zombieSpawnProgress = 0;
 
-		baseSurvivorSpawnInterval = 15;
+		startZombies = 100;
+		startSurvivors = 25;
+
+		baseSurvivorSpawnInterval = 12;
 		baseZombieSpawnInterval = 3;
 		survivorSpawnInterval = baseSurvivorSpawnInterval;
 		zombieSpawnInterval = baseZombieSpawnInterval;
 
-		controlPointList = new ControlPoint[4];
+		controlPointList = new ControlPoint[numControlPoints];
 		quad1 = false;
 		quad2 = false;
 		quad3 = false;
 		quad4 = false;
 
+		enemyList = new List<Survivor>();
 		survivorList = new List<Survivor>();
 
 		wallFolder = new GameObject();
@@ -114,8 +121,10 @@ public class GameManager : MonoBehaviour {
 		tileFolder.name = "Tiles";
 		guardFolder = new GameObject();
 		guardFolder.name = "Guards";
+
+		setDifficulty(2);
 		generateLevel(width, height);
-		survivorCtrl.init(this);
+		survivorCtrl.init(this, numControlPoints);
 		zombieCtrl.init(this);
 		audioCtrl.init(this);
 
@@ -129,9 +138,9 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		cursor.transform.position = mousePos;
-		cursorRend.transform.localScale = new Vector3(1,1,1) *  Camera.main.orthographicSize * .02f;
+//		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+//		cursor.transform.position = mousePos;
+//		cursorRend.transform.localScale = new Vector3(1,1,1) *  Camera.main.orthographicSize * .02f;
 
 		if (Input.GetKeyDown(KeyCode.R)) {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -154,7 +163,7 @@ public class GameManager : MonoBehaviour {
 				ControlPoint.Owner owner = controlPointList[0].currentOwner;
 				if (owner != ControlPoint.Owner.Unclaimed) {
 					bool allPointsCaptured = true;
-					for (int i = 1; i < 4; i++) {
+					for (int i = 1; i < numControlPoints; i++) {
 						if (controlPointList[i].currentOwner != owner) {
 							allPointsCaptured = false;
 							break;
@@ -165,7 +174,7 @@ public class GameManager : MonoBehaviour {
 						if (owner == ControlPoint.Owner.Survivor) {
 							loseScreen.SetActive(true);
 						}
-						else if (survivorList.Count == 0) {
+						else if (enemyList.Count == 0) {
 							winScreen.SetActive(true);
 							state = GameState.Victory;
 						}
@@ -191,15 +200,20 @@ public class GameManager : MonoBehaviour {
 		float ySeed1 = Random.Range(-9999f, 9999f);
 		float ySeed2 = Random.Range(-9999f, 9999f);
 		branch(1, height / 2, 1, 0, xSeed1, ySeed1);
-		branch(width, height / 2, -1, 0, xSeed2, ySeed2);
+		branch(width - 2, height / 2, -1, 0, xSeed2, ySeed2);
 //		branch(width / 2, 1, 0, 1, xSeed2, ySeed2);
 
 		int spawnTiles = 0;
 		foreach (int x in Enumerable.Range(1, 2)) {
-			foreach (int y in Enumerable.Range(width/2 - 2, 5)) {
-				board[x, y] = addTile(x, y, 0, false);
+			foreach (int y in Enumerable.Range(height/2 - 2, 5)) {
+				if (board[x, y] == null) {
+					board[x, y] = addTile(x, y, 0, false);
+				}
+				if (board[width - x - 1, y] == null) {
+					board[width - x - 1, y] = addTile(width - x - 1, y, 0, false);
+				}
+
 				zombieSpawn[spawnTiles] = board[x, y];
-				board[width - x - 1, y] = addTile(width - x - 1, y, 0, false);
 				survivorSpawn[spawnTiles] = board[width - x - 1, y];
 				spawnTiles++;
 			}
@@ -222,11 +236,13 @@ public class GameManager : MonoBehaviour {
 		}
 
 		int numCtrlPointsFound = 0;
-		Tile[] hubs = new Tile[4];
+		Tile[] hubs = new Tile[numControlPoints];
 		hubs[0] = getClosestEmptyTile(new Vector2(Random.Range(0, width/2), Random.Range(height/2, height)));
 		hubs[1] = getClosestEmptyTile(new Vector2(Random.Range(width/2, width), Random.Range(height/2, height)));
 		hubs[2] = getClosestEmptyTile(new Vector2(Random.Range(0, width/2), Random.Range(0, height/2)));
 		hubs[3] = getClosestEmptyTile(new Vector2(Random.Range(width/2, width), Random.Range(0, height/2)));
+		hubs[4] = getRandomEmptyTile();
+		hubs[5] = getRandomEmptyTile();
 		int k = 0;
 		foreach (Tile hub in hubs) {
 			GameObject pointObj = new GameObject();
@@ -240,12 +256,44 @@ public class GameManager : MonoBehaviour {
 			Destroy(hub.gameObject);
 		}
 
-		spawnZombies(100);
-		spawnSurvivors(20);
+		spawnZombies(startZombies);
+		spawnSurvivors(startSurvivors);
 	}
 
-
-	
+	public void setDifficulty(int level) {
+		switch (level) {
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				numControlPoints = 6;
+				baseSurvivorSpawnInterval = 10;
+				baseZombieSpawnInterval = 3;
+				Survivor.setDamageRange(40, 65);
+				Survivor.setShotInterval(.55f);
+				Turret.setTurretDamageRange(66, 81);
+				Turret.setTurretShotInterval(.05f);
+				Turret.setShootingTime(3f);
+				startZombies = 100;
+				startSurvivors = 25;
+				break;
+			default:
+				numControlPoints = 6;
+				baseSurvivorSpawnInterval = 12;
+				baseZombieSpawnInterval = 3;
+				Survivor.setDamageRange(30, 55);
+				Survivor.setShotInterval(.55f);
+				Turret.setTurretDamageRange(66, 81);
+				Turret.setTurretShotInterval(.05f);
+				Turret.setShootingTime(3f);
+				startZombies = 100;
+				startSurvivors = 25;
+				break;
+		}
+		survivorSpawnInterval = baseSurvivorSpawnInterval;
+		zombieSpawnInterval = baseZombieSpawnInterval;
+	}
 
 	public int findQuadrant(Tile hub) {
 		int x = hub.posX;
@@ -444,6 +492,10 @@ public class GameManager : MonoBehaviour {
 		return zombieList;
 	}
 
+	public List<Survivor> getEnemyList() {
+		return enemyList;
+	}
+
 	public List<Survivor> getSurvivorList() {
 		return survivorList;
 	}
@@ -467,6 +519,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void removeSurvivor(Survivor s) {
+		enemyList.Remove(s);
 		survivorList.Remove(s);
 		if (s.getDestination() != null) {
 			s.getDestination().removeIncomingSurvivor(s);
@@ -676,12 +729,24 @@ public class GameManager : MonoBehaviour {
 
 	public void spawnSurvivors(int n) {
 		int numTiles = survivorSpawn.Count();
-		for (int i = 0; i < n; i++) {
-			Tile spawnTile = survivorSpawn[Random.Range(0, numTiles)];
-			addSurvivor(spawnTile.posX, spawnTile.posY);
-			//addTurret(spawnTile.posX, spawnTile.posY);
+		int index = 0;
+		ControlPoint[] survivorControlPoints = new ControlPoint[numControlPoints];
+		if (Random.Range(0f,1f) >= .5f) {
+			foreach (ControlPoint cp in controlPointList) {
+				if (cp.currentOwner == ControlPoint.Owner.Survivor) {
+					survivorControlPoints[index] = cp;
+					index++;
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < n; i++) {
+				Tile spawnTile = survivorSpawn[Random.Range(0, numTiles)];
+				addSurvivor(spawnTile.posX, spawnTile.posY);
+			}
 		}
 	}
+
 
 	public void spawnZombies(int n) {
 		int numTiles = zombieSpawn.Count();
@@ -727,6 +792,7 @@ public class GameManager : MonoBehaviour {
 		if (controlPointList[0] != null) {
 			surv.setDestination(controlPointList[findQuadrant(getTile(x, y)) - 1]);
 		}
+		enemyList.Add(surv);
 		survivorList.Add(surv);
 	}
 
@@ -735,6 +801,7 @@ public class GameManager : MonoBehaviour {
 		turrObj.name = "Turret";
 		Turret turr = turrObj.AddComponent<Turret>();
 		turr.init(getTile(x, y), this, int.MaxValue);
+		enemyList.Add(turr);
 	}
 		
 	// register each guard to be notified when a fan is toggled

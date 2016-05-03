@@ -2,11 +2,15 @@
 using System.Collections;
 
 public class Turret : Survivor {
-	float targetAngle;
+	Vector2 targetAimDirection;
 	TurretState state;
 	float timeSinceStartedShooting;
-	float shootingTime;
 	float turretDegPerSecond;
+
+	protected static float turretShotInterval;
+	protected static float shootingTime;
+	protected static int minTurretDamage;
+	protected static int maxTurretDamage;
 
 	enum TurretState {
 		LockedOn, Shooting, Idle
@@ -17,32 +21,36 @@ public class Turret : Survivor {
 		size = 1f;
 		base.init(t, m, priority);
 		health = 200;
-		shotFrequency = .05f;
+//		turretShotInterval = .05f;
 		shotDuration = .02f;
 		rotationSpeed = .09f;
-		viewDistance = 4.0f;
+		viewDistance = 8f;
 
 		state = TurretState.Idle;
 		timeSinceStartedShooting = 0;
-		shootingTime = 5;
-		turretDegPerSecond = 20;
+//		shootingTime = 3;
+		turretDegPerSecond = 60;
+//		minTurretDamage = 66;
+//		maxTurretDamage = 81;
 
 		rend.sprite = Resources.Load<Sprite>("Sprites/turret");
 //		t.setPassable(false);
 		Destroy(body);
 		coll = gameObject.AddComponent<BoxCollider2D>();
 		((BoxCollider2D)coll).size = new Vector2(.9f, .9f);
+		transform.LookAt((Vector2)transform.position + aimDirection);
 
 	}
 	
 	// Update is called once per frame
 	public override void Update() {
+		bulletObj.SetActive(false);
 		if (state == TurretState.Shooting) {
 			if (timeSinceStartedShooting >= shootingTime) {
 				state = TurretState.Idle;
 			}
 			else {
-				if (shotTimer >= shotFrequency) {
+				if (shotTimer >= turretShotInterval) {
 					shootAt((Vector2)transform.position + aimDirection);
 				}
 				else if (shotTimer >= shotDuration) {
@@ -51,27 +59,10 @@ public class Turret : Survivor {
 			}
 		}
 		else if (state == TurretState.LockedOn) {
+			aimDirection = Vector3.RotateTowards(aimDirection, targetAimDirection, Mathf.Deg2Rad * turretDegPerSecond * Time.deltaTime, 1);
 			float currAngle = Mathf.Rad2Deg * Mathf.Atan2(aimDirection.y, aimDirection.x);
-			float angle = Mathf.Abs(targetAngle - currAngle);
-			bool clockWise = (targetAngle - currAngle < 180) || (targetAngle + 360 - currAngle < 180);
-			if (angle > 180) {
-				angle = 360 - angle;
-			}
-			if (clockWise) {
-				currAngle -= turretDegPerSecond * Time.deltaTime;
-				if (currAngle < targetAngle) {
-					currAngle = targetAngle;
-				}
-			}
-			else {
-				currAngle += turretDegPerSecond * Time.deltaTime;
-				if (currAngle > targetAngle) {
-					currAngle = targetAngle;
-				}
-			}
-			aimDirection = new Vector2(Mathf.Cos(Mathf.Deg2Rad * currAngle), Mathf.Sin(Mathf.Deg2Rad * currAngle));
 			transform.eulerAngles = new Vector3(0, 0, currAngle - 90);
-			if (currAngle == targetAngle) {
+			if (aimDirection == targetAimDirection) {
 				state = TurretState.Shooting;
 				timeSinceStartedShooting = 0;
 			}
@@ -95,8 +86,7 @@ public class Turret : Survivor {
 			}
 			else {
 				state = TurretState.LockedOn;
-				Vector2 toGuard = closestGuard.transform.position - transform.position;
-				targetAngle = Mathf.Rad2Deg * Mathf.Atan2(toGuard.y, toGuard.x);
+				targetAimDirection = closestGuard.transform.position - transform.position;
 			}
 		}
 		shotTimer += Time.deltaTime;
@@ -119,12 +109,10 @@ public class Turret : Survivor {
 		if (hit.collider != null) {
 			Guard zomb = hit.collider.gameObject.GetComponent<Guard>();
 			if (zomb != null) {
-				zomb.onObjectShot(Random.Range(61, 81));
+				zomb.onObjectShot(Random.Range(minTurretDamage, maxTurretDamage));
 			}
 		}
 	}
-
-
 
 	public override void damage(int damage) {
 		health -= damage;
@@ -133,5 +121,18 @@ public class Turret : Survivor {
 			tile.setPassable(true);
 			Destroy(gameObject);
 		}
+	}
+
+	public static void setShootingTime(float t) {
+		shootingTime = t;
+	}
+
+	public static void setTurretShotInterval(float i) {
+		turretShotInterval = i;
+	}
+
+	public static void setTurretDamageRange(int min, int max) {
+		minTurretDamage = min;
+		maxTurretDamage = max;
 	}
 }

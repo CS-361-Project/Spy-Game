@@ -16,6 +16,9 @@ public class ControlPoint : Tile {
 	SpriteRenderer ringRend;
 	float ringFlashTimer = 0;
 
+	float captureAnimationTimer = 0;
+	float captureAnimationLength = 1;
+
 	public enum Owner {
 		Zombie,
 		Unclaimed,
@@ -35,7 +38,6 @@ public class ControlPoint : Tile {
 		turretSpawnClock = 0;
 		base.init(x, y, gm, 0, 0, true);
 		currentOwner = Owner.Unclaimed;
-//		currentOwner = Owner.Survivor;
 		controlState = 0;
 		sc = control;
 
@@ -46,7 +48,7 @@ public class ControlPoint : Tile {
 		ringRend = alertRing.AddComponent<SpriteRenderer>();
 		ringRend.sprite = Resources.Load<Sprite>("Sprites/Ring");
 		ringRend.color = Color.red;
-		ringRend.sortingLayerName = "Foreground";
+		ringRend.sortingLayerName = "UI";
 		alertRing.SetActive(false);
 	}
 	
@@ -105,6 +107,7 @@ public class ControlPoint : Tile {
 						//HEY I THINK there is a issue with our calls to modify spawn rates, we never positibly modify the survivor spawn rate?
 						gm.modifyZombieSpawnRate(.1f);
 						spawnClock = 0f;
+						captureAnimationTimer = 0;
 					}
 					else if (controlState <= 0) {
 						currentOwner = Owner.Unclaimed;
@@ -124,6 +127,7 @@ public class ControlPoint : Tile {
 						controlState = 1;
 						currentOwner = Owner.Survivor;
 						gm.modifySurvivorSpawnRate(.1f);
+						captureAnimationTimer = 0;
 						spawnClock = 0f;
 						alertRing.SetActive(false);
 					}
@@ -144,6 +148,7 @@ public class ControlPoint : Tile {
 		}
 		if (contested) {
 			alertRing.SetActive(true);
+			alertRing.transform.localScale = Vector3.one;
 			ringRend.color = Color.Lerp(Color.white, Color.red, Mathf.Sin(ringFlashTimer * 2 * Mathf.PI) / 2 + .5f);
 			ringFlashTimer += Time.deltaTime;
 		}
@@ -151,12 +156,12 @@ public class ControlPoint : Tile {
 			alertRing.SetActive(false);
 		}
 		if (controlState > 0) {
-			rend.color = Color.Lerp(Color.white, Color.blue, controlState);
+			rend.color = Color.Lerp(Color.white, Color.cyan, controlState);
 			// color lerp for survivors by controlState
 		}
 		else {
 			// color lerp for zombies by -controlState
-			rend.color = Color.Lerp(Color.white, Color.magenta, -controlState);
+			rend.color = Color.Lerp(Color.white, Color.yellow, -controlState);
 		}
 		if (controlState >= 1) {
 			turretSpawnClock += Time.deltaTime;
@@ -164,6 +169,21 @@ public class ControlPoint : Tile {
 				spawnTurret();
 			}
 		}
+		if (captureAnimationTimer <= captureAnimationLength) {
+			if (currentOwner == Owner.Zombie) {
+				alertRing.SetActive(true);
+				ringRend.color = Color.blue;
+				float size = captureAnimationTimer * 10;
+				alertRing.transform.localScale = new Vector3(size, size, 1);
+			}
+			else if (currentOwner == Owner.Survivor) {
+				alertRing.SetActive(true);
+				ringRend.color = Color.red;
+				float size = captureAnimationTimer * 10;
+				alertRing.transform.localScale = new Vector3(size, size, 1);
+			}
+		}
+		captureAnimationTimer += Time.deltaTime;
 	}
 
 	public virtual void setVisibility(bool visible) {

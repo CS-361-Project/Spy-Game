@@ -13,11 +13,14 @@ public class Survivor : Person {
 	protected Vector2 aimDirection;
 	protected float size = .45f;
 	protected float shotTimer;
-	protected float shotFrequency;
 	protected float shotDuration;
 	public int priority;
 	protected int health;
-	protected float rotationSpeed;
+
+	protected static float rotationSpeed;
+	protected static float shotInterval;
+	protected static int minDamage, maxDamage;
+
 	ControlPoint destination;
 
 	Tile startTile, endTile;
@@ -35,10 +38,12 @@ public class Survivor : Person {
 		gameObject.tag = "Survivor";
 
 		shotTimer = 0;
-		shotFrequency = .6f;
+//		shotInterval = .55f;
 		shotDuration = .05f;
 		health = 100;
-		rotationSpeed = .1F;
+		rotationSpeed = .3F;
+//		minDamage = 30;
+//		maxDamage = 55;
 
 		rend = gameObject.AddComponent<SpriteRenderer>();
 		rend.sprite = Resources.Load<Sprite>("Sprites/Survivor");
@@ -111,7 +116,7 @@ public class Survivor : Person {
 			Vector2 targetDirection = (closestGuard.transform.position - transform.position).normalized;
 			float angle = Mathf.LerpAngle(Mathf.Rad2Deg * Mathf.Atan2(aimDirection.y, aimDirection.x), Mathf.Rad2Deg * Mathf.Atan2(targetDirection.y, targetDirection.x), rotationSpeed);
 			aimDirection = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
-			if (shotTimer >= shotFrequency) {
+			if (shotTimer >= shotInterval) {
 				shootAt((Vector2)transform.position + aimDirection);
 				speed = 0;
 			}
@@ -212,7 +217,7 @@ public class Survivor : Person {
 		if (hit.collider != null) {
 			Guard zomb = hit.collider.gameObject.GetComponent<Guard>();
 			if (zomb != null) {
-				zomb.onObjectShot(Random.Range(40, 61));
+				zomb.onObjectShot(Random.Range(minDamage, maxDamage));
 			}
 		}
 	}
@@ -228,5 +233,14 @@ public class Survivor : Person {
 
 	public ControlPoint getDestination() {
 		return destination;
+	}
+
+	public static void setDamageRange(int min, int max) {
+		minDamage = min;
+		maxDamage = max;
+	}
+
+	public static void setShotInterval(float i) {
+		shotInterval = i;
 	}
 }

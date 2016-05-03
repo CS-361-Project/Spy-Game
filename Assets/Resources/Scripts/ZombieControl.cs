@@ -8,6 +8,10 @@ public class ZombieControl : MonoBehaviour {
 	GameManager gm;
 	HashSet<Guard> selection;
 
+	GameObject cursor;
+	SpriteRenderer cursorRend;
+	bool attackSurvivors;
+
 	// Use this for initialization
 	public void init(GameManager g) {
 		gm = g;
@@ -17,6 +21,20 @@ public class ZombieControl : MonoBehaviour {
 		zombieSelector.init(minimap.cam);
 		selection = new HashSet<Guard>();
 		name = "Zombie Control";
+
+
+
+		//Set up Cursor
+
+		cursor = new GameObject();
+		cursorRend = cursor.AddComponent<SpriteRenderer>();
+		cursorRend.sprite = Resources.Load<Sprite>("Sprites/Mouse");
+		cursorRend.sortingLayerName = "UI";
+		cursorRend.sortingOrder = 4;
+		cursor.layer = LayerMask.NameToLayer("Mouse");
+		cursorRend.color = Color.red;
+
+		cursor.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 	}
 
 	public void removeZombie(Guard g) {
@@ -24,6 +42,12 @@ public class ZombieControl : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update() {
+
+		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		cursor.transform.position = mousePos;
+		cursorRend.transform.localScale = new Vector3(1,1,1) *  Camera.main.orthographicSize * .02f;
+
+
 		Collider2D[] currSelection = zombieSelector.getSelectedObjects();
 		bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 		switch (zombieSelector.state) {
@@ -55,13 +79,23 @@ public class ZombieControl : MonoBehaviour {
 			case ZombieSelection.SelectionState.Idle:
 				break;
 		}
+
+		attackSurvivors = Input.GetKey (KeyCode.F);
 		if (zombieSelector.getMouseClicked()) {
 			bool overwritePath = !Input.GetKey (KeyCode.LeftShift);
-			bool attackSurvivors = Input.GetKey (KeyCode.F);
+
 			gm.moveTo (selection.ToList (), zombieSelector.getMousePosInWorldCoords (), overwritePath, attackSurvivors);
 			roar();
 
 		}
+		if (attackSurvivors) {
+			Cursor.visible = false;
+			cursorRend.enabled = true;
+		} else {
+			Cursor.visible = true;
+			cursorRend.enabled = false;
+		}
+
 	}
 
 	void roar(){
