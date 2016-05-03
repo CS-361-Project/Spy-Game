@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour {
 	public AudioClip defeatScreen;
 
 	GameObject cursor;
+	SpriteRenderer cursorRend;
 
 	public enum GameState {
 		Playing,
@@ -61,6 +62,9 @@ public class GameManager : MonoBehaviour {
 		gameSpeed = 1f;
 		Cursor.visible = false;
 		cursor = new GameObject();
+		cursorRend = gameObject.AddComponent<SpriteRenderer>();
+		cursorRend.sprite = Resources.Load<Texture2D>("Sprites/CrossHair");
+
 
 		maxZombiePriority = 0;
 		maxSurvivorPriority = 0;
