@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour {
 	Tile[,] board;
 	public int width;
 	public int height;
-	int count;
 	public float gameSpeed;
 
 	int finishX = 0;
@@ -128,8 +127,6 @@ public class GameManager : MonoBehaviour {
 		zombieCtrl.init(this);
 		audioCtrl.init(this);
 
-		count = 0;
-
 		audioSource = gameObject.AddComponent<AudioSource>();
 		defeatScreen = Resources.Load("Audio/Music/160418 Zombie_Paradise", typeof(AudioClip)) as AudioClip;
 
@@ -184,7 +181,6 @@ public class GameManager : MonoBehaviour {
 		}
 		zombieSpawnProgress += Time.deltaTime / zombieSpawnInterval;
 		survivorSpawnProgress += Time.deltaTime / survivorSpawnInterval;
-		count++;
 	}
 
 	void generateLevel(int w, int h) {
@@ -729,21 +725,26 @@ public class GameManager : MonoBehaviour {
 
 	public void spawnSurvivors(int n) {
 		int numTiles = survivorSpawn.Count();
-		int index = 0;
+		int numSurvivorPoints = 0;
 		ControlPoint[] survivorControlPoints = new ControlPoint[numControlPoints];
-		if (Random.Range(0f,1f) >= .5f) {
-			foreach (ControlPoint cp in controlPointList) {
-				if (cp.currentOwner == ControlPoint.Owner.Survivor) {
-					survivorControlPoints[index] = cp;
-					index++;
-				}
+		bool ctrlPointOwned = false;
+		foreach (ControlPoint cp in controlPointList) {
+			if (cp.currentOwner == ControlPoint.Owner.Survivor) {
+				survivorControlPoints[numSurvivorPoints] = cp;
+				numSurvivorPoints++;
+				ctrlPointOwned = true;
 			}
 		}
-		else {
-			for (int i = 0; i < n; i++) {
-				Tile spawnTile = survivorSpawn[Random.Range(0, numTiles)];
-				addSurvivor(spawnTile.posX, spawnTile.posY);
+
+		for (int i = 0; i < n; i++) {
+			Tile spawnTile;
+			if (ctrlPointOwned && Random.Range(0f, 1f) >= .5f) {
+				spawnTile = survivorControlPoints[Random.Range(0, numSurvivorPoints)];
 			}
+			else {
+				spawnTile = survivorSpawn[Random.Range(0, numTiles)];
+			}
+			addSurvivor(spawnTile.posX, spawnTile.posY);
 		}
 	}
 
