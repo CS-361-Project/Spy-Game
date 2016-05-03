@@ -35,7 +35,7 @@ public class Survivor : Person {
 		gameObject.layer = LayerMask.NameToLayer("Survivor");
 		gameObject.tag = "Survivor";
 
-		shotTimer = 0; 
+		shotTimer = 0;
 		shotFrequency = .6f;
 		shotDuration = .05f;
 		health = 100;
@@ -67,7 +67,7 @@ public class Survivor : Person {
 		//Debug.DrawLine(tile.transform.position + new Vector3(-.5f, .5f, 0), tile.transform.position + new Vector3(.5f, -.5f, 0));
 		//Debug.DrawLine(endTile.transform.position + new Vector3(-.5f, .5f, 0), endTile.transform.position + new Vector3(.5f, -.5f, 0));
 		speed = 2f;
-		aimDirection = direction;
+		aimDirection = Vector2.left;
 	}
 
 	// Update is called once per frame
