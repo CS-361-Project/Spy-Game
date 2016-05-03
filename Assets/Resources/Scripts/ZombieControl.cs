@@ -59,7 +59,28 @@ public class ZombieControl : MonoBehaviour {
 			bool overwritePath = !Input.GetKey (KeyCode.LeftShift);
 			bool attackSurvivors = Input.GetKey (KeyCode.F);
 			gm.moveTo (selection.ToList (), zombieSelector.getMousePosInWorldCoords (), overwritePath, attackSurvivors);
+			roar();
+
 		}
+	}
+
+	void roar(){
+		int rand = Random.Range(0, 2);
+		switch (rand) {
+			case 0:
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar1);
+				break;
+			case 1: 
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar2);
+				break;
+			case 2:
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar3);
+				break;
+			default:
+				print("huh? this shouldn't happen.");
+				break;
+		}
+
 	}
 }
 

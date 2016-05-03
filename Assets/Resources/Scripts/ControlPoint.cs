@@ -94,6 +94,9 @@ public class ControlPoint : Tile {
 		else if (survivorCount == 0) {
 			if (zombieCount > 0) {
 				if (currentOwner != Owner.Zombie) {
+					if (!gm.audioCtrl.getSource().isPlaying) {
+						gm.audioCtrl.playClip((int)AudioControl.clips.zombieHoard);
+					}
 					Owner oldOwner = currentOwner;
 					controlState -= zombieCount * zombieClaimPerSecond * gm.gameSpeed * Time.deltaTime;
 					if (controlState <= -1) {
@@ -190,8 +193,7 @@ public class ControlPoint : Tile {
 	public List<Survivor> getIncomingSurvivors() {
 		return incomingSurvivorList;
 	}
-
-	public void spawnTurret() {
+ 	void spawnTurret() {
 		Tile[] area = getNxNEmptyTiles(5, false);
 		Tile turret = area[Random.Range(0, area.Length)];
 		print("Spawning Turret!!");

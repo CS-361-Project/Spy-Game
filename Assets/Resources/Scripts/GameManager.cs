@@ -31,13 +31,16 @@ public class GameManager : MonoBehaviour {
 
 	ZombieControl zombieCtrl;
 	SurvivorControl survivorCtrl;
-	AudioControl audioCtrl;
+	public AudioControl audioCtrl;
 
 	int maxZombiePriority;
 	int maxSurvivorPriority;
 
 	public AudioSource audioSource;
 	public AudioClip defeatScreen;
+
+	GameObject cursor;
+	SpriteRenderer cursorRend;
 
 	public enum GameState {
 		Playing,
@@ -57,6 +60,14 @@ public class GameManager : MonoBehaviour {
 		GameObject.Find("Minimap Camera").GetComponent<Minimap>().init(this);
 
 		gameSpeed = 1f;
+
+		//Set up Cursor
+		//Cursor.visible = false;
+		cursor = new GameObject();
+		cursorRend = gameObject.AddComponent<SpriteRenderer>();
+		cursorRend.sprite = Resources.Load<Texture2D>("Sprites/CrossHair");
+		cursorRend.transform= Cursor.
+
 
 		maxZombiePriority = 0;
 		maxSurvivorPriority = 0;
