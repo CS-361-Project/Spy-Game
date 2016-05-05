@@ -23,7 +23,7 @@ public class SurvivorControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		print("Survivor count: " + survivorList.Count);
+//		print("Survivor count: " + survivorList.Count);
 		survivorList = gm.getEnemyList();
 		assignSurvivors();
 	}
