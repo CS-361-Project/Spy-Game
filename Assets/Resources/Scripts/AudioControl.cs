@@ -26,7 +26,6 @@ public class AudioControl : MonoBehaviour {
 		myLife,
 		ohYeah1,
 		ohYeah2,
-		oneShot,
 		outtaWay,
 		huh
 	}
@@ -65,7 +64,6 @@ public class AudioControl : MonoBehaviour {
 		audioClips[(int)clips.zombieCheer1] = Resources.Load("Audio/Diagetic Sounds/Zombie Cheer 1", typeof(AudioClip)) as AudioClip;
 		audioClips[(int)clips.zombieCheer2] = Resources.Load("Audio/Diagetic Sounds/Zombie Cheer 2", typeof(AudioClip)) as AudioClip;
 		audioClips[(int)clips.zombieHoard] = Resources.Load("Audio/Diagetic Sounds/Zombie Hoard Loop", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieHoard] = Resources.Load("Audio/Diagetic Sounds/Zombie Hoard Loop", typeof(AudioClip)) as AudioClip;
 		audioClips[(int)clips.gunFire1] = Resources.Load("Audio/Diagetic Sounds/Arcade Blip 1", typeof(AudioClip)) as AudioClip;
 		audioClips[(int)clips.gunFire2] = Resources.Load("Audio/Diagetic Sounds/Arcade Blip 2", typeof(AudioClip)) as AudioClip;
 		audioClips[(int)clips.captureSound1] = Resources.Load("Audio/Voice/Asides/Wrapped Up", typeof(AudioClip)) as AudioClip;
@@ -77,7 +75,6 @@ public class AudioControl : MonoBehaviour {
 		survivorClips[(int)survivor.myLife] = Resources.Load("Audio/Voice/Asides/My Life", typeof(AudioClip)) as AudioClip;
 		survivorClips[(int)survivor.ohYeah1] = Resources.Load("Audio/Voice/Asides/Oh Yeah 1", typeof(AudioClip)) as AudioClip;
 		survivorClips[(int)survivor.ohYeah2] = Resources.Load("Audio/Voice/Asides/Oh Yeah 2", typeof(AudioClip)) as AudioClip;
-		survivorClips[(int)survivor.oneShot] = Resources.Load("Audio/Voice/Asides/One Shot One Kill", typeof(AudioClip)) as AudioClip;
 		survivorClips[(int)survivor.outtaWay] = Resources.Load("Audio/Voice/Asides/Outta My Way", typeof(AudioClip)) as AudioClip;
 		survivorClips[(int)survivor.huh] = Resources.Load("Audio/Voice/Asides/Uh Huh", typeof(AudioClip)) as AudioClip;
 
