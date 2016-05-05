@@ -17,8 +17,8 @@ public class GameManager : MonoBehaviour {
 	ControlPoint[] controlPointList;
 	bool quad1, quad2, quad3, quad4;
 
-	GameObject wallFolder, tileFolder, doorFolder, guardFolder;
-	GameObject winScreen, loseScreen;
+	GameObject wallFolder, tileFolder, doorFolder, zombieFolder, survivorFolder;
+	GameObject winScreen, loseScreen, newGameMenu;
 
 	Tile[,] board;
 	public int width;
@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour {
 	public AudioSource audioSource;
 	public AudioClip defeatScreen;
 	int numControlPoints = 6;
+
+	int difficulty = 2;
 
 //	GameObject cursor;
 //	SpriteRenderer cursorRend;
@@ -81,9 +83,11 @@ public class GameManager : MonoBehaviour {
 
 		winScreen = GameObject.Find("WinPanel");
 		loseScreen = GameObject.Find("LosePanel");
+		newGameMenu = GameObject.Find("NewGamePanel");
 
 		winScreen.SetActive(false);
 		loseScreen.SetActive(false);
+		newGameMenu.SetActive(false);
 
 		zombieCtrl = new GameObject().AddComponent<ZombieControl>();
 
@@ -118,8 +122,10 @@ public class GameManager : MonoBehaviour {
 		wallFolder.name = "Walls";
 		tileFolder = new GameObject();
 		tileFolder.name = "Tiles";
-		guardFolder = new GameObject();
-		guardFolder.name = "Guards";
+		zombieFolder = new GameObject();
+		zombieFolder.name = "Zombies";
+		survivorFolder = new GameObject();
+		survivorFolder.name = "Survivors";
 
 		setDifficulty(2);
 		generateLevel(width, height);
@@ -132,6 +138,44 @@ public class GameManager : MonoBehaviour {
 
 		state = GameState.Playing;
 	}
+
+	public void restart() {
+		winScreen.SetActive(false);
+		loseScreen.SetActive(false);
+		newGameMenu.SetActive(false);
+		survivorList.Clear();
+		emptyTileList.Clear();
+		survivorSpawnProgress = 0;
+		zombieSpawnProgress = 0;
+		gameSpeed = 1;
+
+
+		for (int i = enemyList.Count - 1; i >= 0; i--) {
+			Survivor s = enemyList[i];
+			removeSurvivor(enemyList[i]);
+			Destroy(s.gameObject);
+		}
+		for (int i = zombieList.Count - 1; i >= 0; i--) {
+			Guard z = zombieList[i];
+			removeZombie(zombieList[i]);
+			Destroy(z.gameObject);
+		}
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				Destroy(board[i, j].gameObject);
+				board[i, j] = null;
+			}
+		}
+		for (int i = 0; i < controlPointList.Length; i++) {
+			Destroy(controlPointList[i].gameObject);
+		}
+
+		generateLevel(width, height);
+
+		survivorCtrl.init(this, numControlPoints);
+		zombieCtrl.init(this);
+		audioCtrl.init(this);
+	}
 	
 	// Update is called once per frame
 	void Update() {
@@ -141,6 +185,9 @@ public class GameManager : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.R)) {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
+		else if (Input.GetKeyDown(KeyCode.Escape)) {
+			newGameMenu.SetActive(!newGameMenu.activeInHierarchy);
 		}
 		if (zombieSpawnProgress >= 1) {
 			zombieSpawnProgress -= 1;
@@ -183,7 +230,7 @@ public class GameManager : MonoBehaviour {
 		survivorSpawnProgress += Time.deltaTime / survivorSpawnInterval;
 	}
 
-	void generateLevel(int w, int h) {
+	public void generateLevel(int w, int h) {
 		int survivorCount = 0;
 		survivorSpawn = new Tile[10];
 		zombieSpawn = new Tile[10];
@@ -233,12 +280,26 @@ public class GameManager : MonoBehaviour {
 
 		int numCtrlPointsFound = 0;
 		Tile[] hubs = new Tile[numControlPoints];
-		hubs[0] = getClosestEmptyTile(new Vector2(Random.Range(0, width/2), Random.Range(height/2, height)));
-		hubs[1] = getClosestEmptyTile(new Vector2(Random.Range(width/2, width), Random.Range(height/2, height)));
-		hubs[2] = getClosestEmptyTile(new Vector2(Random.Range(0, width/2), Random.Range(0, height/2)));
-		hubs[3] = getClosestEmptyTile(new Vector2(Random.Range(width/2, width), Random.Range(0, height/2)));
-		hubs[4] = getRandomEmptyTile();
-		hubs[5] = getRandomEmptyTile();
+		controlPointList = new ControlPoint[numControlPoints];
+		for (int i = 0; i < numControlPoints; i++) {
+			switch (i) {
+				case 0:
+					hubs[0] = getClosestEmptyTile(new Vector2(Random.Range(0, width / 2), Random.Range(height / 2, height)));
+					break;
+				case 1:
+					hubs[1] = getClosestEmptyTile(new Vector2(Random.Range(width / 2, width), Random.Range(height / 2, height)));
+					break;
+				case 2:
+					hubs[2] = getClosestEmptyTile(new Vector2(Random.Range(0, width / 2), Random.Range(0, height / 2)));
+					break;
+				case 3:
+					hubs[3] = getClosestEmptyTile(new Vector2(Random.Range(width / 2, width), Random.Range(0, height / 2)));
+					break;
+				default:
+					hubs[i] = getRandomEmptyTile();
+					break;
+			}
+		}
 		int k = 0;
 		foreach (Tile hub in hubs) {
 			GameObject pointObj = new GameObject();
@@ -259,8 +320,28 @@ public class GameManager : MonoBehaviour {
 	public void setDifficulty(int level) {
 		switch (level) {
 			case 0:
+				numControlPoints = 4;
+				baseSurvivorSpawnInterval = 17;
+				baseZombieSpawnInterval = 2;
+				Survivor.setDamageRange(30, 45);
+				Survivor.setShotInterval(.65f);
+				Turret.setTurretDamageRange(45, 65);
+				Turret.setTurretShotInterval(.1f);
+				Turret.setShootingTime(5f);
+				startZombies = 120;
+				startSurvivors = 20;
 				break;
 			case 1:
+				numControlPoints = 6;
+				baseSurvivorSpawnInterval = 15;
+				baseZombieSpawnInterval = 3;
+				Survivor.setDamageRange(35, 55);
+				Survivor.setShotInterval(.65f);
+				Turret.setTurretDamageRange(66, 81);
+				Turret.setTurretShotInterval(.05f);
+				Turret.setShootingTime(3f);
+				startZombies = 120;
+				startSurvivors = 20;
 				break;
 			case 2:
 				numControlPoints = 6;
@@ -795,6 +876,7 @@ public class GameManager : MonoBehaviour {
 		}
 		enemyList.Add(surv);
 		survivorList.Add(surv);
+		surv.transform.parent = survivorFolder.transform;
 	}
 
 	public void addTurret(int x, int y) {
@@ -803,6 +885,7 @@ public class GameManager : MonoBehaviour {
 		Turret turr = turrObj.AddComponent<Turret>();
 		turr.init(getTile(x, y), this, int.MaxValue);
 		enemyList.Add(turr);
+		turr.transform.parent = survivorFolder.transform;
 	}
 		
 	// register each guard to be notified when a fan is toggled
@@ -811,7 +894,7 @@ public class GameManager : MonoBehaviour {
 		guardObj.name = "Guard";
 		Guard guard = guardObj.AddComponent<Guard>();
 		guard.init(getTile(x, y), this, maxZombiePriority++);
-		guard.transform.parent = guardFolder.transform;
+		guard.transform.parent = zombieFolder.transform;
 		zombieList.Add(guard);
 	}
 
