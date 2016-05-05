@@ -40,8 +40,10 @@ public class AudioControl : MonoBehaviour {
 	}
 		
 
-	AudioSource onClickSource;
-	AudioSource onPointSource;
+	AudioSource source1;
+	AudioSource source2;
+	AudioSource source3;
+
 	public AudioClip[] audioClips;
 	public AudioClip[] survivorClips;
 	public AudioClip[] survivorDeath;
@@ -52,8 +54,9 @@ public class AudioControl : MonoBehaviour {
 		audioClips = new AudioClip[Enum.GetNames(typeof(clips)).Length];
 		survivorClips = new AudioClip[Enum.GetNames(typeof(survivor)).Length];
 		survivorDeath = new AudioClip[Enum.GetNames(typeof(death)).Length];
-		onClickSource = gameObject.AddComponent<AudioSource>();
-		onPointSource = gameObject.AddComponent<AudioSource>();
+		source1 = gameObject.AddComponent<AudioSource>();
+		source2 = gameObject.AddComponent<AudioSource>();
+		source3 = gameObject.AddComponent<AudioSource>();
 		//print(source);
 
 		audioClips[(int)clips.zombieRoar1] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 1", typeof(AudioClip)) as AudioClip;
@@ -113,11 +116,15 @@ public class AudioControl : MonoBehaviour {
 		return survivorDeath;
 	}
 
-	public AudioSource getClickSource(){
-		return onClickSource;
+	public AudioSource getSource1(){
+		return source1;
 	}
 
-	public AudioSource getPointSource(){
-		return onPointSource;
+	public AudioSource getSource2(){
+		return source2;
+	}
+
+	public AudioSource getSource3(){
+		return source3;
 	}
 }

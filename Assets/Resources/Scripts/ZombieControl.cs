@@ -90,13 +90,13 @@ public class ZombieControl : MonoBehaviour {
 		}
 
 		if (selection.Count != 0) {
-			if (!gm.audioCtrl.getPointSource().isPlaying) {
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieHoard, gm.audioCtrl.getPointSource());
+			if (!gm.audioCtrl.getSource3().isPlaying) {
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieHoard, gm.audioCtrl.getSource3());
 			}
 		}
 		else {
-			if (gm.audioCtrl.getPointSource().isPlaying) {
-				gm.audioCtrl.getPointSource().Stop();
+			if (gm.audioCtrl.getSource3().isPlaying) {
+				gm.audioCtrl.getSource3().Stop();
 			}
 		}
 		if (attackSurvivors) {
@@ -112,13 +112,13 @@ public class ZombieControl : MonoBehaviour {
 		int rand = Random.Range(0, 3);
 		switch (rand) {
 			case 0:
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar1, gm.audioCtrl.getClickSource());
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar1, gm.audioCtrl.getSource1());
 				break;
 			case 1: 
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar2, gm.audioCtrl.getClickSource());
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar2, gm.audioCtrl.getSource1());
 				break;
 			case 2:
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar3, gm.audioCtrl.getClickSource());
+				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar3, gm.audioCtrl.getSource1());
 				break;
 			default:
 				print("huh? this shouldn't happen.");

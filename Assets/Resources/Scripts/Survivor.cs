@@ -213,19 +213,19 @@ public class Survivor : Person {
 		int rand = Random.Range(0, 5);
 		switch(rand){
 			case 0:
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death1, gm.audioCtrl.getPointSource());
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death1, gm.audioCtrl.getSource2());
 				break;
 			case 1:					
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death2, gm.audioCtrl.getPointSource());
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death2, gm.audioCtrl.getSource2());
 				break;
 			case 2:
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death3, gm.audioCtrl.getPointSource());
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death3, gm.audioCtrl.getSource2());
 				break;
 			case 3:
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death4, gm.audioCtrl.getPointSource());
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death4, gm.audioCtrl.getSource2());
 				break;
 			case 4:
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death5, gm.audioCtrl.getPointSource());
+				gm.audioCtrl.playDeathClip((int)AudioControl.death.death5, gm.audioCtrl.getSource2());
 				break;
 			default:
 				print("NO" + rand);
