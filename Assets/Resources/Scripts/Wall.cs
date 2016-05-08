@@ -34,5 +34,26 @@ public class Wall : Tile {
 			rend.color = new Color(.25f, .25f, .25f);
 		}
 	}
+
+	public override void setVisibility(float percentVisible){
+		if (percentVisible < 0) {
+			percentVisible = 0;
+		} else if (percentVisible > 1) {
+			percentVisible = 1;
+		}
+
+		if (percentVisible > .01f) {
+			rend.sortingLayerName = "Default";
+			rend.sortingOrder = 0;
+		} else {
+			rend.sortingLayerName = "Foreground";
+			rend.sortingOrder = 3;
+		}
+		if (percentVisible < .4f) {
+			rend.color = Color.Lerp (Color.black, new Color (.25f, .25f, .25f), percentVisible / .4f);
+		} else {
+			rend.color = new Color (.25f, .25f, .25f);;
+		}
+	}
 }
 

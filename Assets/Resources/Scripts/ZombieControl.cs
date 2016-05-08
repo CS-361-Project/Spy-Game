@@ -80,7 +80,7 @@ public class ZombieControl : MonoBehaviour {
 				break;
 		}
 
-		attackSurvivors = Input.GetKey (KeyCode.F);
+		attackSurvivors = !Input.GetKey (KeyCode.F);
 		if (zombieSelector.getMouseClicked()) {
 			bool overwritePath = !Input.GetKey (KeyCode.LeftShift);
 

@@ -105,10 +105,11 @@ public class Tile : MonoBehaviour {
 			this.x = x;
 			this.y = y;
 		}
-		public void turnLeft() {
+		public IntDirection turnLeft() {
 			int tmp = x;
 			x = -y;
 			y = tmp;
+			return this;
 		}
 		public IntDirection copy() {
 			return new IntDirection(x, y);
@@ -121,22 +122,37 @@ public class Tile : MonoBehaviour {
 		bool foundZombie = false;
 		Tile currTile = this;
 		HashSet<Tile> visitedTiles = new HashSet<Tile>();
-		while (!foundZombie && Mathf.Abs(currTile.posX - posX) <= maxDistance && Mathf.Abs(currTile.posY - posY) <= maxDistance) {
+		int tileX = posX;
+		int tileY = posY;
+		while (!foundZombie && Mathf.Abs(tileX - posX) <= maxDistance && Mathf.Abs(tileY - posY) <= maxDistance) {
+			if (currTile == null) {
+				currTile = gm.getTile (posX - dir.x, posY - dir.y);
+				dir.turnLeft ();
+				for(int i=0; i<maxDistance * 2 && visitedTiles.Contains (currTile); i++) {
+					currTile = gm.getTile (tileX + dir.x, tileY + dir.y);
+					tileX += dir.x;
+					tileY += dir.y;
+				}
+			}
 			ControlPoint cp = currTile as ControlPoint;
-			if (currTile.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie)) {
+			if (currTile != null && (currTile.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie))) {
 				foundZombie = true;
-				zombieDistance = Vector2.Distance(new Vector2(posX, posY), new Vector2(currTile.posX, currTile.posY));
+				zombieDistance = Vector2.Distance(new Vector2(posX, posY), new Vector2(tileX, tileY));
 			}
 			else {
 				visitedTiles.Add(currTile);
 				IntDirection left = dir.copy().turnLeft();
-				Tile leftTile = gm.getTile(currTile.posX + left.x, currTile.posY + left.y);
+				Tile leftTile = gm.getTile(tileX + left.x, tileY + left.y);
 				if (!visitedTiles.Contains(leftTile)) {
 					currTile = leftTile;
+					tileX += left.x;
+					tileY += left.y;
 					dir = left;
 				}
 				else {
-					currTile = (gm.getTile(currTile.posX + dir.x, currTile.posY + dir.y));
+					tileX += dir.x;
+					tileY += dir.y;
+					currTile = (gm.getTile(tileX, tileY));
 				}
 			}
 		}
@@ -149,14 +165,17 @@ public class Tile : MonoBehaviour {
 			int minCheck = 0;
 			int maxCheck = Guard.tileViewDistance;
 			bool foundZombie = false;
-			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
-				ControlPoint cp = t as ControlPoint;
-				if (t.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie)) {
-					foundZombie = true;
-					break;
-				}
-			}
-			setVisibility(foundZombie);
+			float closestZombie = closestZombieDistance (Guard.tileViewDistance);
+
+
+//			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
+//				ControlPoint cp = t as ControlPoint;
+//				if (t.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie)) {
+//					foundZombie = true;
+//					break;
+//				}
+//			}
+			setVisibility(1- (closestZombie/(float) Guard.tileViewDistance));
 //			setVisibility(true);
 //			if (foundZombie && !visited) {
 //				Destroy(fogRend.gameObject);
@@ -335,6 +354,28 @@ public class Tile : MonoBehaviour {
 	public void checkVisibility() {
 		needToCheckVisibility = true;
 	}
+
+	public virtual void setVisibility(float percentVisible){
+		if (percentVisible < 0) {
+			percentVisible = 0;
+		} else if (percentVisible > 1) {
+			percentVisible = 1;
+		}
+
+		if (percentVisible > .01f) {
+			rend.sortingLayerName = "Default";
+			rend.sortingOrder = 0;
+		} else {
+			rend.sortingLayerName = "Foreground";
+			rend.sortingOrder = 3;
+		}
+		if (percentVisible < .4f) {
+			rend.color = Color.Lerp (Color.grey, new Color (.75f, .75f, .75f), percentVisible / .4f);
+		} else {
+			rend.color = new Color(.75f, .75f, .75f);
+		}
+	}
+
 
 	public virtual void setVisibility(bool visible) {
 		if (!visible) {

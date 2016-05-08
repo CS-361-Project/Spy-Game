@@ -153,6 +153,9 @@ public class ControlPoint : Tile {
 					}
 					else if (controlState >= 0) {
 						currentOwner = Owner.Unclaimed;
+						foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
+							t.checkVisibility ();
+						}
 						alertRing.SetActive(false);
 					}
 					else {
