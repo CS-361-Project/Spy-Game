@@ -4,8 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class AudioControl : MonoBehaviour {
+	private int numZombieClips = 11;
+	private int numSurvivorClips = 8;
+	private int numDeathClips = 5;
+	private int zombieStart = 0;
+	private int survivorStart, deathStart;
+	private Dictionary<int, float> volDict;
 
-	public enum clips {
+	public enum Clip {
 		zombieRoar1,
 		zombieRoar2,
 		zombieRoar3,
@@ -16,10 +22,8 @@ public class AudioControl : MonoBehaviour {
 		gunFire2,
 		captureSound1,
 		captureSound2,
-		captureSound3
-	}
+		captureSound3,
 
-	public enum survivor {
 		christmas,
 		gimmeSome,
 		letsGo,
@@ -27,10 +31,8 @@ public class AudioControl : MonoBehaviour {
 		ohYeah1,
 		ohYeah2,
 		outtaWay,
-		huh
-	}
+		huh,
 
-	public enum death{
 		death1,
 		death2,
 		death3,
@@ -50,40 +52,43 @@ public class AudioControl : MonoBehaviour {
 
 	public void init (GameManager m) {
 		gm = m;
-		audioClips = new AudioClip[Enum.GetNames(typeof(clips)).Length];
-		survivorClips = new AudioClip[Enum.GetNames(typeof(survivor)).Length];
-		survivorDeath = new AudioClip[Enum.GetNames(typeof(death)).Length];
+		audioClips = new AudioClip[Enum.GetNames(typeof(Clip)).Length];
+		survivorClips = new AudioClip[numSurvivorClips];
+		survivorDeath = new AudioClip[numDeathClips];
 		source1 = gameObject.AddComponent<AudioSource>();
 		source2 = gameObject.AddComponent<AudioSource>();
 		source3 = gameObject.AddComponent<AudioSource>();
 		//print(source);
 
-		audioClips[(int)clips.zombieRoar1] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 1", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieRoar2] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 2", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieRoar3] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 3", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieCheer1] = Resources.Load("Audio/Diagetic Sounds/Zombie Cheer 1", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieCheer2] = Resources.Load("Audio/Diagetic Sounds/Zombie Cheer 2", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.zombieHoard] = Resources.Load("Audio/Diagetic Sounds/Zombie Hoard Loop", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.gunFire1] = Resources.Load("Audio/Diagetic Sounds/Arcade Blip 1", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.gunFire2] = Resources.Load("Audio/Diagetic Sounds/Arcade Blip 2", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.captureSound1] = Resources.Load("Audio/Voice/Asides/Wrapped Up", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.captureSound2] = Resources.Load("Audio/Voice/Asides/Christmas", typeof(AudioClip)) as AudioClip;
-		audioClips[(int)clips.captureSound3] = Resources.Load("Audio/Voice/Asides/That's Over", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.zombieRoar1] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 1", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.zombieRoar2] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 2", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.zombieRoar3] = Resources.Load("Audio/Diagetic Sounds/Zombie Roar 3", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.zombieCheer1] = Resources.Load("Audio/Diagetic Sounds/Zombie Cheer 1", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.zombieCheer2] = Resources.Load("Audio/Diagetic Sounds/Zombie Cheer 2", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.zombieHoard] = Resources.Load("Audio/Diagetic Sounds/Zombie Hoard Loop", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.gunFire1] = Resources.Load("Audio/Diagetic Sounds/Arcade Blip 1", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.gunFire2] = Resources.Load("Audio/Diagetic Sounds/Arcade Blip 2", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.captureSound1] = Resources.Load("Audio/Voice/Asides/Wrapped Up", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.captureSound2] = Resources.Load("Audio/Voice/Asides/Christmas", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.captureSound3] = Resources.Load("Audio/Voice/Asides/That's Over", typeof(AudioClip)) as AudioClip;
 
-		survivorClips[(int)survivor.gimmeSome] = Resources.Load("Audio/Voice/Asides/Gimmie Some", typeof(AudioClip)) as AudioClip;
-		survivorClips[(int)survivor.letsGo] = Resources.Load("Audio/Voice/Asides/Let's Go", typeof(AudioClip)) as AudioClip;
-		survivorClips[(int)survivor.myLife] = Resources.Load("Audio/Voice/Asides/My Life", typeof(AudioClip)) as AudioClip;
-		survivorClips[(int)survivor.ohYeah1] = Resources.Load("Audio/Voice/Asides/Oh Yeah 1", typeof(AudioClip)) as AudioClip;
-		survivorClips[(int)survivor.ohYeah2] = Resources.Load("Audio/Voice/Asides/Oh Yeah 2", typeof(AudioClip)) as AudioClip;
-		survivorClips[(int)survivor.outtaWay] = Resources.Load("Audio/Voice/Asides/Outta My Way", typeof(AudioClip)) as AudioClip;
-		survivorClips[(int)survivor.huh] = Resources.Load("Audio/Voice/Asides/Uh Huh", typeof(AudioClip)) as AudioClip;
+		survivorStart = (int)Clip.gimmeSome;
+		survivorClips[(int)Clip.gimmeSome - survivorStart] = Resources.Load("Audio/Voice/Asides/Gimmie Some", typeof(AudioClip)) as AudioClip;
+		survivorClips[(int)Clip.letsGo - survivorStart] = Resources.Load("Audio/Voice/Asides/Let's Go", typeof(AudioClip)) as AudioClip;
+		survivorClips[(int)Clip.myLife - survivorStart] = Resources.Load("Audio/Voice/Asides/My Life", typeof(AudioClip)) as AudioClip;
+		survivorClips[(int)Clip.ohYeah1 - survivorStart] = Resources.Load("Audio/Voice/Asides/Oh Yeah 1", typeof(AudioClip)) as AudioClip;
+		survivorClips[(int)Clip.ohYeah2 - survivorStart] = Resources.Load("Audio/Voice/Asides/Oh Yeah 2", typeof(AudioClip)) as AudioClip;
+		survivorClips[(int)Clip.outtaWay - survivorStart] = Resources.Load("Audio/Voice/Asides/Outta My Way", typeof(AudioClip)) as AudioClip;
+		survivorClips[(int)Clip.huh - survivorStart] = Resources.Load("Audio/Voice/Asides/Uh Huh", typeof(AudioClip)) as AudioClip;
 
-		survivorDeath[(int)death.death1] = Resources.Load("Audio/Voice/Body Noises/Cough 1", typeof(AudioClip)) as AudioClip;
-		survivorDeath[(int)death.death2] = Resources.Load("Audio/Voice/Body Noises/Cough 2", typeof(AudioClip)) as AudioClip;
-		survivorDeath[(int)death.death3] = Resources.Load("Audio/Voice/Body Noises/Cough 3", typeof(AudioClip)) as AudioClip;
-		survivorDeath[(int)death.death4] = Resources.Load("Audio/Voice/Body Noises/Ugh", typeof(AudioClip)) as AudioClip;
-		survivorDeath[(int)death.death5] = Resources.Load("Audio/Voice/Body Noises/Vomit", typeof(AudioClip)) as AudioClip;
+		deathStart = (int)Clip.death1;
+		survivorDeath[(int)Clip.death1 - deathStart] = Resources.Load("Audio/Voice/Body Noises/Cough 1", typeof(AudioClip)) as AudioClip;
+		survivorDeath[(int)Clip.death2 - deathStart] = Resources.Load("Audio/Voice/Body Noises/Cough 2", typeof(AudioClip)) as AudioClip;
+		survivorDeath[(int)Clip.death3 - deathStart] = Resources.Load("Audio/Voice/Body Noises/Cough 3", typeof(AudioClip)) as AudioClip;
+		survivorDeath[(int)Clip.death4 - deathStart] = Resources.Load("Audio/Voice/Body Noises/Ugh", typeof(AudioClip)) as AudioClip;
+		survivorDeath[(int)Clip.death5 - deathStart] = Resources.Load("Audio/Voice/Body Noises/Vomit", typeof(AudioClip)) as AudioClip;
 
+		volDict = new Dictionary<int, float>();
 	}
 	
 	// Update is called once per frame
@@ -92,18 +97,22 @@ public class AudioControl : MonoBehaviour {
 	}
 
 	public void playClip(int clipIndex, AudioSource source){
-		source.PlayOneShot(audioClips[clipIndex]);
+		if (clipIndex >= deathStart) {
+			clipIndex -= deathStart;
+		}
+		else if (clipIndex >= survivorStart) {
+			clipIndex -= survivorStart;
+		}
+		float vol = 1;
+		if (volDict.ContainsKey(clipIndex)) {
+			vol = volDict[clipIndex];
+		}
+		source.PlayOneShot(audioClips[clipIndex], vol);
 	}
 
-	public void playSurvivorClip(int clipIndex, AudioSource source){
-		source.PlayOneShot(survivorClips[clipIndex]);
+	public void playClip(Clip clip, AudioSource source) {
+		playClip((int)clip, source);
 	}
-
-	public void playDeathClip(int clipIndex, AudioSource source){
-		source.PlayOneShot(survivorDeath[clipIndex]);
-	}
-
-
 
 	public AudioClip[] getSurvivorSounds(){
 		return survivorClips;

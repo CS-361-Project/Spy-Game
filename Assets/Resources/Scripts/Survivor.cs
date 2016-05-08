@@ -213,19 +213,19 @@ public class Survivor : Person {
 		int rand = Random.Range(0, 5);
 		switch(rand){
 			case 0:
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death1, gm.audioCtrl.getSource2());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.death1, gm.audioCtrl.getSource2());
 				break;
 			case 1:					
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death2, gm.audioCtrl.getSource2());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.death2, gm.audioCtrl.getSource2());
 				break;
 			case 2:
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death3, gm.audioCtrl.getSource2());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.death3, gm.audioCtrl.getSource2());
 				break;
 			case 3:
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death4, gm.audioCtrl.getSource2());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.death4, gm.audioCtrl.getSource2());
 				break;
 			case 4:
-				gm.audioCtrl.playDeathClip((int)AudioControl.death.death5, gm.audioCtrl.getSource2());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.death5, gm.audioCtrl.getSource2());
 				break;
 			default:
 				print("NO" + rand);
@@ -262,10 +262,10 @@ public class Survivor : Person {
 	void shootSound(){
 		switch(Random.Range(0,2)){
 			case 0:
-				gm.audioCtrl.playClip((int)AudioControl.clips.gunFire1, source);
+				gm.audioCtrl.playClip((int)AudioControl.Clip.gunFire1, source);
 				break;
 			case 1:
-				gm.audioCtrl.playClip((int)AudioControl.clips.gunFire2, source);
+				gm.audioCtrl.playClip((int)AudioControl.Clip.gunFire2, source);
 				break;
 			default:
 				print("NO");

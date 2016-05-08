@@ -106,10 +106,10 @@ public class ControlPoint : Tile {
 						if (!source.isPlaying) {
 							switch (Random.Range(0, 2)) {
 								case 0:
-									gm.audioCtrl.playClip((int)AudioControl.clips.zombieCheer1, source);
+									gm.audioCtrl.playClip((int)AudioControl.Clip.zombieCheer1, source);
 									break;
 								case 1:
-									gm.audioCtrl.playClip((int)AudioControl.clips.zombieCheer2, source);
+									gm.audioCtrl.playClip((int)AudioControl.Clip.zombieCheer2, source);
 									break;
 								default:
 									print("what");
@@ -168,7 +168,7 @@ public class ControlPoint : Tile {
 		}
 		if (contested) {
 			if (!source.isPlaying){
-				gm.audioCtrl.playSurvivorClip(Random.Range(0, gm.audioCtrl.getSurvivorSounds().Length), source);
+				gm.audioCtrl.playClip(Random.Range(0, gm.audioCtrl.getSurvivorSounds().Length), source);
 			}
 			alertRing.SetActive(true);
 			alertRing.transform.localScale = Vector3.one;
@@ -212,13 +212,13 @@ public class ControlPoint : Tile {
 	void captureSound(){
 		switch(Random.Range(0,3)){
 			case 0:
-				gm.audioCtrl.playClip((int)AudioControl.clips.captureSound1, source);
+				gm.audioCtrl.playClip((int)AudioControl.Clip.captureSound1, source);
 				break;
 			case 1:
-				gm.audioCtrl.playClip((int)AudioControl.clips.captureSound2, source);
+				gm.audioCtrl.playClip((int)AudioControl.Clip.captureSound2, source);
 				break;
 			case 2:
-				gm.audioCtrl.playClip((int)AudioControl.clips.captureSound3, source);
+				gm.audioCtrl.playClip((int)AudioControl.Clip.captureSound3, source);
 				break;
 			default:
 				print("NO");

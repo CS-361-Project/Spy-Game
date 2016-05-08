@@ -91,7 +91,7 @@ public class ZombieControl : MonoBehaviour {
 
 		if (selection.Count != 0) {
 			if (!gm.audioCtrl.getSource3().isPlaying) {
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieHoard, gm.audioCtrl.getSource3());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.zombieHoard, gm.audioCtrl.getSource3());
 			}
 		}
 		else {
@@ -112,13 +112,13 @@ public class ZombieControl : MonoBehaviour {
 		int rand = Random.Range(0, 3);
 		switch (rand) {
 			case 0:
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar1, gm.audioCtrl.getSource1());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.zombieRoar1, gm.audioCtrl.getSource1());
 				break;
 			case 1: 
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar2, gm.audioCtrl.getSource1());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.zombieRoar2, gm.audioCtrl.getSource1());
 				break;
 			case 2:
-				gm.audioCtrl.playClip((int)AudioControl.clips.zombieRoar3, gm.audioCtrl.getSource1());
+				gm.audioCtrl.playClip((int)AudioControl.Clip.zombieRoar3, gm.audioCtrl.getSource1());
 				break;
 			default:
 				print("huh? this shouldn't happen.");
