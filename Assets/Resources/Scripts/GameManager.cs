@@ -166,15 +166,16 @@ public class GameManager : MonoBehaviour {
 				board[i, j] = null;
 			}
 		}
-		for (int i = 0; i < controlPointList.Length; i++) {
-			Destroy(controlPointList[i].gameObject);
-		}
+//		for (int i = 0; i < controlPointList.Length; i++) {
+//			Destroy(controlPointList[i].gameObject);
+//		}
 
 		generateLevel(width, height);
 
 		survivorCtrl.init(this, numControlPoints);
 		zombieCtrl.init(this);
 		audioCtrl.init(this);
+		state = GameState.Playing;
 	}
 	
 	// Update is called once per frame
@@ -217,8 +218,9 @@ public class GameManager : MonoBehaviour {
 					if (allPointsCaptured) {
 						if (owner == ControlPoint.Owner.Survivor) {
 							loseScreen.SetActive(true);
+							state = GameState.Defeat;
 						}
-						else if (enemyList.Count == 0) {
+						else if (owner == ControlPoint.Owner.Zombie && enemyList.Count == 0) {
 							winScreen.SetActive(true);
 							state = GameState.Victory;
 						}
