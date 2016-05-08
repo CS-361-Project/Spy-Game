@@ -98,10 +98,56 @@ public class Tile : MonoBehaviour {
 //	public void setColor() {
 //		rend.color = Color.green;
 //	}
+
+	class IntDirection {
+		public int x, y;
+		public IntDirection(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+		public void turnLeft() {
+			int tmp = x;
+			x = -y;
+			y = tmp;
+		}
+		public IntDirection copy() {
+			return new IntDirection(x, y);
+		}
+	}
+
+	public float closestZombieDistance(int maxDistance) {
+		IntDirection dir = new IntDirection(0, 1);
+		float zombieDistance = maxDistance;
+		bool foundZombie = false;
+		Tile currTile = this;
+		HashSet<Tile> visitedTiles = new HashSet<Tile>();
+		while (!foundZombie && Mathf.Abs(currTile.posX - posX) <= maxDistance && Mathf.Abs(currTile.posY - posY) <= maxDistance) {
+			ControlPoint cp = currTile as ControlPoint;
+			if (currTile.getZombieList().Count > 0 || (cp != null && cp.currentOwner == ControlPoint.Owner.Zombie)) {
+				foundZombie = true;
+				zombieDistance = Vector2.Distance(new Vector2(posX, posY), new Vector2(currTile.posX, currTile.posY));
+			}
+			else {
+				visitedTiles.Add(currTile);
+				IntDirection left = dir.copy().turnLeft();
+				Tile leftTile = gm.getTile(currTile.posX + left.x, currTile.posY + left.y);
+				if (!visitedTiles.Contains(leftTile)) {
+					currTile = leftTile;
+					dir = left;
+				}
+				else {
+					currTile = (gm.getTile(currTile.posX + dir.x, currTile.posY + dir.y));
+				}
+			}
+		}
+		return zombieDistance;
+	}
 	
 	// Update is called once per frame
 	public virtual void Update() {
 		if (needToCheckVisibility) {
+			int minCheck = 0;
+			int maxCheck = Guard.tileViewDistance;
 			bool foundZombie = false;
 			foreach (Tile t in getNxNArea(Guard.tileViewDistance * 2)) {
 				ControlPoint cp = t as ControlPoint;
