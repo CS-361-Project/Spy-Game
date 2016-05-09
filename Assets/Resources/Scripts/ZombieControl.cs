@@ -25,7 +25,9 @@ public class ZombieControl : MonoBehaviour {
 
 
 		//Set up Cursor
-
+		if (cursor != null) {
+			Destroy(cursor);
+		}
 		cursor = new GameObject();
 		cursorRend = cursor.AddComponent<SpriteRenderer>();
 		cursorRend.sprite = Resources.Load<Sprite>("Sprites/Mouse");
@@ -35,6 +37,7 @@ public class ZombieControl : MonoBehaviour {
 		cursorRend.color = Color.red;
 
 		cursor.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		cursor.transform.position += Vector3.back;
 	}
 
 	public void removeZombie(Guard g) {
@@ -44,7 +47,7 @@ public class ZombieControl : MonoBehaviour {
 	void Update() {
 
 		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		cursor.transform.position = mousePos;
+		cursor.transform.position = new Vector3(mousePos.x, mousePos.y, -9);
 		cursorRend.transform.localScale = new Vector3(1,1,1) *  Camera.main.orthographicSize * .02f;
 
 
@@ -76,7 +79,7 @@ public class ZombieControl : MonoBehaviour {
 						g.setSelected(true);
 					}
 				}
-				int postCount = currSelection.Count();
+				int postCount = selection.Count;
 				if (postCount > preCount) {
 					playBeep();
 				}
@@ -104,14 +107,8 @@ public class ZombieControl : MonoBehaviour {
 //				gm.audioCtrl.getSource3().Stop();
 //			}
 //		}
-
-		if (attackSurvivors) {
-			Cursor.visible = false;
-			cursorRend.enabled = true;
-		} else {
-			Cursor.visible = true;
-			cursorRend.enabled = false;
-		}
+		Cursor.visible = attackSurvivors;
+		cursorRend.enabled = !attackSurvivors;
 	}
 
 	public void playBeep() {
