@@ -62,6 +62,7 @@ public class ZombieControl : MonoBehaviour {
 			case ZombieSelection.SelectionState.EndingSelection:
 				break;
 			case ZombieSelection.SelectionState.Selecting:
+				int preCount = selection.Count;
 				if (!shift) {
 					foreach (Guard g in selection) {
 						g.setSelected(false);
@@ -74,6 +75,10 @@ public class ZombieControl : MonoBehaviour {
 						selection.Add(g);
 						g.setSelected(true);
 					}
+				}
+				int postCount = currSelection.Count();
+				if (postCount > preCount) {
+					playBeep();
 				}
 				break;
 			case ZombieSelection.SelectionState.Idle:
@@ -89,16 +94,17 @@ public class ZombieControl : MonoBehaviour {
 
 		}
 
-		if (selection.Count != 0) {
-			if (!gm.audioCtrl.getSource3().isPlaying) {
-				gm.audioCtrl.playClip((int)AudioControl.Clip.zombieHoard, gm.audioCtrl.getSource3());
-			}
-		}
-		else {
-			if (gm.audioCtrl.getSource3().isPlaying) {
-				gm.audioCtrl.getSource3().Stop();
-			}
-		}
+//		if (selection.Count != 0) {
+//			if (!gm.audioCtrl.getSource3().isPlaying) {
+//				gm.audioCtrl.playClip((int)AudioControl.Clip.zombieHoard, gm.audioCtrl.getSource3());
+//			}
+//		}
+//		else {
+//			if (gm.audioCtrl.getSource3().isPlaying) {
+//				gm.audioCtrl.getSource3().Stop();
+//			}
+//		}
+
 		if (attackSurvivors) {
 			Cursor.visible = false;
 			cursorRend.enabled = true;
@@ -106,6 +112,10 @@ public class ZombieControl : MonoBehaviour {
 			Cursor.visible = true;
 			cursorRend.enabled = false;
 		}
+	}
+
+	public void playBeep() {
+		gm.audioCtrl.playClip(AudioControl.Clip.beepSound, gm.audioCtrl.getSource3());
 	}
 
 	void roar(){

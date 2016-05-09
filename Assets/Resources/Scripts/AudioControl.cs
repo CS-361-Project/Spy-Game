@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class AudioControl : MonoBehaviour {
-	private int numZombieClips = 11;
+	private int numZombieClips = 12;
 	private int numSurvivorClips = 8;
 	private int numDeathClips = 5;
 	private int zombieStart = 0;
@@ -23,6 +23,7 @@ public class AudioControl : MonoBehaviour {
 		captureSound1,
 		captureSound2,
 		captureSound3,
+		beepSound,
 
 		christmas,
 		gimmeSome,
@@ -71,6 +72,7 @@ public class AudioControl : MonoBehaviour {
 		audioClips[(int)Clip.captureSound1] = Resources.Load("Audio/Voice/Asides/Wrapped Up", typeof(AudioClip)) as AudioClip;
 		audioClips[(int)Clip.captureSound2] = Resources.Load("Audio/Voice/Asides/Christmas", typeof(AudioClip)) as AudioClip;
 		audioClips[(int)Clip.captureSound3] = Resources.Load("Audio/Voice/Asides/That's Over", typeof(AudioClip)) as AudioClip;
+		audioClips[(int)Clip.beepSound] = Resources.Load("Audio/Diagetic Sounds/Arcade Beep 02", typeof(AudioClip)) as AudioClip;
 
 		survivorStart = (int)Clip.gimmeSome;
 		survivorClips[(int)Clip.gimmeSome - survivorStart] = Resources.Load("Audio/Voice/Asides/Gimmie Some", typeof(AudioClip)) as AudioClip;
@@ -89,6 +91,7 @@ public class AudioControl : MonoBehaviour {
 		survivorDeath[(int)Clip.death5 - deathStart] = Resources.Load("Audio/Voice/Body Noises/Vomit", typeof(AudioClip)) as AudioClip;
 
 		volDict = new Dictionary<int, float>();
+		volDict.Add((int)Clip.beepSound, .3f);
 	}
 	
 	// Update is called once per frame
@@ -106,6 +109,12 @@ public class AudioControl : MonoBehaviour {
 		float vol = 1;
 		if (volDict.ContainsKey(clipIndex)) {
 			vol = volDict[clipIndex];
+		}
+		else if (clipIndex <= (int)Clip.zombieHoard) {
+			vol = .3f;
+		}
+		else if (clipIndex <= (int)Clip.gunFire2) {
+			vol = .15f;
 		}
 		source.PlayOneShot(audioClips[clipIndex], vol);
 	}
